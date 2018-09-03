@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<CharacterEmailLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" characterName="Test char">
+  <name>Character 2</name>
+  <hideFlags>None</hideFlags>
+  <Emails>
+    <Email emailID="test2_01">
+      <name>init</name>
+      <hideFlags>None</hideFlags>
+      <content>Hello I want to order a Fire Rose</content>
+      <itemOrder>Fire Rose</itemOrder>
+      <playerReplyNeutral></playerReplyNeutral>
+      <playerReplyGood></playerReplyGood>
+      <playerReplyBad></playerReplyBad>
+      <nextEmailIDNeutral>test2_01_return</nextEmailIDNeutral>
+      <nextEmailIDGood></nextEmailIDGood>
+      <nextEmailIDBad></nextEmailIDBad>
+    </Email>
+	 <Email emailID="test2_01">
+      <name>test2_01_return</name>
+      <hideFlags>None</hideFlags>
+      <content>Thank you for the Fire Rose. It was on fire.</content>
+      <itemOrder></itemOrder>
+      <playerReplyNeutral>Thank you for being my customer</playerReplyNeutral>
+      <playerReplyGood>I'm glad you liked it!</playerReplyGood>
+      <playerReplyBad>Sorry about that. Not much I can do.</playerReplyBad>
+      <nextEmailIDNeutral>test2_02_N</nextEmailIDNeutral>
+      <nextEmailIDGood>test2_02_G</nextEmailIDGood>
+      <nextEmailIDBad>test2_02_B</nextEmailIDBad>
+    </Email>
+  </Emails>
+</CharacterEmailLog>

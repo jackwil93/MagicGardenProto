@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<CharacterEmailLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" characterName="Test char">
+  <name>TestChar</name>
+  <hideFlags>None</hideFlags>
+  <Emails>
+    <Email emailID="test_01">
+      <name>TestResponse</name>
+      <hideFlags>None</hideFlags>
+      <content>Your body text here</content>
+      <itemOrder>Fire Rose</itemOrder>
+      <playerReplyNeutral>text, player reply neutral</playerReplyNeutral>
+      <playerReplyGood>text, player reply good</playerReplyGood>
+      <playerReplyBad>text, player reply bad</playerReplyBad>
+      <nextEmailIDNeutral>next email ID Neutral</nextEmailIDNeutral>
+      <nextEmailIDGood>next email ID Good</nextEmailIDGood>
+      <nextEmailIDBad>next email ID Bad</nextEmailIDBad>
+    </Email>
+  </Emails>
+</CharacterEmailLog>

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a66c12b7d909e7f469763bec74e46258, type: 3}
+  m_Name: TestResponse
+  m_EditorClassIdentifier: 
+  emailID: test_01
+  content: Your body text here
+  itemOrder: Fire Rose
+  playerReplyNeutral: text, player reply neutral
+  playerReplyGood: text, player reply good
+  playerReplyBad: text, player reply bad
+  nextEmailIDNeutral: next email ID Neutral
+  nextEmailIDGood: next email ID Good
+  nextEmailIDBad: next email ID Bad
