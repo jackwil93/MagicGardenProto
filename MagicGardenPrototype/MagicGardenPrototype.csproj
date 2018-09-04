@@ -239,6 +239,7 @@
     <Compile Include="Assets\Scripts\EmailCharacter.cs" />
     <Compile Include="Assets\Scripts\EmailPath.cs" />
     <Compile Include="Assets\Scripts\EmailResponse.cs" />
+    <Compile Include="Assets\Scripts\LineDraw.cs" />
     <Compile Include="Assets\Scripts\PlantCore.cs" />
     <Compile Include="Assets\Scripts\XMLSaveLoad.cs" />
   </ItemGroup>

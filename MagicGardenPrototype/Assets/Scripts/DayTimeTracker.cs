@@ -15,6 +15,8 @@ public class DayTimeTracker : MonoBehaviour {
 
     public float SecondsRealtime()
     {
+        // Flawed. Always 1. Return to fix sometime
+
         if (prevSecond != DateTime.Now.Second)
         {
             prevSecond = DateTime.Now.Second;
@@ -26,7 +28,7 @@ public class DayTimeTracker : MonoBehaviour {
 
     private void Update()
     {
-        Debug.Log("Second = " + DateTime.Now.Second.ToString() + "Hour = " + DateTime.Now.Hour.ToString());
+        //Debug.Log("Second = " + DateTime.Now.Second.ToString() + "Hour = " + DateTime.Now.Hour.ToString());
         // Debug.Log(DayProgression().ToString());
     }
 }

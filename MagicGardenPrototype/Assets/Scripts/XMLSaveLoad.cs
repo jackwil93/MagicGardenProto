@@ -11,11 +11,12 @@ public class XMLSaveLoad : MonoBehaviour
     public int i;
 
     public EmailCharacter testChar;
+    public string docToLoad;
 
     private void Start()
     {
-        
         SaveXML();
+        LoadXML();
     }
 
     public void SaveXML()
@@ -37,6 +38,15 @@ public class XMLSaveLoad : MonoBehaviour
             Debug.Log("Created new XML file");
             SaveXML();
         }
-
     }
+
+    public void LoadXML()
+    {
+        XmlSerializer loadXML = new XmlSerializer(typeof(EmailCharacter));
+        FileStream stream = new FileStream(Path.Combine(Application.dataPath, "XMLs/" + docToLoad + ".xml"), FileMode.Open);
+        EmailCharacter charNew = loadXML.Deserialize(stream) as EmailCharacter;
+
+        Debug.Log("Read " + docToLoad + ":\nName = " + charNew.name + "\nEmails = " + charNew.emailList.Count);
+    }
+        
 }

@@ -24,6 +24,6 @@ public class PlantCore : MonoBehaviour {
     void PlantGrow()
     {
         // Not great but OK for prototype
-        child.transform.localScale = Vector3.Lerp(child.transform.localScale, child.transform.localScale + Vector3.one * lifetimeSeconds / 86400, Time.deltaTime);
+        //child.transform.localScale = Vector3.Lerp(child.transform.localScale, child.transform.localScale + Vector3.one * lifetimeSeconds / 86400, Time.deltaTime);
     }
 }
