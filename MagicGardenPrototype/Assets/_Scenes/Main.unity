@@ -1321,10 +1321,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 430227572}
+  - component: {fileID: 430227576}
   - component: {fileID: 430227571}
   - component: {fileID: 430227573}
   - component: {fileID: 430227574}
-  - component: {fileID: 430227576}
+  - component: {fileID: 430227575}
   m_Layer: 0
   m_Name: GAMECORE
   m_TagString: Untagged
@@ -1368,9 +1369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  i: 0
-  testChar: {fileID: 11400000, guid: 32e4d7b7be98fcf4b977cbdf11bc124b, type: 2}
-  docToLoad: character2
+  itemsToSave: []
 --- !u!114 &430227574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1390,6 +1389,20 @@ MonoBehaviour:
   spellNo: 3
   deleteAllKeys: 0
   tickMax: 6
+--- !u!114 &430227575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 430227570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100f1cac1fea60d46b8f4a91c63d2dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data:
+    inventoryList: []
+  itemsList: []
 --- !u!114 &430227576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,6 +1422,7 @@ MonoBehaviour:
   - {fileID: 1028708367}
   - {fileID: 427578872}
   - {fileID: 1843729072}
+  currentInventory: {fileID: 430227575}
 --- !u!1 &480648548
 GameObject:
   m_ObjectHideFlags: 0

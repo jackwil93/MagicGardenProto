@@ -7,46 +7,110 @@ using System.IO;
 
 public class XMLSaveLoad : MonoBehaviour
 {
-    [Header("Will auto save a file on play")]
-    public int i;
+    // For future Ref: 
+    // Inventory is for run time only, lives on the GAMECORE
+    // Inventory Item (a Scriptable Obj) is to make my life easier creating new items for this game
+    // InventoryData is the data structure used for saving the inventory to an XML
+    // InventoryItemXML is what each Item is translated to for saving to XML (Scriptables cant be loaded via XML)
 
-    public EmailCharacter testChar;
-    public string docToLoad;
 
-    private void Start()
+    InventoryData tempInv;
+    string dir;
+
+    private void Awake()
     {
-        SaveXML();
-        LoadXML();
+        dir = Application.persistentDataPath.ToString() + "/data/";
     }
 
-    public void SaveXML()
+    public void SaveGame() // Called from Game Manager
     {
-        //var serializer = new XmlSerializer(typeof(EmailCharacter));
+        Debug.Log("Saving...");
+        SaveInventory();
+        SaveEmails();
+    }
+    
+    private void SaveInventory()
+    {
+        Inventory mainInv = GetComponent<Inventory>();
+        tempInv = mainInv.data;
 
-        if (File.Exists(Path.Combine(Application.dataPath, "XMLs/character1.xml")))
+        foreach (InventoryItem item in mainInv.itemsList)
         {
-            FileStream stream = new FileStream(Path.Combine(Application.dataPath, "XMLs/character1.xml"), FileMode.Create);
-            XmlSerializer serializer = new XmlSerializer(typeof(EmailCharacter));
+            InventoryItemXML itemXML = new InventoryItemXML();
+            itemXML.itemID = item.itemID;
+            itemXML.ageTime = item.ageTime;
+            itemXML.displayedName = item.displayedName;
+            itemXML.invSlotNumber = item.invSlotNumber;
+            itemXML.plantID = item.plantID;
+            itemXML.potID = item.potID;
 
-            serializer.Serialize(stream, testChar);
-            Debug.Log("Saved XML to " + Path.Combine(Application.dataPath, "XMLs/character1.xml"));
+            tempInv.inventoryList.Add(itemXML);
+        }
+        SaveXML((object)tempInv, "inv");
+
+        tempInv.inventoryList.Clear();
+    }
+
+    private void SaveEmails()
+    {
+
+    }
+
+    void SaveXML(object dataPackage, string fileName)
+    {
+        if (File.Exists(dir + fileName + ".xml"))
+        {
+            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Create);
+            XmlSerializer serializer = new XmlSerializer(dataPackage.GetType());
+            serializer.Serialize(stream, dataPackage);
+            Debug.Log("Saved XML to " + dir + fileName + ".xml");
+            stream.Close();
         }
         else
         {
             Debug.Log("File does not exist");
-            File.CreateText(Path.Combine(Application.dataPath, "XMLs/character1.xml"));
+            Directory.CreateDirectory(dir);
+            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Create);
+            stream.Close();
+            
             Debug.Log("Created new XML file");
-            SaveXML();
+            SaveXML(dataPackage, fileName);
         }
     }
 
-    public void LoadXML()
+    public void LoadGame() // Called from Game Manager
     {
-        XmlSerializer loadXML = new XmlSerializer(typeof(EmailCharacter));
-        FileStream stream = new FileStream(Path.Combine(Application.dataPath, "XMLs/" + docToLoad + ".xml"), FileMode.Open);
-        EmailCharacter charNew = loadXML.Deserialize(stream) as EmailCharacter;
+        LoadXML(typeof(InventoryData), "inv");
+    }
 
-        Debug.Log("Read " + docToLoad + ":\nName = " + charNew.name + "\nEmails = " + charNew.emailList.Count);
+    private void LoadXML(System.Type type, string fileName)
+    {
+            XmlSerializer loadXML = new XmlSerializer(type);
+            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Open);
+
+        if (type == typeof(InventoryData))
+        {
+            InventoryData obj = (InventoryData)loadXML.Deserialize(stream);
+            LoadInventoryData(obj);
+        }
+    }
+
+    void LoadInventoryData(InventoryData loadedInventoryXML)
+    {
+        Inventory mainInventory = GetComponent<Inventory>();
+
+        foreach (InventoryItemXML itemXML in loadedInventoryXML.inventoryList)
+        {
+            InventoryItem item = ScriptableObject.CreateInstance<InventoryItem>();
+            item.itemID = itemXML.itemID;
+            item.ageTime = itemXML.ageTime;
+            item.displayedName = itemXML.displayedName;
+            item.invSlotNumber = itemXML.invSlotNumber;
+            item.plantID = itemXML.plantID;
+            item.potID = itemXML.potID;
+
+            mainInventory.itemsList.Add(item);
+        }
     }
         
 }

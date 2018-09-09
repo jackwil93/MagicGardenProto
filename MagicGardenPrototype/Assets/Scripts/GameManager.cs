@@ -18,12 +18,16 @@ public class GameManager : MobileInputManager {
     int currentCamPos;
     Vector3 camMoveToPos;
 
+    public Inventory currentInventory;
+
     private void Start()
     {
         currentScreen = screens.mainGame;
         currentCamPos = 0;
         mainCam = Camera.main.transform;
         camMoveToPos = cameraPosList[0].position;
+
+        GetComponent<XMLSaveLoad>().LoadGame();
     }
 
     private void Update()
@@ -37,6 +41,12 @@ public class GameManager : MobileInputManager {
             mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
         }
             
+
+        // FOR DEV TESTING PURPOSES ONLY
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            this.GetComponent<XMLSaveLoad>().SaveGame();
+        }
     }
 
     public override void SingleTapRelease()
