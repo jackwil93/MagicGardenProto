@@ -1323,9 +1323,10 @@ GameObject:
   - component: {fileID: 430227572}
   - component: {fileID: 430227576}
   - component: {fileID: 430227571}
-  - component: {fileID: 430227573}
   - component: {fileID: 430227574}
   - component: {fileID: 430227575}
+  - component: {fileID: 430227577}
+  - component: {fileID: 430227573}
   m_Layer: 0
   m_Name: GAMECORE
   m_TagString: Untagged
@@ -1364,12 +1365,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 430227570}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e615303c4c75434e9d36274ee2876fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemsToSave: []
+  JSONfileName: emaildata.json
+  emailsDavinta: []
+  emailsXander: []
 --- !u!114 &430227574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1401,8 +1404,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data:
-    inventoryList: []
-  itemsList: []
+    inventoryList:
+    - itemID: 
+      displayedName: 
+      potID: 
+      plantID: 
+      ageTime: 0
+      invSlotNumber: 0
+  itemsList:
+  - {fileID: 0}
 --- !u!114 &430227576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1423,6 +1433,17 @@ MonoBehaviour:
   - {fileID: 427578872}
   - {fileID: 1843729072}
   currentInventory: {fileID: 430227575}
+--- !u!114 &430227577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 430227570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &480648548
 GameObject:
   m_ObjectHideFlags: 0
