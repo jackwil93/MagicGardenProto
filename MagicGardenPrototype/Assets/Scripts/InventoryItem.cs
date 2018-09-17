@@ -8,8 +8,13 @@ public class InventoryItem : ScriptableObject {
 
     public string itemID;
     public string displayedName;
-    public string potID;
-    public string plantID;
+    public int potID;
+    public int plantID;
     public float ageTime;
     public int invSlotNumber;
+    public bool inWorld;
+    public string placedPointName;
+    public float placedPointX;
+    public float placedPointY;
+    public float placedPointZ;
 }

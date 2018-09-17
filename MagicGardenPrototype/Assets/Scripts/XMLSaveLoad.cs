@@ -32,7 +32,9 @@ public class XMLSaveLoad : MonoBehaviour
     private void SaveInventory()
     {
         Inventory mainInv = GetComponent<Inventory>();
-        tempInv = mainInv.data;
+        mainInv.CheckInAllItems();
+
+        tempInv = mainInv.data; // the list that gets put to XML
 
         foreach (InventoryItem item in mainInv.itemsList)
         {
@@ -43,6 +45,11 @@ public class XMLSaveLoad : MonoBehaviour
             itemXML.invSlotNumber = item.invSlotNumber;
             itemXML.plantID = item.plantID;
             itemXML.potID = item.potID;
+            itemXML.inWorld = item.inWorld;
+            itemXML.placedPointName = item.placedPointName;
+            itemXML.placedPointX = item.placedPointX;
+            itemXML.placedPointY = item.placedPointY;
+            itemXML.placedPointZ = item.placedPointZ;
 
             tempInv.inventoryList.Add(itemXML);
         }
@@ -108,9 +115,16 @@ public class XMLSaveLoad : MonoBehaviour
             item.invSlotNumber = itemXML.invSlotNumber;
             item.plantID = itemXML.plantID;
             item.potID = itemXML.potID;
+            item.inWorld = itemXML.inWorld;
+            item.placedPointName = itemXML.placedPointName;
+            item.placedPointX = itemXML.placedPointX;
+            item.placedPointY = itemXML.placedPointY;
+            item.placedPointZ = itemXML.placedPointZ;
 
             mainInventory.itemsList.Add(item);
         }
+
+        mainInventory.SortItems();
     }
         
 }

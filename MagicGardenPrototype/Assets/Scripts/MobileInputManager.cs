@@ -32,6 +32,7 @@ public class MobileInputManager : MonoBehaviour {
             touchTime += Time.deltaTime;
             userIsTouching = true;
 
+
             // Get Distance of drag, if player is moving finger while touching
             touchMoveDistance = Vector3.Distance(screenTouchPos, prevScreenTouchPos);
             Debug.Log("touchMoveDistance = " + touchMoveDistance);
@@ -80,6 +81,26 @@ public class MobileInputManager : MonoBehaviour {
         }
 		
 	}
+
+    public Transform GetSelectedObject() 
+    {
+        Ray r = Camera.main.ScreenPointToRay(screenTouchPos);
+        RaycastHit hit;
+        if (Physics.Raycast(r, out hit))
+            return hit.transform;
+        else
+            return null;
+    }
+
+    public Vector3 GetRaycastHitPoint()
+    {
+        Ray r = Camera.main.ScreenPointToRay(screenTouchPos);
+        RaycastHit hit;
+        if (Physics.Raycast(r, out hit))
+            return hit.point;
+        else
+            return Vector3.zero;
+    }
 
     public virtual void SingleTapRelease()
     {

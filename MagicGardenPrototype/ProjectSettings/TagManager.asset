@@ -6,6 +6,9 @@ TagManager:
   tags:
   - music
   - voice
+  - plant
+  - moveable
+  - placePoint
   layers:
   - Default
   - TransparentFX
