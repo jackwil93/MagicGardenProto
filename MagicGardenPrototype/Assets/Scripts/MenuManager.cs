@@ -17,7 +17,8 @@ public class MenuManager : MonoBehaviour {
 
     bool emailsLoaded;
 
-    List<GameObject> conversationsLoaded = new List<GameObject>();
+    public List<string> conversationsLoaded = new List<string>();
+    Vector3 emailWindowPos;
 
     EmailManager EM;
 
@@ -86,15 +87,24 @@ public class MenuManager : MonoBehaviour {
     public void CreateEmailConversation(string characterID) // for Buttons
     {
         // Check if has not been loaded, else open
-        if (!conversationsLoaded.Contains(GameObject.Find(characterID)))
+        if (!conversationsLoaded.Contains(characterID + "_emailConvo"))
         {
             // Create the Conversation Window
             Transform emailUIGroup = GameObject.Find("Emails UI").transform;
             GameObject newConvoWindow = GameObject.Instantiate(emailConvoWindowPrefab, emailUIGroup);
-            newConvoWindow.name = characterID;
+            newConvoWindow.name = characterID + "_emailConvo";
+
+            emailWindowPos = newConvoWindow.transform.localPosition;
 
             // Create each Email Entry 
-            emailConvoScrollContent = newConvoWindow.transform.Find("Content");
+            //emailConvoScrollContent = newConvoWindow.transform.GetChild(1).Find("Content_Log");
+
+            foreach (Transform t in newConvoWindow.GetComponentsInChildren<Transform>())
+            {
+                if (t.name == "Content_Log")
+                    emailConvoScrollContent = t;
+            }
+            
 
             foreach (EmailEntry email in EM.GetAllEmails(characterID))
             {
@@ -110,25 +120,17 @@ public class MenuManager : MonoBehaviour {
             newConvoWindow.transform.Find("Button_Close").GetComponent<Button>().onClick.AddListener(
                 delegate
             {
-                newConvoWindow.SetActive(false);
+                newConvoWindow.transform.localPosition = Vector3.right * 2000;
             }
                 );
 
             // Store the Conversation Window somewhere (dont load it every time)
-            conversationsLoaded.Add(newConvoWindow);
+            conversationsLoaded.Add(newConvoWindow.name);
         }
-        else
+        else if (conversationsLoaded.Contains(characterID + "_emailConvo"))
         {
-            foreach (GameObject convoWindow in conversationsLoaded)
-            {
-                if (convoWindow.name == characterID)
-                {
-                    convoWindow.SetActive(true);
-                    break;
-                }
-            }
+            GameObject.Find(characterID + "_emailConvo").transform.localPosition = emailWindowPos;
         }
-
     }
 
     void AddNewEntryToConversation()
