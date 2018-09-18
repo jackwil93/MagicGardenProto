@@ -9,7 +9,9 @@ public class GameManager : MobileInputManager {
         mainGame,
         emails,
         shop,
-        spellGame
+        spellGame,
+        settings,
+        transactions
     }
     public screens currentScreen;
 
@@ -51,10 +53,10 @@ public class GameManager : MobileInputManager {
 
     private void Update()
     {
-        base.Update();
-        // If in the main game scene, run an input raycast
+        if (currentScreen == screens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
+            base.Update();
 
-        if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f)
+        if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f && !userIsTouching)
         {
             mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
             mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
@@ -73,10 +75,30 @@ public class GameManager : MobileInputManager {
         }
     }
 
+    public void SetScreen(int enumValue) // Called when click on Interactive
+    {
+        currentScreen = (screens)enumValue;
+        MenuManager MM = GetComponent<MenuManager>();
+
+        switch (currentScreen)
+        {
+            case screens.emails:
+                MM.OpenEmails();
+                break;
+        }
+
+        return;
+    }
+
+    
+
     public override void SingleTapRelease()
     {
         base.SingleTapRelease();
         Debug.Log("Game Manager registered Single Tap Release!");
+
+        if (GetSelectedObject() != null && GetSelectedObject().CompareTag("interactive") && currentScreen == screens.mainGame)
+            SetScreen((int)GetSelectedObject().GetComponent<Interactive>().screenToOpen);
     }
 
     public override void SwipeLeft()
@@ -108,6 +130,16 @@ public class GameManager : MobileInputManager {
     {
         if (GetSelectedObject().CompareTag("moveable") && !holdingMoveable)
             PickUpObject(GetSelectedObject());
+
+
+        // Move cam a little
+        //if (!holdingMoveable)
+        //{
+        //    mainCam.Rotate(mainCam.rotation.x,
+        //        cameraPosList[currentCamPos].rotation.y + Mathf.Clamp(Screen.width / base.screenTouchPos.x, -1, 1),
+        //        mainCam.rotation.z);
+        //}
+                
     }
 
     public override void HoldRelease()
@@ -120,7 +152,7 @@ public class GameManager : MobileInputManager {
     {
         heldObject = obj;
         heldObjectInitialPos = obj.position;
-        heldObject.GetComponent<Collider>().enabled = false;
+        heldObject.GetComponent<BoxCollider>().enabled = false;
         holdingMoveable = true;
 
         GameObject.Find(heldObject.GetComponent<WorldItem>().placedPointName).GetComponent<PlacePoint>().empty = true;
@@ -196,8 +228,6 @@ public class GameManager : MobileInputManager {
                 // Finally, add it back to the Inventory's WorldItems list
                 mainInv.worldItems.Add(newItemAttributes);
             }
-        }
-
         }
     }
 }

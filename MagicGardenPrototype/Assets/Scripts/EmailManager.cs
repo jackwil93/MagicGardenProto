@@ -12,6 +12,9 @@ public class EmailManager : MonoBehaviour {
     public List<EmailEntry> emailsDavinta = new List<EmailEntry>();
     public List<EmailEntry> emailsXander = new List<EmailEntry>();
 
+    public List<string> conversationsList = new List<string>(); // PURELY for storing how many conversations exist and with who
+
+    List<EmailEntry> targetList; // To make accessing lists a little easier
 
     private void Start()
     {
@@ -26,9 +29,9 @@ public class EmailManager : MonoBehaviour {
     /// <param name="characterName"></param>
     /// <param name="emailID"></param>
     /// <returns></returns>
-    public EmailEntry GetEmailEntry (string characterName, string emailID)
+    public EmailEntry GetEmailEntry (string characterID, string emailID)
     {
-        switch (characterName)
+        switch (characterID)
         {
             case "davinta":
                 return emailsDavinta.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
@@ -38,6 +41,43 @@ public class EmailManager : MonoBehaviour {
                 break;
         }
         return null;
+    }
+
+    public List<EmailEntry> GetAllEmails (string characterID)
+    {
+        switch (characterID)
+        {
+            case "davinta":
+                return emailsDavinta;
+                break;
+            case "xander":
+                return emailsXander;
+                break;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// characterName must be lowercase.
+    /// </summary>
+    /// <param name="characterName"></param>
+    /// <returns>Returns most recently received of their emails</returns>
+    public EmailEntry GetLatestEmailEntry(string characterID)
+    {
+        switch (characterID)
+        {
+            case "davinta":
+                targetList = emailsDavinta;
+                break;
+            case "xander":
+                targetList = emailsXander;
+                break;
+        }
+
+        if (targetList.Count > 1)
+            return targetList[targetList.Count - 1];
+        else
+            return targetList[0];
     }
 
     void DataToJson()
@@ -59,6 +99,10 @@ public class EmailManager : MonoBehaviour {
             
             foreach (EmailEntry emailEntry in emails)
             {
+                if (!conversationsList.Contains(emailEntry.characterID))
+                    conversationsList.Add(emailEntry.characterID);
+
+
             if (emailEntry.characterID == "davinta")
                 emailsDavinta.Add(emailEntry);
             if (emailEntry.characterID == "xander")

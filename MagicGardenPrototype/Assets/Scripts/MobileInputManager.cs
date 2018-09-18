@@ -11,6 +11,7 @@ public class MobileInputManager : MonoBehaviour {
     public Vector3 screenTouchPos;
     Vector3 prevScreenTouchPos; // Recorded at end of Update to check change between frames
     float touchMoveDistance;
+    float storedTouchMoveDist; // For accessing from other scripts
     Vector3 swipeDirection;
     bool holdDown;
 
@@ -35,7 +36,6 @@ public class MobileInputManager : MonoBehaviour {
 
             // Get Distance of drag, if player is moving finger while touching
             touchMoveDistance = Vector3.Distance(screenTouchPos, prevScreenTouchPos);
-            Debug.Log("touchMoveDistance = " + touchMoveDistance);
 
             // To register when being 'Held Down'
             if (touchTime > 0.2f && touchMoveDistance < 0.2f)
@@ -57,7 +57,7 @@ public class MobileInputManager : MonoBehaviour {
                 swipeDirection = Vector3.zero;
             }
 
-
+            storedTouchMoveDist = touchMoveDistance;
             prevScreenTouchPos = screenTouchPos;
         }
         else
@@ -76,6 +76,7 @@ public class MobileInputManager : MonoBehaviour {
             holdDown = false;
             touchTime = 0;
             touchMoveDistance = 0;
+            storedTouchMoveDist = 0;
             screenTouchPos = Vector3.zero;
             prevScreenTouchPos = Vector3.zero;
         }
@@ -100,6 +101,13 @@ public class MobileInputManager : MonoBehaviour {
             return hit.point;
         else
             return Vector3.zero;
+    }
+
+    public float GetTouchMoveDistance()
+    {
+        Debug.Log("touchMoveDistance = " + storedTouchMoveDist);
+
+        return storedTouchMoveDist;
     }
 
     public virtual void SingleTapRelease()
