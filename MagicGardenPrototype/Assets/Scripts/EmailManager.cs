@@ -9,12 +9,16 @@ public class EmailManager : MonoBehaviour {
     public string JSONfileName = "emaildata.json";
     string filePath;
 
-    public List<EmailEntry> emailsDavinta = new List<EmailEntry>();
-    public List<EmailEntry> emailsXander = new List<EmailEntry>();
+    public List<EmailEntry> allEmailsDavinta = new List<EmailEntry>();
+    public List<EmailEntry> allEmailsXander = new List<EmailEntry>();
+    public List<EmailEntry> allEmailsMrsTew = new List<EmailEntry>();
 
-    public List<string> conversationsList = new List<string>(); // PURELY for storing how many conversations exist and with who
+    public List<string> conversationsByNameList = new List<string>(); // PURELY for storing how many conversations exist and with who
+    public List<EmailConversation> activeConversations = new List<EmailConversation>();
 
-    List<EmailEntry> targetList; // To make accessing lists a little easier
+    List<EmailEntry> targetList = new List<EmailEntry>(); // To make accessing lists a little easier
+
+   
 
     private void Start()
     {
@@ -34,11 +38,11 @@ public class EmailManager : MonoBehaviour {
         switch (characterID)
         {
             case "davinta":
-                return emailsDavinta.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
-                break;
+                return allEmailsDavinta.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
             case "xander":
-                return emailsXander.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
-                break;
+                return allEmailsXander.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
+            case "mrstew":
+                return allEmailsMrsTew.Where(EmailEntry => EmailEntry.entryID == emailID).SingleOrDefault();
         }
         return null;
     }
@@ -48,11 +52,11 @@ public class EmailManager : MonoBehaviour {
         switch (characterID)
         {
             case "davinta":
-                return emailsDavinta;
-                break;
+                return allEmailsDavinta;
             case "xander":
-                return emailsXander;
-                break;
+                return allEmailsXander;
+            case "mrstew":
+                return allEmailsMrsTew;
         }
         return null;
     }
@@ -64,25 +68,22 @@ public class EmailManager : MonoBehaviour {
     /// <returns>Returns most recently received of their emails</returns>
     public EmailEntry GetLatestEmailEntry(string characterID)
     {
-        switch (characterID)
-        {
-            case "davinta":
-                targetList = emailsDavinta;
-                break;
-            case "xander":
-                targetList = emailsXander;
-                break;
-        }
-
-        if (targetList.Count > 1)
-            return targetList[targetList.Count - 1];
-        else
-            return targetList[0];
+        return GetConversation(characterID).latestEmail;
     }
+
+    public void WriteDataToEmail() // Called when the Player chooses a response. Not yet implemented
+    {
+
+    }
+
+
+
+    
+    /// JSON SERIALISATION STUFF
 
     void DataToJson()
     {
-        string data = JsonUtility.ToJson(emailsDavinta[0]);
+        string data = JsonUtility.ToJson(allEmailsDavinta[0]);
         File.AppendAllText(Application.persistentDataPath + "/data/" + "testJson.json", data);
     }
 
@@ -95,22 +96,109 @@ public class EmailManager : MonoBehaviour {
             string JsonString = fixJson(dataAsJson);
             EmailEntry[] emails = FromJson<EmailEntry>(JsonString);
             
-            //EmailEntry emailEntry = JsonUtility.FromJson<EmailEntry>(dataAsJson);
             
             foreach (EmailEntry emailEntry in emails)
             {
-                if (!conversationsList.Contains(emailEntry.characterID))
-                    conversationsList.Add(emailEntry.characterID);
+                // If this character hasn't appeared yet, add their name in list
+                if (!conversationsByNameList.Contains(emailEntry.characterID))
+                    conversationsByNameList.Add(emailEntry.characterID);
 
 
-            if (emailEntry.characterID == "davinta")
-                emailsDavinta.Add(emailEntry);
-            if (emailEntry.characterID == "xander")
-                emailsXander.Add(emailEntry);
+                if (emailEntry.characterID == "davinta")
+                    allEmailsDavinta.Add(emailEntry);
+                if (emailEntry.characterID == "xander")
+                    allEmailsXander.Add(emailEntry);
+                if (emailEntry.characterID == "mrstew")
+                    allEmailsMrsTew.Add(emailEntry);
             }
+
+            CreateActiveConversatons();
         }
         else
             Debug.LogWarning("Json file not found");
+    }
+
+    void CreateActiveConversatons() // MUST only run once
+    {
+        foreach (string charName in conversationsByNameList)
+        {
+            Debug.Log(conversationsByNameList.Count);
+            EmailConversation newConvo = this.gameObject.AddComponent<EmailConversation>();
+            newConvo.characterID = charName;
+            activeConversations.Add(newConvo);
+
+
+            switch (charName)
+            {
+                case "davinta":
+                    SortConversationEmails(allEmailsDavinta, newConvo);
+                    break;
+                case "xander":
+                    SortConversationEmails(allEmailsXander, newConvo);
+                    break;
+                case "mrstew":
+                    SortConversationEmails(allEmailsMrsTew, newConvo);
+                    break;
+            }
+        }
+    }
+
+    public List<EmailEntry> GetConversationEmails(string characterID) // Called from Menu Manager to populate the conversation window
+    {
+       return activeConversations.Where(EmailConversation => EmailConversation.characterID == characterID).SingleOrDefault().emailConvoList;
+    }
+
+    public EmailConversation GetConversation(string characterID)
+    {
+        return activeConversations.Where(EmailConversation => EmailConversation.characterID == characterID).SingleOrDefault();
+    }
+
+    public EmailEntry GetNextEmail(string characterID, int currentStage, string playerReplyGBN)
+    {
+        targetList.Clear();
+        targetList = GetAllEmails(characterID);
+
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            // If email is in the next stage and matches with the players reply (g/b/n) then it is the next email
+            if (targetList[i].stage == currentStage + 1 && targetList[i].characterReplyGBN == playerReplyGBN)
+                return targetList[i];
+        }
+        return null;
+    }
+
+    void SortConversationEmails(List<EmailEntry> listToSort, EmailConversation targetConversation)
+    {
+        foreach (EmailEntry email in listToSort)
+        {
+            if (email.initialOrReply == "initial")
+            {
+                targetConversation.emailConvoList.Add(email);
+                targetConversation.latestEmail = email;
+                return;
+            }
+            else if (email.received && email.initialOrReply != "initial")
+            {
+                targetConversation.emailConvoList.Add(email);
+            }
+        }
+
+        // Find latest email
+        foreach (EmailEntry email in targetConversation.emailConvoList)
+        {
+            if (email.stage > targetConversation.stage)
+            {
+                targetConversation.stage = email.stage;
+                if (!email.replied)
+                    targetConversation.latestEmail = email;
+            }
+            else if (email.replied == false && email.stage == 0 && targetConversation.stage == 0)
+            {
+                targetConversation.latestEmail = email;
+            }
+        }
+
+        GetNextEmail(targetConversation.characterID, targetConversation.stage, targetConversation.latestEmail.playerReplyGBN);
     }
 
 

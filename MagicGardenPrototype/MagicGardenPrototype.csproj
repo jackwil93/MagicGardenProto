@@ -239,6 +239,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\DayTimeTracker.cs" />
+    <Compile Include="Assets\Scripts\EmailConversation.cs" />
     <Compile Include="Assets\Scripts\EmailEntry.cs" />
     <Compile Include="Assets\Scripts\EmailManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />

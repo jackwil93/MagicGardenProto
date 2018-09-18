@@ -9,10 +9,13 @@ public class EmailEntry {
     public int stage;
     public string normalOrLove;
     public string initialOrReply;
-    public string goodBadNeutral;
+    public string characterReplyGBN;
     public string bodyText;
     public string itemID;
     public string playerReplyGood;
     public string playerReplyBad;
     public string playerReplyNeutral;
+    public bool received;
+    public bool replied;
+    public string playerReplyGBN;
 }

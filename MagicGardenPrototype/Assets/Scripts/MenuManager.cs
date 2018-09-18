@@ -67,9 +67,9 @@ public class MenuManager : MonoBehaviour {
         GetComponent<GameManager>().SetScreen(0);
     }
 
-    void PopulateEmailList()
+    void PopulateEmailList() // The Screen where it shows the latest email from each convo
     {
-        foreach (string convo in EM.conversationsList)
+        foreach (string convo in EM.conversationsByNameList)
         {
             GameObject newEmail = GameObject.Instantiate(emailPrefab, emailListScrollContent);
             EmailEntry emailInfo = EM.GetLatestEmailEntry(convo);
@@ -96,8 +96,6 @@ public class MenuManager : MonoBehaviour {
 
             emailWindowPos = newConvoWindow.transform.localPosition;
 
-            // Create each Email Entry 
-            //emailConvoScrollContent = newConvoWindow.transform.GetChild(1).Find("Content_Log");
 
             foreach (Transform t in newConvoWindow.GetComponentsInChildren<Transform>())
             {
@@ -106,7 +104,8 @@ public class MenuManager : MonoBehaviour {
             }
             
 
-            foreach (EmailEntry email in EM.GetAllEmails(characterID))
+            // Create each Email Entry 
+            foreach (EmailEntry email in EM.GetConversationEmails(characterID))
             {
                 Debug.Log(characterID + " email added");
                 GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent);
