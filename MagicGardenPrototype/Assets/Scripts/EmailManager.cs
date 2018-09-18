@@ -71,11 +71,6 @@ public class EmailManager : MonoBehaviour {
         return GetConversation(characterID).latestEmail;
     }
 
-    public void WriteDataToEmail() // Called when the Player chooses a response. Not yet implemented
-    {
-
-    }
-
 
 
     
@@ -153,20 +148,45 @@ public class EmailManager : MonoBehaviour {
         return activeConversations.Where(EmailConversation => EmailConversation.characterID == characterID).SingleOrDefault();
     }
 
-    public EmailEntry GetNextEmail(string characterID, int currentStage, string playerReplyGBN)
+    /// <summary>
+    /// Get the character's Response email to the Player's Reply. This completes the Stage
+    /// </summary>
+    /// <param name="referenceEmail"></param>
+    /// <returns></returns>
+    public EmailEntry GetReturnEmail(EmailEntry referenceEmail)
     {
         targetList.Clear();
-        targetList = GetAllEmails(characterID);
+        targetList = GetAllEmails(referenceEmail.characterID);
 
         for (int i = 0; i < targetList.Count; i++)
         {
-            // If email is in the next stage and matches with the players reply (g/b/n) then it is the next email
-            if (targetList[i].stage == currentStage + 1 && targetList[i].characterReplyGBN == playerReplyGBN)
-                return targetList[i];
+            // If email is the next in this stage and matches with the players reply (g/b/n) then it is the reply email
+            if (targetList[i].initialOrReply == "reply" && targetList[i].stage == referenceEmail.stage && targetList[i].characterReplyGBN == referenceEmail.playerReplyGBN)
+            {
+                EmailEntry e = targetList[i];
+                e.received = true;
+                return e;
+            }
         }
         return null;
     }
 
+    public void ReplyToEmailConversation(EmailEntry repliedEmail) // Called from Menu Manager after Player replies
+    {
+        // Save reply to the current email, then fetch the next one
+        repliedEmail.replied = true;
+
+        EmailConversation targetConversation = GetConversation(repliedEmail.characterID);
+        targetConversation.latestEmail.playerReplyGBN = repliedEmail.playerReplyGBN;
+
+        EmailEntry returnEmail = GetReturnEmail(repliedEmail);
+        targetConversation.emailConvoList.Add(returnEmail);
+
+        // Set the new latest email
+        targetConversation.latestEmail = returnEmail;
+    }
+
+    // Used at Set Up to get all conversation emails in and find the latest email
     void SortConversationEmails(List<EmailEntry> listToSort, EmailConversation targetConversation)
     {
         foreach (EmailEntry email in listToSort)
@@ -177,7 +197,7 @@ public class EmailManager : MonoBehaviour {
                 targetConversation.latestEmail = email;
                 return;
             }
-            else if (email.received && email.initialOrReply != "initial")
+            else if (email.received && email.initialOrReply == "reply")
             {
                 targetConversation.emailConvoList.Add(email);
             }
@@ -198,7 +218,7 @@ public class EmailManager : MonoBehaviour {
             }
         }
 
-        GetNextEmail(targetConversation.characterID, targetConversation.stage, targetConversation.latestEmail.playerReplyGBN);
+       // Not sure if needed? GetNextEmail(targetConversation.emailConvoList[targetConversation.emailConvoList.Count -1]);
     }
 
 

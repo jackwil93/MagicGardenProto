@@ -9,6 +9,12 @@ public class MenuManager : MonoBehaviour {
     public Transform emailListScrollContent;
     public Transform emailConvoScrollContent;
     public GameObject inventoryCanvasGroup;
+    public GameObject emailReplyWindow;
+    public Button replyButton1;
+    public Button replyButton2;
+    public Button replyButton3;
+
+    public List<Button> replyButtons = new List<Button>();
 
     [Header("Prefabs")]
     public GameObject emailPrefab;
@@ -16,6 +22,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject emailConvoWindowPrefab;
 
     bool emailsLoaded;
+    EmailEntry currentEmail; // The email of what you're replying to
 
     public List<string> conversationsLoaded = new List<string>();
     Vector3 emailWindowPos;
@@ -107,13 +114,10 @@ public class MenuManager : MonoBehaviour {
             // Create each Email Entry 
             foreach (EmailEntry email in EM.GetConversationEmails(characterID))
             {
-                Debug.Log(characterID + " email added");
-                GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent);
-                newEmailEntry.transform.Find("Text_Content").GetComponent<Text>().text = email.bodyText;
-
-
-                // Needs to cater for showing the player's past response
+                CreateEmailConversationEntry(email);
             }
+
+
 
             // Set up the Close Window button
             newConvoWindow.transform.Find("Button_Close").GetComponent<Button>().onClick.AddListener(
@@ -132,9 +136,82 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    void CreateEmailConversationEntry(EmailEntry email)
+    {
+        // NOTE BUG: Currently does a full load on open. Needs to check if there are any new emails in the Conversation List. More work but better system
+        GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent); 
+        newEmailEntry.transform.Find("Text_Content").GetComponent<Text>().text = email.bodyText;
+
+        // Set up the Respond button
+        newEmailEntry.transform.Find("Button_Respond").GetComponent<Button>().onClick.AddListener(
+            delegate
+            {
+                OpenEmailReplyWindow(EM.GetLatestEmailEntry(email.characterID));
+            });
+
+        // Needs to cater for showing the player's past response
+    }
+
+    void OpenEmailReplyWindow(EmailEntry email)
+    {
+        currentEmail = email;
+        emailReplyWindow.SetActive(true);
+        emailReplyWindow.transform.SetAsLastSibling();
+        replyButtons.Clear();
+        replyButtons.Add(replyButton1);
+        replyButtons.Add(replyButton2);
+        replyButtons.Add(replyButton3);
+
+        // Set up Images
+
+        // set up button text and listeners
+        int randomGood = AssignRandom(0, 3, 99);
+        int randomBad = AssignRandom(0, 3, randomGood);
+
+        replyButtons[randomGood].transform.GetComponentInChildren<Text>().text = email.playerReplyGood;
+        replyButtons[randomBad].transform.GetComponentInChildren<Text>().text = email.playerReplyBad;
+
+
+        replyButtons[randomGood].onClick.AddListener(delegate { SubmitReply("g"); });
+        replyButtons[randomBad].onClick.AddListener(delegate { SubmitReply("b"); });
+
+        replyButtons.Remove(replyButtons[randomGood]);
+        replyButtons.Remove(replyButtons[randomBad]);
+        replyButtons.Sort();
+
+        replyButtons[0].transform.GetComponentInChildren<Text>().text = email.playerReplyNeutral;
+        replyButtons[0].onClick.AddListener(delegate { SubmitReply("n"); });
+    }
+
+    int AssignRandom(int min, int maxExclusive, int taken)
+    {
+        int i = Random.Range(min, maxExclusive);
+
+        if (i == taken)
+            i = AssignRandom(min, maxExclusive, taken);
+
+        return Random.Range(min, maxExclusive);
+    }
+
+    public void CloseReplyWindow() // Assigned in Inspector
+    {
+        emailReplyWindow.SetActive(false);
+    }
+
+    
+
+    void SubmitReply(string gbn)
+    {
+        CloseReplyWindow();
+        currentEmail.playerReplyGBN = gbn;
+        EM.ReplyToEmailConversation(currentEmail);
+
+        AddNewEntryToConversation();
+    }
+
     void AddNewEntryToConversation()
     {
-
+        CreateEmailConversationEntry(EM.GetLatestEmailEntry(currentEmail.characterID));
     }
 
     void ClearEmailConversation()
