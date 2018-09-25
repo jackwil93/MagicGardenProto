@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class InventoryItem : ScriptableObject {
 
-    public string itemID;
+    public string itemType;
     public string displayedName;
     public int potID;
     public int plantID;

@@ -26,11 +26,11 @@ public class GameManager : MobileInputManager {
     Vector3 heldObjectInitialPos; // Where the object was picked up from
 
     public Inventory currentInventory;
-
+    public GameObject worldItemPrefab;
     [Header("All Pot Prefabs")]
-    public List<GameObject> potTypes = new List<GameObject>();
+    public List<Sprite> potSprites = new List<Sprite>();
     [Header("All Plant Prefabs")]
-    public List<GameObject> plantTypes = new List<GameObject>(); // This should probably done by just grabbing what is needed from Resources
+    public List<Sprite> plantTypes = new List<Sprite>(); // This should probably done by just grabbing what is needed from Resources
 
     private void Start()
     {
@@ -204,29 +204,14 @@ public class GameManager : MobileInputManager {
         {
             if (itemToSpawn.inWorld)
             {
-                GameObject newWorldItem = new GameObject();
+                GameObject newWorldItem = Instantiate(worldItemPrefab);
+                newWorldItem.GetComponent<WorldItem>().SetupSelf(this, newWorldItem, itemToSpawn);
 
-                WorldItem newItemAttributes = newWorldItem.AddComponent<WorldItem>();
-
-                newItemAttributes.itemID = itemToSpawn.itemID;
-                newItemAttributes.displayedName = itemToSpawn.displayedName;
-                newItemAttributes.potID = itemToSpawn.potID;
-                newItemAttributes.plantID = itemToSpawn.plantID;
-                newItemAttributes.ageTime = itemToSpawn.ageTime;
-                newItemAttributes.invSlotNumber = itemToSpawn.invSlotNumber;
-                newItemAttributes.inWorld = itemToSpawn.inWorld;
-                newItemAttributes.placedPointName = itemToSpawn.placedPointName;
-                newItemAttributes.placedPointX = itemToSpawn.placedPointX;
-                newItemAttributes.placedPointY = itemToSpawn.placedPointY;
-                newItemAttributes.placedPointZ = itemToSpawn.placedPointZ;
-
-
-                newItemAttributes.SpawnSelf(potTypes[itemToSpawn.potID], plantTypes[itemToSpawn.plantID]);
-
+                // Make sure the matching placedpoint is considered NOT empty
                 GameObject.Find(itemToSpawn.placedPointName).GetComponent<PlacePoint>().empty = false;
 
                 // Finally, add it back to the Inventory's WorldItems list
-                mainInv.worldItems.Add(newItemAttributes);
+                mainInv.worldItems.Add(newWorldItem.GetComponent<WorldItem>());
             }
         }
     }

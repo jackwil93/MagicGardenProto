@@ -5,8 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class InventoryItemXML {
-    [XmlAttribute("itemID")]
-    public string itemID;
+    public string itemType;
     public string displayedName;
     public int potID;
     public int plantID;

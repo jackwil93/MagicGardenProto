@@ -36,10 +36,10 @@ public class XMLSaveLoad : MonoBehaviour
 
         tempInv = mainInv.data; // the list that gets put to XML
 
-        foreach (InventoryItem item in mainInv.itemsList)
+        foreach (InventoryItem item in mainInv.allItemsList)
         {
             InventoryItemXML itemXML = new InventoryItemXML();
-            itemXML.itemID = item.itemID;
+            itemXML.itemType = item.itemType;
             itemXML.ageTime = item.ageTime;
             itemXML.displayedName = item.displayedName;
             itemXML.invSlotNumber = item.invSlotNumber;
@@ -109,9 +109,9 @@ public class XMLSaveLoad : MonoBehaviour
         foreach (InventoryItemXML itemXML in loadedInventoryXML.inventoryList)
         {
             InventoryItem item = ScriptableObject.CreateInstance<InventoryItem>();
-            item.itemID = itemXML.itemID;
-            item.ageTime = itemXML.ageTime;
+            item.itemType = itemXML.itemType;
             item.displayedName = itemXML.displayedName;
+            item.ageTime = itemXML.ageTime;
             item.invSlotNumber = itemXML.invSlotNumber;
             item.plantID = itemXML.plantID;
             item.potID = itemXML.potID;
@@ -121,10 +121,8 @@ public class XMLSaveLoad : MonoBehaviour
             item.placedPointY = itemXML.placedPointY;
             item.placedPointZ = itemXML.placedPointZ;
 
-            mainInventory.itemsList.Add(item);
+            mainInventory.allItemsList.Add(item);
         }
-
-        mainInventory.SortItems();
     }
         
 }

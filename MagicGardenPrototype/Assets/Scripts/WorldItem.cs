@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exist in the scene
 
-    public string itemID;
+    public string itemType; // ie "potplant" for all pots with or without plants, "decor" etc
     public string displayedName;
     public int potID;
     public int plantID;
@@ -16,20 +16,40 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
     public float placedPointY;
     public float placedPointZ;
 
-    public void SpawnSelf(GameObject pot, GameObject plant) // Called from GameManager
+    public void SetupSelf(GameManager GM, GameObject myGameObject, InventoryItem data) // Called from GameManager.
     {
-        GameObject myPot = Instantiate(pot, this.transform);
-        GameObject myPlant = Instantiate(plant, myPot.transform.Find("node_flower_base"));
+        // "GM" is Game Manager. Passing it through as a parameter makes it easier to pull info from its public Lists
+        // "myGameObject" is the object in scene which has been spawned by GameManager, this script is customising it
+        // "data" refers to the data incoming from the XML SaveLoad, passed thru the GameManager
 
-        BoxCollider boxCol = this.gameObject.AddComponent<BoxCollider>();
-        boxCol.center = new Vector3(0, 0.44f, 0);
+        // Get data...
+        itemType =          data.itemType;
+        displayedName =     data.displayedName;
+        potID =             data.potID;
+        plantID =           data.plantID;
+        ageTime =           data.ageTime;
+        invSlotNumber =     data.invSlotNumber;
+        inWorld =           data.inWorld;
+        placedPointName =   data.placedPointName;
+        placedPointX =      data.placedPointX;
+        placedPointY =      data.placedPointY;
+        placedPointZ =      data.placedPointZ;
 
-        transform.tag = "moveable";
-        transform.position = new Vector3(placedPointX, placedPointY, placedPointZ);
+        // Set Object name
+        if (displayedName == null && itemType == "potplant")
+            displayedName = "PotPlant Item";
 
-        if (itemID != null)
-            this.name = itemID;
-        else
-            this.name = "Plant Item";
+        // Set position
+        this.transform.position = new Vector3(placedPointX, placedPointY, placedPointZ);
+
+       // If a pot plant, do the following
+        if (itemType == "potplant")
+        {
+            SpriteRenderer potSprite = transform.Find("node_pot_base").GetComponent<SpriteRenderer>();
+            SpriteRenderer plantSprite = transform.Find("node_flower_base").GetComponent<SpriteRenderer>(); // TODO change to plant base
+
+            potSprite.sprite = GM.potSprites[potID];
+            //plantSprite.sprite = GM.plantTypes[plantID];
+        }
     }
 }

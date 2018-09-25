@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour
         {
             InventoryItem itemToSave = ScriptableObject.CreateInstance<InventoryItem>();
 
-            itemToSave.itemID =         worldItem.itemID;
+            itemToSave.itemType =         worldItem.itemType;
             itemToSave.displayedName =  worldItem.displayedName;
             itemToSave.potID =          worldItem.potID;
             itemToSave.plantID =        worldItem.plantID;

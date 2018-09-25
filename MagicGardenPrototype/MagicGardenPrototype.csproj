@@ -253,6 +253,7 @@
     <Compile Include="Assets\Scripts\MobileInputManager.cs" />
     <Compile Include="Assets\Scripts\PlacePoint.cs" />
     <Compile Include="Assets\Scripts\PlantCore.cs" />
+    <Compile Include="Assets\Scripts\SpriteBillboard.cs" />
     <Compile Include="Assets\Scripts\WorldItem.cs" />
     <Compile Include="Assets\Scripts\XMLSaveLoad.cs" />
   </ItemGroup>
