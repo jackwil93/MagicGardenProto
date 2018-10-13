@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class GameManager : MobileInputManager {
 
+    MenuManager MM;
+
     public enum screens
     {
         mainGame,
         emails,
         shop,
+        inventory,
         spellGame,
         settings,
         transactions
@@ -27,13 +30,14 @@ public class GameManager : MobileInputManager {
 
     public Inventory currentInventory;
     public GameObject worldItemPrefab;
-    [Header("All Pot Prefabs")]
-    public List<Sprite> potSprites = new List<Sprite>();
-    [Header("All Plant Prefabs")]
-    public List<Sprite> plantTypes = new List<Sprite>(); // This should probably done by just grabbing what is needed from Resources
+    [Header("All Pot Sprites")]
+    public List<Sprite> allPotSprites = new List<Sprite>();
+    [Header("All Plant Types (Scriptables)")]
+    public List<PlantType> allPlantTypes = new List<PlantType>();
 
     private void Start()
     {
+        MM = GetComponent<MenuManager>();
         currentScreen = screens.mainGame;
         currentCamPos = 0;
         mainCam = Camera.main.transform;
@@ -53,7 +57,7 @@ public class GameManager : MobileInputManager {
 
     private void Update()
     {
-        if (currentScreen == screens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
+        //if (currentScreen == screens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
             base.Update();
 
         if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f && !userIsTouching)
@@ -78,7 +82,6 @@ public class GameManager : MobileInputManager {
     public void SetScreen(int enumValue) // Called when click on Interactive
     {
         currentScreen = (screens)enumValue;
-        MenuManager MM = GetComponent<MenuManager>();
 
         switch (currentScreen)
         {
@@ -111,7 +114,9 @@ public class GameManager : MobileInputManager {
                 currentCamPos--;
 
         camMoveToPos = cameraPosList[currentCamPos].position;
-            
+
+        if (currentScreen == screens.inventory)
+            MM.InventoryLeft();
     }
 
     public override void SwipeRight()
@@ -124,12 +129,42 @@ public class GameManager : MobileInputManager {
                 currentCamPos++;
 
         camMoveToPos = cameraPosList[currentCamPos].position;
+
+
+        if (currentScreen == screens.inventory)
+            MM.InventoryRight();
+    }
+
+    public override void SwipeUp()
+    {
+        base.SwipeUp();
+
+        // Open Inventory if in Main
+        if (currentScreen == screens.mainGame)
+        {
+            currentScreen = screens.inventory;
+            MM.OpenInventory();
+        }
+    }
+
+    public override void SwipeDown()
+    {
+        base.SwipeDown();
+
+        // Close Inventory if in Inventory
+        if (currentScreen == screens.inventory)
+        {
+            currentScreen = screens.mainGame;
+            MM.CloseInventory();
+        }
     }
 
     public override void HoldDown()
     {
-        if (GetSelectedObject().CompareTag("moveable") && !holdingMoveable)
-            PickUpObject(GetSelectedObject());
+        Transform heldItem = GetSelectedObject();
+
+        if (heldItem != null && heldItem.CompareTag("moveable") && !holdingMoveable)
+            PickUpObject(heldItem);
 
 
         // Move cam a little
@@ -155,7 +190,8 @@ public class GameManager : MobileInputManager {
         heldObject.GetComponent<BoxCollider>().enabled = false;
         holdingMoveable = true;
 
-        GameObject.Find(heldObject.GetComponent<WorldItem>().placedPointName).GetComponent<PlacePoint>().empty = true;
+        if (heldObject.GetComponent<WorldItem>().placedPointName != "")
+            GameObject.Find(heldObject.GetComponent<WorldItem>().placedPointName).GetComponent<PlacePoint>().empty = true;
 
         // Show pointer UI
         foreach (PlacePoint p in placePoints)

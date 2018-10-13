@@ -29,10 +29,15 @@ public class MenuManager : MonoBehaviour {
 
     EmailManager EM;
 
+    [Header("Inventory")]
+    public UIMovement inventoryPanelUI;
+    InventoryUI inventoryScreensUI;
+    
+
     private void Start()
     {
         EM = GetComponent<EmailManager>();
-        
+        inventoryScreensUI = inventoryPanelUI.GetComponent<InventoryUI>();
     }
 
     public void OpenEmails()
@@ -42,9 +47,27 @@ public class MenuManager : MonoBehaviour {
             PopulateEmailList();
     }
 
-    public void OpenInventory()
+    public void OpenInventory() // Called from GM SwipeUp
     {
+       inventoryPanelUI.MoveOnScreen();
+    }
 
+    public void InventoryLeft() // Called from GM SwipeLeft
+    {
+        Debug.Log("MM Inventory Left");
+
+        inventoryScreensUI.MoveScreenLeft();
+    }
+
+    public void InventoryRight() // Called from GM SwipeRight
+    {
+        Debug.Log("MM Inventory Right");
+        inventoryScreensUI.MoveScreenRight();
+    }
+
+    public void CloseInventory() // Called from GM SwipeDown
+    {
+        inventoryPanelUI.MoveOffScreen();
     }
 
     public void OpenShop()
@@ -70,7 +93,6 @@ public class MenuManager : MonoBehaviour {
     public void CloseMenu() // Called from Buttons. Do not use GameManager SetScreen on Buttons
     {
         emailCanvasGroup.SetActive(false);
-        inventoryCanvasGroup.SetActive(false);
         GetComponent<GameManager>().SetScreen(0);
     }
 

@@ -248,12 +248,16 @@
     <Compile Include="Assets\Scripts\InventoryData.cs" />
     <Compile Include="Assets\Scripts\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\InventoryItemXML.cs" />
+    <Compile Include="Assets\Scripts\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\LineDraw.cs" />
     <Compile Include="Assets\Scripts\MenuManager.cs" />
     <Compile Include="Assets\Scripts\MobileInputManager.cs" />
+    <Compile Include="Assets\Scripts\MusicManager.cs" />
     <Compile Include="Assets\Scripts\PlacePoint.cs" />
     <Compile Include="Assets\Scripts\PlantCore.cs" />
+    <Compile Include="Assets\Scripts\PlantType.cs" />
     <Compile Include="Assets\Scripts\SpriteBillboard.cs" />
+    <Compile Include="Assets\Scripts\UIMovement.cs" />
     <Compile Include="Assets\Scripts\WorldItem.cs" />
     <Compile Include="Assets\Scripts\XMLSaveLoad.cs" />
   </ItemGroup>

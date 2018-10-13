@@ -48,8 +48,12 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
             SpriteRenderer potSprite = transform.Find("node_pot_base").GetComponent<SpriteRenderer>();
             SpriteRenderer plantSprite = transform.Find("node_flower_base").GetComponent<SpriteRenderer>(); // TODO change to plant base
 
-            potSprite.sprite = GM.potSprites[potID];
-            //plantSprite.sprite = GM.plantTypes[plantID];
+            potSprite.sprite = GM.allPotSprites[potID];
+
+            PlantCore myPlant = plantSprite.gameObject.AddComponent<PlantCore>();
+            //Get Sprites based on plantid
+            myPlant.frame1 = GM.allPlantTypes[plantID].frame1;
+            myPlant.frame2 = GM.allPlantTypes[plantID].frame2;
         }
     }
 }

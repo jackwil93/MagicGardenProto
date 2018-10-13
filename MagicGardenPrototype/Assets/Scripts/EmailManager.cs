@@ -117,7 +117,6 @@ public class EmailManager : MonoBehaviour {
     {
         foreach (string charName in conversationsByNameList)
         {
-            Debug.Log(conversationsByNameList.Count);
             EmailConversation newConvo = this.gameObject.AddComponent<EmailConversation>();
             newConvo.characterID = charName;
             activeConversations.Add(newConvo);
