@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exist in the scene
 
+    public Sprite itemSprite;
     public string itemType; // ie "potplant" for all pots with or without plants, "decor" etc
     public string displayedName;
     public int potID;
     public int plantID;
     public float ageTime;
     public int invSlotNumber = 999;
-    public bool inWorld = true;
+    public bool inWorld; // If not in world, is in the inventory
     public string placedPointName;
     public float placedPointX;
     public float placedPointY;
@@ -42,7 +43,7 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
         // Set position
         this.transform.position = new Vector3(placedPointX, placedPointY, placedPointZ);
 
-       // If a pot plant, do the following
+        // If a pot plant, do the following
         if (itemType == "potplant")
         {
             SpriteRenderer potSprite = transform.Find("node_pot_base").GetComponent<SpriteRenderer>();

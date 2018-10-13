@@ -249,6 +249,7 @@
     <Compile Include="Assets\Scripts\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\InventoryItemXML.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
+    <Compile Include="Assets\Scripts\InventoryUISlot.cs" />
     <Compile Include="Assets\Scripts\LineDraw.cs" />
     <Compile Include="Assets\Scripts\MenuManager.cs" />
     <Compile Include="Assets\Scripts\MobileInputManager.cs" />

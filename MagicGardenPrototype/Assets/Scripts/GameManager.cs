@@ -161,10 +161,21 @@ public class GameManager : MobileInputManager {
 
     public override void HoldDown()
     {
+        if (currentScreen == screens.mainGame)
+        {
         Transform heldItem = GetSelectedObject();
 
         if (heldItem != null && heldItem.CompareTag("moveable") && !holdingMoveable)
             PickUpObject(heldItem);
+        }
+
+        else if (currentScreen == screens.inventory)
+        {
+            if (GetSelectedGUIObject() != null)
+                Debug.Log(GetSelectedGUIObject().name);
+        }
+
+
 
 
         // Move cam a little

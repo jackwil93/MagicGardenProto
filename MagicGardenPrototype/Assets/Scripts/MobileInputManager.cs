@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MobileInputManager : MonoBehaviour {
     // This script doubles for mouse input for development purposes
-
 
     public bool userIsTouching;
     float touchTime;
@@ -15,8 +16,14 @@ public class MobileInputManager : MonoBehaviour {
     Vector3 swipeDirection;
     bool holdDown;
 
-	// Update is called once per frame
-	public void Update () {
+    // For Graphics UI interactions
+    public GraphicRaycaster m_GUIRaycaster;
+    public PointerEventData m_GUIPointerEventData;
+    public EventSystem m_EventSystem;
+
+
+    // Update is called once per frame
+    public void Update () {
 
         if (Input.GetMouseButton(0) || Input.touchCount > 0) // Could cause issues for 2 finger input later
         {
@@ -60,8 +67,9 @@ public class MobileInputManager : MonoBehaviour {
             storedTouchMoveDist = touchMoveDistance;
             prevScreenTouchPos = screenTouchPos;
         }
-        else
+        else 
         {
+            // The following is registered when the User releases their touch
             // Register swipe direction
             GetSwipeDirection();
 
@@ -93,6 +101,21 @@ public class MobileInputManager : MonoBehaviour {
             return null;
     }
 
+    public Transform GetSelectedGUIObject()
+    {
+        m_GUIPointerEventData = new PointerEventData(m_EventSystem);
+        m_GUIPointerEventData.position = screenTouchPos;
+
+        List<RaycastResult> guiResults = new List<RaycastResult>();
+        m_GUIRaycaster.Raycast(m_GUIPointerEventData, guiResults);
+
+
+        if (guiResults.Count > 0)
+            return guiResults[0].gameObject.transform;
+        else
+            return null;
+    }
+
     public Vector3 GetRaycastHitPoint()
     {
         Ray r = Camera.main.ScreenPointToRay(screenTouchPos);
@@ -116,11 +139,6 @@ public class MobileInputManager : MonoBehaviour {
         Debug.Log("Touch Input: Single Tap Release");
     }
 
-    public virtual void HoldRelease()
-    {
-        // Override for input release after being held down. Registered on release
-        Debug.Log("Touch Input: Hold Release");
-    }
 
     public virtual void SwipeUp()
     {
@@ -146,6 +164,12 @@ public class MobileInputManager : MonoBehaviour {
         // Override for input where the user is holding their finger in one spot
         Debug.Log("Touch Input: Hold Down()");
         
+    }
+
+    public virtual void HoldRelease()
+    {
+        // Override for input release after being held down. Registered on release
+        Debug.Log("Touch Input: Hold Release");
     }
 
     public virtual void Drag()
