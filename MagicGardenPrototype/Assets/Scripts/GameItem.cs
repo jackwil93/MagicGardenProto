@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class InventoryItem : ScriptableObject {
-
-    public string itemType;
+//Base class for every kind of item in game that can be in world or in inventory
+[System.Serializable]
+public class GameItem {
+    public enum itemTypes { pot,plant,potWithPlant,seed,potion,decor};
+    public itemTypes itemType;
     public string displayedName;
     public int potID;
     public int plantID;
     public float ageTime;
-    public int invSlotNumber;
+    public int invSlotNumber = 999;
     public bool inWorld;
     public string placedPointName;
     public float placedPointX;

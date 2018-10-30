@@ -136,17 +136,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5472a7209d0f7594297caeb972257fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 
-  displayedName: 
-  potID: 0
-  plantID: 0
-  ageTime: 0
-  invSlotNumber: 999
-  inWorld: 1
-  placedPointName: PlacePoint
-  placedPointX: 0
-  placedPointY: 0
-  placedPointZ: 0
+  myGameItem:
+    itemType: 0
+    displayedName: 
+    potID: 0
+    plantID: 0
+    ageTime: 0
+    invSlotNumber: 999
+    inWorld: 0
+    placedPointName: 
+    placedPointX: 0
+    placedPointY: 0
+    placedPointZ: 0
 --- !u!212 &212308459077560908
 SpriteRenderer:
   m_ObjectHideFlags: 1

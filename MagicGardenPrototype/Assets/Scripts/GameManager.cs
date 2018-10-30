@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MobileInputManager {
+    [Header ("Player Data")]
+    public PlayerData playerData;
 
     MenuManager MM;
 
@@ -28,8 +30,9 @@ public class GameManager : MobileInputManager {
     Transform heldObject;
     Vector3 heldObjectInitialPos; // Where the object was picked up from
 
-    public Inventory currentInventory;
     public GameObject worldItemPrefab;
+    public List<WorldItem> allWorldItemsInScene = new List<WorldItem>();
+
     [Header("All Pot Sprites")]
     public List<Sprite> allPotSprites = new List<Sprite>();
     [Header("All Plant Types (Scriptables)")]
@@ -45,14 +48,11 @@ public class GameManager : MobileInputManager {
 
         GetComponent<XMLSaveLoad>().LoadGame();
 
-
         // Turn off PlacePoint Icons
         placePoints.AddRange(GameObject.FindObjectsOfType<PlacePoint>());
         foreach (PlacePoint p in placePoints)
             p.HidePointer();
 
-        // Spawn World Items
-        SpawnWorldItems();
     }
 
     private void Update()
@@ -201,8 +201,8 @@ public class GameManager : MobileInputManager {
         heldObject.GetComponent<BoxCollider>().enabled = false;
         holdingMoveable = true;
 
-        if (heldObject.GetComponent<WorldItem>().placedPointName != "")
-            GameObject.Find(heldObject.GetComponent<WorldItem>().placedPointName).GetComponent<PlacePoint>().empty = true;
+        if (heldObject.GetComponent<WorldItem>().myGameItem.placedPointName != "")
+            GameObject.Find(heldObject.GetComponent<WorldItem>().myGameItem.placedPointName).GetComponent<PlacePoint>().empty = true;
 
         // Show pointer UI
         foreach (PlacePoint p in placePoints)
@@ -221,11 +221,11 @@ public class GameManager : MobileInputManager {
                 heldObject.position = selectedObject.position;
                 WorldItem heldWorldItem = heldObject.GetComponent<WorldItem>();
 
-                heldWorldItem.placedPointName = selectedObject.name;
+                heldWorldItem.myGameItem.placedPointName = selectedObject.name;
                 Vector3 placePointPos = selectedObject.position;
-                heldWorldItem.placedPointX = placePointPos.x;
-                heldWorldItem.placedPointY = placePointPos.y;
-                heldWorldItem.placedPointZ = placePointPos.z;
+                heldWorldItem.myGameItem.placedPointX = placePointPos.x;
+                heldWorldItem.myGameItem.placedPointY = placePointPos.y;
+                heldWorldItem.myGameItem.placedPointZ = placePointPos.z;
 
                 selectedObject.GetComponent<PlacePoint>().empty = false;
             }
@@ -242,24 +242,34 @@ public class GameManager : MobileInputManager {
             p.HidePointer();
     }
 
-
-    public void SpawnWorldItems() 
+    public void LoadPlayerData(PlayerData data) // Called from XMLSaveLoad
     {
-        Inventory mainInv = GetComponent<Inventory>();
+        playerData = data;
 
-        foreach (InventoryItem itemToSpawn in mainInv.allItemsList)
+        // Sort World Items from Inventory Items
+        foreach (GameItem item in playerData.allGameItems)
         {
-            if (itemToSpawn.inWorld)
-            {
-                GameObject newWorldItem = Instantiate(worldItemPrefab);
-                newWorldItem.GetComponent<WorldItem>().SetupSelf(this, newWorldItem, itemToSpawn);
-
-                // Make sure the matching placedpoint is considered NOT empty
-                GameObject.Find(itemToSpawn.placedPointName).GetComponent<PlacePoint>().empty = false;
-
-                // Finally, add it back to the Inventory's WorldItems list
-                mainInv.worldItems.Add(newWorldItem.GetComponent<WorldItem>());
-            }
+            if (item.inWorld)
+                LoadItemToWorld(item);
+            else
+                LoadItemToInventory(item);
         }
+    }
+
+     void LoadItemToWorld(GameItem newGameItem)
+    {
+        GameObject newWorldItem = Instantiate(worldItemPrefab);
+        newWorldItem.GetComponent<WorldItem>().SetupSelf(this, newWorldItem, newGameItem);
+
+        // Make sure the matching placedpoint is considered NOT empty
+        GameObject.Find(newGameItem.placedPointName).GetComponent<PlacePoint>().empty = false;
+
+        // Finally, add it back to the WorldItems list
+        allWorldItemsInScene.Add(newWorldItem.GetComponent<WorldItem>());
+    }
+
+    void LoadItemToInventory(GameItem newGameItem)
+    {
+        GetComponent<Inventory>().AddItemToInventory(newGameItem);
     }
 }

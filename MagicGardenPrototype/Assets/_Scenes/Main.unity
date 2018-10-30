@@ -4346,9 +4346,9 @@ GameObject:
   - component: {fileID: 430227572}
   - component: {fileID: 430227576}
   - component: {fileID: 430227578}
+  - component: {fileID: 430227575}
   - component: {fileID: 430227571}
   - component: {fileID: 430227574}
-  - component: {fileID: 430227575}
   - component: {fileID: 430227577}
   - component: {fileID: 430227573}
   m_Layer: 0
@@ -4428,14 +4428,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 430227570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 100f1cac1fea60d46b8f4a91c63d2dd1, type: 3}
+  m_Script: {fileID: 11500000, guid: 94a798e24ca84ab45b90da78b762d923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    inventoryList: []
-  allItemsList: []
-  inventoryItems: []
-  worldItems: []
+  itemsInInventory:
+  - itemType: 0
+    displayedName: Pot Plant
+    potID: 0
+    plantID: 0
+    ageTime: 0
+    invSlotNumber: 1
+    inWorld: 0
+    placedPointName: 
+    placedPointX: 0
+    placedPointY: 0
+    placedPointZ: 0
 --- !u!114 &430227576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4451,6 +4458,8 @@ MonoBehaviour:
   screenTouchPos: {x: 0, y: 0, z: 0}
   m_GUIRaycaster: {fileID: 96141606}
   m_EventSystem: {fileID: 726413930}
+  playerData:
+    allGameItems: []
   currentScreen: 0
   cameraPosList:
   - {fileID: 973722768}
@@ -4458,9 +4467,9 @@ MonoBehaviour:
   - {fileID: 427578872}
   - {fileID: 1843729072}
   placePoints: []
-  currentInventory: {fileID: 430227575}
   worldItemPrefab: {fileID: 1662571811784820, guid: ab8e0d00cce0d5d4aa845558d61662b3,
     type: 2}
+  allWorldItemsInScene: []
   allPotSprites:
   - {fileID: 21300000, guid: 32791bcb3267e544c8f0f639034da79c, type: 3}
   - {fileID: 21300000, guid: b513b6e61316c71478400bfb4464cd22, type: 3}
@@ -4478,6 +4487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveFileName: ma
 --- !u!114 &430227578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10559,17 +10569,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5472a7209d0f7594297caeb972257fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: potion
-  displayedName: 
-  potID: 0
-  plantID: 0
-  ageTime: 0
-  invSlotNumber: 999
-  inWorld: 1
-  placedPointName: 
-  placedPointX: 0
-  placedPointY: 0
-  placedPointZ: 0
+  myGameItem:
+    itemType: 0
+    displayedName: 
+    potID: 0
+    plantID: 0
+    ageTime: 0
+    invSlotNumber: 999
+    inWorld: 1
+    placedPointName: 
+    placedPointX: 0
+    placedPointY: 0
+    placedPointZ: 0
 --- !u!4 &1190375899
 Transform:
   m_ObjectHideFlags: 0

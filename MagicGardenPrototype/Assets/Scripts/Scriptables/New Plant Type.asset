@@ -8,12 +8,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59ea96746f1d349448acf945bef530e4, type: 3}
-  m_Name: Fire Rose
+  m_Script: {fileID: 11500000, guid: fa35d67a78273e54e9639ce9c8e251c8, type: 3}
+  m_Name: New Plant Type
   m_EditorClassIdentifier: 
-  itemID: firerose
-  displayedName: Fire Rose
-  potID: pot1
-  plantID: firerose1
-  ageTime: 0
-  invSlotNumber: 0
+  plantID: 
+  plantName: 
+  description: 
+  frame1: {fileID: 0}
+  frame2: {fileID: 0}

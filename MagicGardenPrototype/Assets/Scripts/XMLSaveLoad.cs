@@ -13,8 +13,7 @@ public class XMLSaveLoad : MonoBehaviour
     // InventoryData is the data structure used for saving the inventory to an XML
     // InventoryItemXML is what each Item is translated to for saving to XML (Scriptables cant be loaded via XML)
 
-
-    InventoryData tempInv;
+    public string saveFileName = "ma";
     string dir;
 
     private void Awake()
@@ -25,52 +24,45 @@ public class XMLSaveLoad : MonoBehaviour
     public void SaveGame() // Called from Game Manager
     {
         Debug.Log("Saving...");
-        SaveInventory();
+        SaveItems();
         SaveEmails();
+
+        SaveXML(GetComponent<GameManager>().playerData, saveFileName);
     }
     
-    private void SaveInventory()
+    private void SaveItems()
     {
-        Inventory mainInv = GetComponent<Inventory>();
-        mainInv.CheckInAllItems();
+        GameManager GM = GetComponent<GameManager>();
+        PlayerData pd = GM.playerData;
+        Inventory inv = GetComponent<Inventory>();
 
-        tempInv = mainInv.data; // the list that gets put to XML
-
-        foreach (InventoryItem item in mainInv.allItemsList)
+        // Refresh Player Data
+        pd.allGameItems.Clear();
+        
+        // Add all World Items to Player Data
+        foreach (WorldItem wItem in GM.allWorldItemsInScene)
         {
-            InventoryItemXML itemXML = new InventoryItemXML();
-            itemXML.itemType = item.itemType;
-            itemXML.ageTime = item.ageTime;
-            itemXML.displayedName = item.displayedName;
-            itemXML.invSlotNumber = item.invSlotNumber;
-            itemXML.plantID = item.plantID;
-            itemXML.potID = item.potID;
-            itemXML.inWorld = item.inWorld;
-            itemXML.placedPointName = item.placedPointName;
-            itemXML.placedPointX = item.placedPointX;
-            itemXML.placedPointY = item.placedPointY;
-            itemXML.placedPointZ = item.placedPointZ;
-
-            tempInv.inventoryList.Add(itemXML);
+            pd.allGameItems.Add(wItem.myGameItem);
         }
-        SaveXML((object)tempInv, "inv");
 
-        tempInv.inventoryList.Clear();
+        // Add all Inventory Items to Player Data
+        pd.allGameItems.AddRange(inv.itemsInInventory);
+
     }
 
     private void SaveEmails()
     {
-
+        // Record this in the PlayerData too, to make saving easier to manage
     }
 
     void SaveXML(object dataPackage, string fileName)
     {
-        if (File.Exists(dir + fileName + ".xml"))
+        if (File.Exists(dir + fileName + ".gic"))
         {
-            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Create);
+            FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Create);
             XmlSerializer serializer = new XmlSerializer(dataPackage.GetType());
             serializer.Serialize(stream, dataPackage);
-            Debug.Log("Saved XML to " + dir + fileName + ".xml");
+            Debug.Log("Saved XML to " + dir + fileName + ".gic");
             stream.Close();
         }
         else
@@ -87,42 +79,46 @@ public class XMLSaveLoad : MonoBehaviour
 
     public void LoadGame() // Called from Game Manager
     {
-        LoadXML(typeof(InventoryData), "inv");
+        Debug.Log("Loading...");
+        LoadPlayerDataXML(typeof(PlayerData), "ma");
     }
 
-    private void LoadXML(System.Type type, string fileName)
+    private void LoadPlayerDataXML(System.Type type, string fileName)
     {
-            XmlSerializer loadXML = new XmlSerializer(type);
-            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Open);
+        XmlSerializer loadXML = new XmlSerializer(type);
 
-        if (type == typeof(InventoryData))
+        if (!File.Exists(dir + fileName + ".gic"))
         {
-            InventoryData obj = (InventoryData)loadXML.Deserialize(stream);
-            LoadInventoryData(obj);
+            File.Create(dir + fileName + ".gic");
+            Debug.Log("New Save File created");
+            LoadPlayerDataXML(typeof(PlayerData), fileName);
         }
+
+        FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Open);
+        GetComponent<GameManager>().LoadPlayerData((PlayerData)loadXML.Deserialize(stream));
     }
 
-    void LoadInventoryData(InventoryData loadedInventoryXML)
-    {
-        Inventory mainInventory = GetComponent<Inventory>();
+    //void LoadInventoryData(InventoryData loadedInventoryXML)
+    //{
+    //    Inventory mainInventory = GetComponent<Inventory>();
 
-        foreach (InventoryItemXML itemXML in loadedInventoryXML.inventoryList)
-        {
-            InventoryItem item = ScriptableObject.CreateInstance<InventoryItem>();
-            item.itemType = itemXML.itemType;
-            item.displayedName = itemXML.displayedName;
-            item.ageTime = itemXML.ageTime;
-            item.invSlotNumber = itemXML.invSlotNumber;
-            item.plantID = itemXML.plantID;
-            item.potID = itemXML.potID;
-            item.inWorld = itemXML.inWorld;
-            item.placedPointName = itemXML.placedPointName;
-            item.placedPointX = itemXML.placedPointX;
-            item.placedPointY = itemXML.placedPointY;
-            item.placedPointZ = itemXML.placedPointZ;
+    //    foreach (InventoryItemXML itemXML in loadedInventoryXML.inventoryList)
+    //    {
+    //        InventoryItem item = ScriptableObject.CreateInstance<InventoryItem>();
+    //        item.itemType = itemXML.itemType;
+    //        item.displayedName = itemXML.displayedName;
+    //        item.ageTime = itemXML.ageTime;
+    //        item.invSlotNumber = itemXML.invSlotNumber;
+    //        item.plantID = itemXML.plantID;
+    //        item.potID = itemXML.potID;
+    //        item.inWorld = itemXML.inWorld;
+    //        item.placedPointName = itemXML.placedPointName;
+    //        item.placedPointX = itemXML.placedPointX;
+    //        item.placedPointY = itemXML.placedPointY;
+    //        item.placedPointZ = itemXML.placedPointZ;
 
-            mainInventory.allItemsList.Add(item);
-        }
-    }
+    //        mainInventory.allItemsList.Add(item);
+    //    }
+    //}
         
 }

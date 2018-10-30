@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59ea96746f1d349448acf945bef530e4, type: 3}
+  m_Name: New Inventory Item
+  m_EditorClassIdentifier: 
+  itemType: 
+  displayedName: 
+  potID: 0
+  plantID: 0
+  ageTime: 0
+  invSlotNumber: 0
+  inWorld: 0
+  placedPointName: 
+  placedPointX: 0
+  placedPointY: 0
+  placedPointZ: 0
