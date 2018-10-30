@@ -116,6 +116,7 @@ public class MobileInputManager : MonoBehaviour {
             return null;
     }
 
+
     public Vector3 GetRaycastHitPoint()
     {
         Ray r = Camera.main.ScreenPointToRay(screenTouchPos);

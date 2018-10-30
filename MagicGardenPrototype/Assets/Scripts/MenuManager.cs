@@ -65,9 +65,10 @@ public class MenuManager : MonoBehaviour {
         inventoryScreensUI.MoveScreenRight();
     }
 
-    public void CloseInventory() // Called from GM SwipeDown
+    public void CloseInventory() // Called from GM SwipeDown & Inventory Panel Close Button
     {
         inventoryPanelUI.MoveOffScreen();
+        GetComponent<GameManager>().currentScreen = GameManager.screens.mainGame;
     }
 
     public void OpenShop()

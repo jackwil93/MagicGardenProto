@@ -5,6 +5,8 @@ using UnityEngine;
 public class InventoryUI : MonoBehaviour {
 
     public Transform invScreensTransform;
+    [HideInInspector]
+    public InventoryUISlot lastUsedSlot; // Used to return item to slot if placed in occupied slot
 
     public List<Vector3> invScreenLocalPosList = new List<Vector3>();
     Vector3 targetPos;

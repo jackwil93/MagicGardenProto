@@ -7,6 +7,7 @@ public class GameManager : MobileInputManager {
     public PlayerData playerData;
 
     MenuManager MM;
+    InventoryUI InvUI;
 
     public enum screens
     {
@@ -27,7 +28,8 @@ public class GameManager : MobileInputManager {
     [Space(20)]
     public List<PlacePoint> placePoints = new List<PlacePoint>();
     bool holdingMoveable;
-    Transform heldObject;
+    bool holdingInventoryItem;
+    public Transform heldObject;
     Vector3 heldObjectInitialPos; // Where the object was picked up from
 
     public GameObject worldItemPrefab;
@@ -41,6 +43,7 @@ public class GameManager : MobileInputManager {
     private void Start()
     {
         MM = GetComponent<MenuManager>();
+        InvUI = InventoryUI.FindObjectOfType(typeof(InventoryUI)) as InventoryUI;
         currentScreen = screens.mainGame;
         currentCamPos = 0;
         mainCam = Camera.main.transform;
@@ -66,10 +69,11 @@ public class GameManager : MobileInputManager {
             mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
         }
 
-        if (holdingMoveable)
-        {
+        if (holdingMoveable && heldObject != null)
             heldObject.transform.position = GetRaycastHitPoint();
-        }
+
+        if (holdingInventoryItem && heldObject != null)
+            heldObject.transform.position = screenTouchPos;
 
 
         // FOR DEV TESTING PURPOSES ONLY
@@ -171,27 +175,32 @@ public class GameManager : MobileInputManager {
 
         else if (currentScreen == screens.inventory)
         {
-            if (GetSelectedGUIObject() != null)
-                Debug.Log(GetSelectedGUIObject().name);
+            if (heldObject == null && GetSelectedGUIObject().GetComponent<InventoryUISlot>() != null)
+            {
+                InventoryUISlot targetUISlot = GetSelectedGUIObject().GetComponent<InventoryUISlot>();
+                InvUI.lastUsedSlot = targetUISlot; // To record where to send the item if dropped somewhere invalid
+
+                heldObject = targetUISlot.TakeItemFromSlot();
+                holdingInventoryItem = true;
+            }
         }
 
-
-
-
-        // Move cam a little
-        //if (!holdingMoveable)
-        //{
-        //    mainCam.Rotate(mainCam.rotation.x,
-        //        cameraPosList[currentCamPos].rotation.y + Mathf.Clamp(Screen.width / base.screenTouchPos.x, -1, 1),
-        //        mainCam.rotation.z);
-        //}
                 
     }
 
     public override void HoldRelease()
     {
-        if (holdingMoveable)
+        if (currentScreen == screens.mainGame && holdingMoveable)
             PlaceObject();
+
+        else if (currentScreen == screens.inventory && heldObject != null)
+        {
+            Transform target = GetSelectedGUIObject();
+            if (target != null && target.GetComponent<InventoryUISlot>() != null)
+                PlaceInventoryObjectInSlot(target.GetComponent<InventoryUISlot>());
+            else
+                PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
+        }
     }
 
     void PickUpObject(Transform obj)
@@ -240,6 +249,30 @@ public class GameManager : MobileInputManager {
         // Hide pointer UI
         foreach (PlacePoint p in placePoints)
             p.HidePointer();
+    }
+
+
+    void PlaceInventoryObjectInSlot(InventoryUISlot selectedSlot)
+    {
+        // If slot is not free, return to previous slot
+        if (selectedSlot.TryPlaceItem(heldObject))
+        {
+            selectedSlot.PlaceItemInSlot(heldObject);
+            heldObject = null;
+            holdingInventoryItem = false;
+        }
+        else PlaceInventoryObjectInSlot(InvUI.lastUsedSlot); // Return to previous slot
+    }
+
+
+    void MoveInventoryObjectToWorld()
+    {
+
+    }
+
+    void MoveWorldObjectToInventory()
+    {
+
     }
 
     public void LoadPlayerData(PlayerData data) // Called from XMLSaveLoad
