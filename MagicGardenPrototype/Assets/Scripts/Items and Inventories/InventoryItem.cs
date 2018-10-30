@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class InventoryItem : MonoBehaviour {
     public GameItem myGameItem;
+    public WorldItem myWorldItem;
     RawImage myRawImage;
 
     // Potted plants cannot be in the Inventory

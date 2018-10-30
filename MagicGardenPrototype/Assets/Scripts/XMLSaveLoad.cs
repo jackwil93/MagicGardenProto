@@ -46,7 +46,7 @@ public class XMLSaveLoad : MonoBehaviour
         }
 
         // Add all Inventory Items to Player Data
-        pd.allGameItems.AddRange(inv.itemsInInventory);
+        pd.allGameItems.AddRange(inv.CheckInAllItems());
 
     }
 

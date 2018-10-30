@@ -4,48 +4,60 @@ using UnityEngine;
 
 public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exist in the scene
 
+    GameManager GM;
     public GameItem myGameItem;
+    SpriteRenderer mainSprite; // The central sprite. Pot, potions, decor, etc
+    SpriteRenderer topSprite; // A raised sprite for plants or things that sit on top
 
-    public void SetupSelf(GameManager GM, GameObject myGameObject, GameItem data) // Called from GameManager.
+    public void SetupSelf(GameManager gm, GameObject myGameObject, GameItem data) // Called from GameManager.
     {
-        // "GM" is Game Manager. Passing it through as a parameter makes it easier to pull info from its public Lists
-        // "myGameObject" is the object in scene which has been spawned by GameManager, this script is customising it
-        // "data" refers to the data incoming from the XML SaveLoad, passed thru the GameManager
-
-        // Get data...
-        //itemType =          data.itemType;
-        //displayedName =     data.displayedName;
-        //potID =             data.potID;
-        //plantID =           data.plantID;
-        //ageTime =           data.ageTime;
-        //invSlotNumber =     data.invSlotNumber;
-        //inWorld =           data.inWorld;
-        //placedPointName =   data.placedPointName;
-        //placedPointX =      data.placedPointX;
-        //placedPointY =      data.placedPointY;
-        //placedPointZ =      data.placedPointZ;
-
+        GM = gm;
         myGameItem = data;
+        mainSprite = transform.Find("node_pot_base").GetComponent<SpriteRenderer>();
+        topSprite = transform.Find("node_flower_base").GetComponent<SpriteRenderer>();
 
         // Set Object name
-        if (myGameItem.displayedName == null && myGameItem.itemType == GameItem.itemTypes.potWithPlant)
-            myGameItem.displayedName = "PotPlant Item";
+        transform.name = myGameItem.displayedName;
+        if (transform.name == "")
+            transform.name = "World Item";
 
         // Set position
         this.transform.position = new Vector3(myGameItem.placedPointX, myGameItem.placedPointY, myGameItem.placedPointZ);
 
+        // If just a pot, do the following
+        if (myGameItem.itemType == GameItem.itemTypes.pot)
+            SetPotSprite();
+
         // If a pot plant, do the following
         if (myGameItem.itemType == GameItem.itemTypes.potWithPlant)
         {
-            SpriteRenderer potSprite = transform.Find("node_pot_base").GetComponent<SpriteRenderer>();
-            SpriteRenderer plantSprite = transform.Find("node_flower_base").GetComponent<SpriteRenderer>(); // TODO change to plant base
-
-            potSprite.sprite = GM.allPotSprites[myGameItem.potID];
-
-            PlantCore myPlant = plantSprite.gameObject.AddComponent<PlantCore>();
-            //Get Sprites based on plantid
-            myPlant.frame1 = GM.allPlantTypes[myGameItem.plantID].frame1;
-            myPlant.frame2 = GM.allPlantTypes[myGameItem.plantID].frame2;
+            SetPotSprite();
+            //Get Plant Sprites based on plantid
+            SetPlantSprites();
         }
+
+        if (myGameItem.itemType == GameItem.itemTypes.potion)
+            SetPotionSprite();
+
+
+        // Finally, tick bool
+        myGameItem.inWorld = true;
     }
+    void SetPotSprite()
+    {
+        mainSprite.sprite = GM.allPotSprites[myGameItem.potID];
+    }
+
+    void SetPlantSprites()
+    {
+        PlantCore myPlant = topSprite.gameObject.AddComponent<PlantCore>();
+        myPlant.frame1 = GM.allPlantTypes[myGameItem.plantID].frame1;
+        myPlant.frame2 = GM.allPlantTypes[myGameItem.plantID].frame2;
+    }
+
+    void SetPotionSprite()
+    { }
+
+    void SetDecorSprite()
+    { }
 }

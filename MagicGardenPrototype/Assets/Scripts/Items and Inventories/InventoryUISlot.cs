@@ -26,7 +26,7 @@ public class InventoryUISlot : MonoBehaviour {
             return false;
     }
 
-    public void PlaceItemInSlot(Transform newItem) // Called from GM
+    public void PlaceItemInSlot(Transform newItem) // Called from GM and Inventory on Load
     {
         newItem.SetParent(this.transform);
         newItem.localPosition = Vector3.zero;

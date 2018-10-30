@@ -33,6 +33,7 @@ public class GameManager : MobileInputManager {
     Vector3 heldObjectInitialPos; // Where the object was picked up from
 
     public GameObject worldItemPrefab;
+    public List<WorldItem> worldItemsPool = new List<WorldItem>(); // Keeps inventory items hidden off screen
     public List<WorldItem> allWorldItemsInScene = new List<WorldItem>();
 
     [Header("All Pot Sprites")]
@@ -175,13 +176,26 @@ public class GameManager : MobileInputManager {
 
         else if (currentScreen == screens.inventory)
         {
-            if (heldObject == null && GetSelectedGUIObject().GetComponent<InventoryUISlot>() != null)
+            
+            if (heldObject == null && GetSelectedGUIObject() != null)
             {
+                if (GetSelectedGUIObject().GetComponent<InventoryUISlot>())
+                {
                 InventoryUISlot targetUISlot = GetSelectedGUIObject().GetComponent<InventoryUISlot>();
                 InvUI.lastUsedSlot = targetUISlot; // To record where to send the item if dropped somewhere invalid
 
                 heldObject = targetUISlot.TakeItemFromSlot();
                 holdingInventoryItem = true;
+                }
+            }
+
+            // For taking Inv Item into the world
+            if (holdingInventoryItem && GetSelectedGUIObject() == null)
+            {
+                MM.CloseInventory();
+                currentScreen = screens.mainGame;
+
+                ShowPlacePointMarkers();
             }
         }
 
@@ -192,6 +206,9 @@ public class GameManager : MobileInputManager {
     {
         if (currentScreen == screens.mainGame && holdingMoveable)
             PlaceObject();
+
+        if (currentScreen == screens.mainGame && holdingInventoryItem)
+            PlaceInventoryItemInWorld();
 
         else if (currentScreen == screens.inventory && heldObject != null)
         {
@@ -213,9 +230,7 @@ public class GameManager : MobileInputManager {
         if (heldObject.GetComponent<WorldItem>().myGameItem.placedPointName != "")
             GameObject.Find(heldObject.GetComponent<WorldItem>().myGameItem.placedPointName).GetComponent<PlacePoint>().empty = true;
 
-        // Show pointer UI
-        foreach (PlacePoint p in placePoints)
-            p.ShowPointer();
+        ShowPlacePointMarkers();
     }
 
     void PlaceObject()
@@ -243,9 +258,26 @@ public class GameManager : MobileInputManager {
             heldObject.position = heldObjectInitialPos;
 
         heldObject.GetComponent<Collider>().enabled = true;
+        ClearHeldObject();
+        HidePlacePointMarkers();
+    }
+
+    void ClearHeldObject()
+    {
         heldObject = null;
         holdingMoveable = false;
+        holdingInventoryItem = false;
+    }
 
+    void ShowPlacePointMarkers()
+    {
+        // Show pointer UI
+        foreach (PlacePoint p in placePoints)
+            p.ShowPointer();
+    }
+
+    void HidePlacePointMarkers()
+    {
         // Hide pointer UI
         foreach (PlacePoint p in placePoints)
             p.HidePointer();
@@ -258,20 +290,48 @@ public class GameManager : MobileInputManager {
         if (selectedSlot.TryPlaceItem(heldObject))
         {
             selectedSlot.PlaceItemInSlot(heldObject);
-            heldObject = null;
-            holdingInventoryItem = false;
+            ClearHeldObject();
+            HidePlacePointMarkers(); // Runs even if just doing things in inventory. Could be cleaner.
         }
         else PlaceInventoryObjectInSlot(InvUI.lastUsedSlot); // Return to previous slot
     }
 
 
-    void MoveInventoryObjectToWorld()
+    void PlaceInventoryItemInWorld()
     {
+        // Get Holding Position
+        Transform selectedObject = GetSelectedObject();
 
-    }
+        // Check if being placed correctly
+        if (selectedObject.CompareTag("placePoint"))
+        {
+            if (selectedObject.GetComponent<PlacePoint>().empty)
+            {
+                GameItem currentHeldGameItem = heldObject.GetComponent<InventoryItem>().myGameItem;
 
-    void MoveWorldObjectToInventory()
-    {
+                currentHeldGameItem.placedPointName = selectedObject.name;
+                Vector3 placePointPos = selectedObject.position;
+                currentHeldGameItem.placedPointX = placePointPos.x;
+                currentHeldGameItem.placedPointY = placePointPos.y;
+                currentHeldGameItem.placedPointZ = placePointPos.z;
+
+                LoadItemToWorld(currentHeldGameItem);
+
+                heldObject.gameObject.SetActive(false);
+
+                // Remove the item from Inventory Item lists, as it is now in the World
+                GetComponent<Inventory>().RemoveItemFromInventory(currentHeldGameItem);
+                
+                ClearHeldObject();
+                HidePlacePointMarkers();
+            }
+        }
+        else
+        {
+            PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
+            currentScreen = screens.inventory;
+            MM.OpenInventory();
+        }
 
     }
 
