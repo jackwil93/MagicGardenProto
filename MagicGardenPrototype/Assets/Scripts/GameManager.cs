@@ -168,15 +168,28 @@ public class GameManager : MobileInputManager {
     {
         if (currentScreen == screens.mainGame)
         {
-        Transform heldItem = GetSelectedObject();
+            if (heldObject == null)
+            {
+                Transform heldItem = GetSelectedObject();
 
-        if (heldItem != null && heldItem.CompareTag("moveable") && !holdingMoveable)
-            PickUpObject(heldItem);
+                if (heldItem.CompareTag("moveable") && !holdingMoveable)
+                    PickUpObject(heldItem);
+            }
+
+            // If held in lower third of screen, move world item to inventory
+            if (holdingMoveable && screenTouchPos.y < Screen.height / 3)
+                MoveWorldItemToInventory();
+            // If player takes inv item out of inv but wants to return it without placing in world...
+            else if (holdingInventoryItem && screenTouchPos.y < Screen.height / 3)
+            {
+                MM.OpenInventory();
+                currentScreen = screens.inventory;
+            }
+
         }
 
         else if (currentScreen == screens.inventory)
         {
-            
             if (heldObject == null && GetSelectedGUIObject() != null)
             {
                 if (GetSelectedGUIObject().GetComponent<InventoryUISlot>())
@@ -190,13 +203,14 @@ public class GameManager : MobileInputManager {
             }
 
             // For taking Inv Item into the world
-            if (holdingInventoryItem && GetSelectedGUIObject() == null)
+            if (holdingInventoryItem && screenTouchPos.y > Screen.height / 2)
             {
                 MM.CloseInventory();
                 currentScreen = screens.mainGame;
 
                 ShowPlacePointMarkers();
             }
+           
         }
 
                 
@@ -204,19 +218,28 @@ public class GameManager : MobileInputManager {
 
     public override void HoldRelease()
     {
+        // For moving World Item to world spot
         if (currentScreen == screens.mainGame && holdingMoveable)
             PlaceObject();
 
+        // For moving Inventory Item to world spot
         if (currentScreen == screens.mainGame && holdingInventoryItem)
             PlaceInventoryItemInWorld();
 
-        else if (currentScreen == screens.inventory && heldObject != null)
+        // For moving Inventory Item to inventory slot
+        else if (currentScreen == screens.inventory && heldObject != null && heldObject.GetComponent<InventoryItem>())
         {
             Transform target = GetSelectedGUIObject();
             if (target != null && target.GetComponent<InventoryUISlot>() != null)
                 PlaceInventoryObjectInSlot(target.GetComponent<InventoryUISlot>());
             else
                 PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
+        }
+
+        // For moving World Item to inventory slot
+        else if (currentScreen == screens.mainGame && heldObject != null && heldObject.GetComponent<WorldItem>() != null)
+        {
+            MoveWorldItemToInventory();
         }
     }
 
@@ -301,9 +324,8 @@ public class GameManager : MobileInputManager {
     {
         // Get Holding Position
         Transform selectedObject = GetSelectedObject();
-
         // Check if being placed correctly
-        if (selectedObject.CompareTag("placePoint"))
+        if (selectedObject != null && selectedObject.CompareTag("placePoint"))
         {
             if (selectedObject.GetComponent<PlacePoint>().empty)
             {
@@ -333,6 +355,52 @@ public class GameManager : MobileInputManager {
             MM.OpenInventory();
         }
 
+    }
+
+    void MoveWorldItemToInventory()
+    {
+        Debug.Log("World Item To Inventory = " + heldObject.name);
+        if (heldObject.GetComponent<WorldItem>().myGameItem.itemType != GameItem.itemTypes.potWithPlant)
+        {
+            MM.OpenInventory();
+            currentScreen = screens.inventory;
+            holdingInventoryItem = true;
+            Inventory inv = GetComponent<Inventory>();
+
+
+            // Create new Inventory UI object
+            GameItem gi = heldObject.GetComponent<WorldItem>().myGameItem;
+            GameObject newInvItem = Instantiate(inv.inventoryItemPrefab);
+            newInvItem.GetComponent<InventoryItem>().myGameItem = gi;
+            Debug.Log("World Item to Inv, new Inv Item Created");
+            
+            // Open correct Inventory tab and child new Inventory item
+            switch (gi.itemType)
+            {
+                case GameItem.itemTypes.seed:
+                    InvUI.GoToScreen(0);
+                    newInvItem.transform.SetParent(inv.panelSeeds);
+                    break;
+                case GameItem.itemTypes.pot:
+                    InvUI.GoToScreen(1);
+                    newInvItem.transform.SetParent(inv.panelPots);
+                    break;
+                case GameItem.itemTypes.potion:
+                    InvUI.GoToScreen(1);
+                    newInvItem.transform.SetParent(inv.panelPots);
+                    break;
+                case GameItem.itemTypes.decor:
+                    InvUI.GoToScreen(2);
+                    newInvItem.transform.SetParent(inv.panelDecor);
+                    break;
+            }
+
+            // Set held object to Inv Item UI, destroy old world object
+            GameObject temp = heldObject.gameObject;
+            heldObject = newInvItem.transform;
+            Destroy(temp);
+            Debug.Log("Old World Item destroyed");
+        }
     }
 
     public void LoadPlayerData(PlayerData data) // Called from XMLSaveLoad

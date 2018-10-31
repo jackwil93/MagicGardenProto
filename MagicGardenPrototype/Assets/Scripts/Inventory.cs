@@ -12,9 +12,10 @@ public class Inventory : MonoBehaviour
     public List<GameItem> itemsInInventory = new List<GameItem>();
     List<InventoryUISlot> itemSlots = new List<InventoryUISlot>();
 
-    Transform panelPots;
-    Transform panelSeeds;
-    Transform panelDecor;
+    [Header ("Auto-Assigned")]
+    public Transform panelPots;
+    public Transform panelSeeds;
+    public Transform panelDecor;
 
     private void Start()
     {

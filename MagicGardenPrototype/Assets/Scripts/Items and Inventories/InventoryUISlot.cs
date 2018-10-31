@@ -30,8 +30,10 @@ public class InventoryUISlot : MonoBehaviour {
     {
         newItem.SetParent(this.transform);
         newItem.localPosition = Vector3.zero;
+        newItem.GetComponent<RectTransform>().localScale = Vector3.one;
         myItem = newItem.GetComponent<InventoryItem>();
         myItem.myGameItem.invSlotNumber = slotNumber;
+        myItem.myGameItem.inWorld = false;
     }
 
     public Transform TakeItemFromSlot()
