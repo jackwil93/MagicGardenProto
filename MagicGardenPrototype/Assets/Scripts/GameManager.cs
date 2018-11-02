@@ -4,10 +4,9 @@ using UnityEngine;
 using CurrencyManagement;
 
 public class GameManager : MobileInputManager {
+    
     [Header ("Player Data")]
     public PlayerData playerData;
-
-    public int currentFlorets;
 
     MenuManager MM;
     InventoryUI InvUI;
@@ -54,6 +53,10 @@ public class GameManager : MobileInputManager {
         camMoveToPos = cameraPosList[0].position;
 
         GetComponent<XMLSaveLoad>().LoadGame();
+
+        // Update Currencies
+        Currencies.OverrideFlorets(playerData.playerFlorets);
+        Currencies.OverrideCrystals(playerData.playerCrystals);
 
         // Turn off PlacePoint Icons
         placePoints.AddRange(GameObject.FindObjectsOfType<PlacePoint>());
@@ -235,6 +238,12 @@ public class GameManager : MobileInputManager {
             Transform target = GetSelectedGUIObject();
             if (target != null && target.GetComponent<InventoryUISlot>() != null)
                 PlaceInventoryObjectInSlot(target.GetComponent<InventoryUISlot>());
+            else if (target.name == "Tab_Close")
+            {
+                // Delete object, it has been dragged onto the bin
+                Destroy(heldObject.gameObject);
+                ClearHeldObject();
+            }
             else
                 PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
         }
@@ -244,6 +253,8 @@ public class GameManager : MobileInputManager {
         {
             MoveWorldItemToInventory();
         }
+
+        
     }
 
     void PickUpObject(Transform obj)
@@ -258,6 +269,7 @@ public class GameManager : MobileInputManager {
 
         ShowPlacePointMarkers();
     }
+
 
     void PlaceObject()
     {
@@ -425,15 +437,40 @@ public class GameManager : MobileInputManager {
         GameObject newWorldItem = Instantiate(worldItemPrefab);
         newWorldItem.GetComponent<WorldItem>().SetupSelf(this, newWorldItem, newGameItem);
 
-        // Make sure the matching placedpoint is considered NOT empty
-        GameObject.Find(newGameItem.placedPointName).GetComponent<PlacePoint>().empty = false;
+        if (CheckForWorldDuplicate(newWorldItem.GetComponent<WorldItem>()))
+        {
+             // This was a duplicate and has been deleted
+        }
+        else
+        {
+            // Make sure the matching placedpoint is considered NOT empty
+            GameObject.Find(newGameItem.placedPointName).GetComponent<PlacePoint>().empty = false;
 
-        // Finally, add it back to the WorldItems list
-        allWorldItemsInScene.Add(newWorldItem.GetComponent<WorldItem>());
+            // Finally, add it back to the WorldItems list
+            allWorldItemsInScene.Add(newWorldItem.GetComponent<WorldItem>());
+
+            // This was not a duplicate. A success!
+        }
+
     }
+
+
+    bool CheckForWorldDuplicate(WorldItem loadedItem) // Called at load to stop world items duplicating
+    {
+        PlacePoint point = GameObject.Find(loadedItem.myGameItem.placedPointName).GetComponent<PlacePoint>();
+        if (point.empty == false)
+        {
+            Destroy(loadedItem.gameObject);
+            return true;
+        }
+        else
+            return false;
+    }
+
 
     void LoadItemToInventory(GameItem newGameItem)
     {
         GetComponent<Inventory>().AddItemToInventory(newGameItem);
     }
+
 }

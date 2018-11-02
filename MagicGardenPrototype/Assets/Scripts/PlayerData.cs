@@ -9,8 +9,9 @@ using CurrencyManagement;
 [XmlRoot ("PlayerData")]
 public class PlayerData
 {
-    public int playerFlorets;
-    public int playerCrystals;
+
+    [SerializeField] public int playerFlorets;
+    [SerializeField] public int playerCrystals;
     [XmlArray ("SavedGameItems")]
     [XmlArrayItem ("GameItem")]
     public List<GameItem> allGameItems;

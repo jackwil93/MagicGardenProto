@@ -24,16 +24,23 @@ public class XMLSaveLoad : MonoBehaviour
     public void SaveGame() // Called from Game Manager
     {
         Debug.Log("Saving...");
-        SaveItems();
-        SaveEmails();
+        GameManager GM = GetComponent<GameManager>();
+
+        SaveCurrencies(GM.playerData);
+        SaveItems(GM, GM.playerData);
+        //SaveEmails();
 
         SaveXML(GetComponent<GameManager>().playerData, saveFileName);
     }
-    
-    private void SaveItems()
+
+    private void SaveCurrencies(PlayerData pd)
     {
-        GameManager GM = GetComponent<GameManager>();
-        PlayerData pd = GM.playerData;
+        pd.playerFlorets = CurrencyManagement.Currencies.florets;
+        pd.playerCrystals = CurrencyManagement.Currencies.crystals;
+    }
+    
+    private void SaveItems(GameManager GM, PlayerData pd)
+    {
         Inventory inv = GetComponent<Inventory>();
 
         // Refresh Player Data
@@ -50,7 +57,7 @@ public class XMLSaveLoad : MonoBehaviour
 
     }
 
-    private void SaveEmails()
+    private void SaveEmails(PlayerData pd)
     {
         // Record this in the PlayerData too, to make saving easier to manage
     }

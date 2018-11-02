@@ -111,7 +111,10 @@ public class MobileInputManager : MonoBehaviour {
 
 
         if (guiResults.Count > 0)
+        {
+            Debug.Log("GUI Selected Object = " + guiResults[0].gameObject.transform.name);
             return guiResults[0].gameObject.transform;
+        }
         else
             return null;
     }

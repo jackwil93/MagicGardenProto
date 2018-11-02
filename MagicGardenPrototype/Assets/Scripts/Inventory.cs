@@ -12,6 +12,8 @@ public class Inventory : MonoBehaviour
     public List<GameItem> itemsInInventory = new List<GameItem>();
     List<InventoryUISlot> itemSlots = new List<InventoryUISlot>();
 
+    InventoryUISlot targetSlot; // For putting item to Inventory on Purchase
+
     [Header ("Auto-Assigned")]
     public Transform panelPots;
     public Transform panelSeeds;
@@ -30,18 +32,24 @@ public class Inventory : MonoBehaviour
         itemsInInventory.Add(newItem);
         // Sort to the correct Inventory Tab and instantiate
 
-        switch (newItem.itemType)
-        {
-            case GameItem.itemTypes.pot: CreateUIItem(panelPots);
-                break;
-            case GameItem.itemTypes.seed: CreateUIItem(panelSeeds);
-                break;
-            case GameItem.itemTypes.decor: CreateUIItem(panelDecor);
-                break;
-            case GameItem.itemTypes.potion: CreateUIItem(panelPots);
-                break;
-        }
+        CreateUIItem();
 
+    }
+
+    Transform InventoryTab(GameItem item)
+    {
+        switch (item.itemType)
+        {
+            case GameItem.itemTypes.pot:
+                return panelPots;
+            case GameItem.itemTypes.seed:
+                return panelSeeds;
+            case GameItem.itemTypes.decor:
+                return panelDecor;
+            case GameItem.itemTypes.potion:
+                return panelPots;
+        }
+        return null;
     }
 
     public void RemoveItemFromInventory(GameItem item)
@@ -50,13 +58,15 @@ public class Inventory : MonoBehaviour
             itemsInInventory.Remove(item);
     }
 
-    void CreateUIItem(Transform panelTab)
+    void CreateUIItem()
     {
         GameObject newInvItem = Instantiate(inventoryItemPrefab);
         // Fix weird scale bug
         // Assign GameItem (Latest added)
         GameItem gi = itemsInInventory[itemsInInventory.Count - 1];
         newInvItem.GetComponent<InventoryItem>().myGameItem = gi;
+
+        Transform panelTab = InventoryTab(gi);
 
         // Put to correct position
         InventoryUISlot invSlot = panelTab.GetChild(gi.invSlotNumber).GetComponent<InventoryUISlot>();
@@ -67,10 +77,39 @@ public class Inventory : MonoBehaviour
             newInvItem.GetComponent<RectTransform>().localScale = Vector3.one;
         }
         else
+        {
+            itemsInInventory.Remove(gi);
+            Debug.Log("Inventory item loading shares occupied slot. Deleting item...");
             Destroy(newInvItem);
+        }
 
         Debug.Log("Inventory Item Loaded: " + gi.itemType + " " + gi.displayedName + " at " + panelTab.name + " slot " + gi.invSlotNumber);
     }
+
+
+    // Specifically to check if there is a free slot to allow purchase of a new item
+    public bool CheckIfFreeSlot(GameItem gameItem)
+    {
+        Transform targetTab = InventoryTab(gameItem);
+
+        List<InventoryUISlot> slots = new List<InventoryUISlot>();
+        slots.AddRange(targetTab.GetComponentsInChildren<InventoryUISlot>());
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (slots[i].myItem == null)
+            {
+                gameItem.invSlotNumber = i;
+                targetSlot = slots[i];
+                Debug.Log("Found free slot at slot " + i);
+                return true;
+            }
+            else if (i == slots.Count)
+                return false;
+        }
+        return false;
+    }
+    
 
 
     /// <summary>
