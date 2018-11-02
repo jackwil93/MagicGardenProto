@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CurrencyManagement;
 
 public class GameManager : MobileInputManager {
     [Header ("Player Data")]
     public PlayerData playerData;
+
+    public int currentFlorets;
 
     MenuManager MM;
     InventoryUI InvUI;
@@ -56,7 +59,6 @@ public class GameManager : MobileInputManager {
         placePoints.AddRange(GameObject.FindObjectsOfType<PlacePoint>());
         foreach (PlacePoint p in placePoints)
             p.HidePointer();
-
     }
 
     private void Update()
@@ -83,6 +85,7 @@ public class GameManager : MobileInputManager {
             this.GetComponent<XMLSaveLoad>().SaveGame();
         }
     }
+
 
     public void SetScreen(int enumValue) // Called when click on Interactive
     {
