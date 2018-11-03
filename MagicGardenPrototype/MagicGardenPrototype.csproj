@@ -261,6 +261,7 @@
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\Shop.cs" />
     <Compile Include="Assets\Scripts\ShopItem.cs" />
+    <Compile Include="Assets\Scripts\ShopItemButton.cs" />
     <Compile Include="Assets\Scripts\SpriteBillboard.cs" />
     <Compile Include="Assets\Scripts\UIMovement.cs" />
     <Compile Include="Assets\Scripts\XMLSaveLoad.cs" />
