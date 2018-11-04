@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea96fa9948626848b8114ee858354fc, type: 3}
+  m_Name: Pot_Terracotta
+  m_EditorClassIdentifier: 
+  referenceIcon: {fileID: 2800000, guid: bc5fff062a96f9440aacea2d7f7e2ccf, type: 3}
+  itemSprites:
+    seedSprite: {fileID: 0}
+    deadSprite: {fileID: 0}
+    germ1Sprites: []
+    germ2Sprites: []
+    normalSprites:
+    - {fileID: 21300000, guid: bc5fff062a96f9440aacea2d7f7e2ccf, type: 3}
+    sickSprites: []
+  itemProperties:
+    itemID: 100
+    displayedName: Terracotta Pot
+    itemType: 0
+    baseElement: 0
+    elementNeeded: 0
+    itemDescription: An earthy and sturdy terracotta pot.
+    currentStage: 0
+    buyPriceFlorets: 20
+    sellPriceFlorets: 5
+    buyPriceCrystals: 0

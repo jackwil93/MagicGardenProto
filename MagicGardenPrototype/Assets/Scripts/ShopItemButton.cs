@@ -28,11 +28,11 @@ public class ShopItemButton : MonoBehaviour {
         itemName.text = myShopItem.gameItem.itemProperties.displayedName;
 
         if (buyOrSell == saleType.buy)
-            itemPrice.text = myShopItem.buyPriceFlorets.ToString();
+            itemPrice.text = myShopItem.gameItem.itemProperties.buyPriceFlorets.ToString();
         else
-            itemPrice.text = myShopItem.sellPriceFlorets.ToString();
+            itemPrice.text = myShopItem.gameItem.itemProperties.sellPriceFlorets.ToString();
 
-        //itemImage.sprite = myShopItem.gameItem.itemProperties.itemSprite;
+        itemImage.sprite = myShopItem.itemIcon;
     }
     
 

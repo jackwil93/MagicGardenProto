@@ -18,7 +18,7 @@ public class InventoryItem : MonoBehaviour {
 
         if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
         {
-            myRawImage.texture = GM.allPotSprites[myGameItem.potID].texture;
+            myRawImage.texture = GM.GetSpriteSet(myGameItem.itemProperties.itemID).normalSprites[0].texture;
         }
     }
 }

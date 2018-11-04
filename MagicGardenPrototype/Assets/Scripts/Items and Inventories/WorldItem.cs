@@ -7,8 +7,11 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
 
     GameManager GM;
     public GameItem myGameItem;
+    GameItem secondaryGameItem; // For pots with plants. 'myGameItem' would be the pot, secondaryGameItem would be the plant
     SpriteRenderer mainSprite; // The central sprite. Pot, potions, decor, etc
     SpriteRenderer topSprite; // A raised sprite for plants or things that sit on top
+
+    ItemSprites spriteSet;
 
     public void SetupSelf(GameManager gm, GameObject myGameObject, GameItem data) // Called from GameManager.
     {
@@ -25,40 +28,19 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
         // Set position
         this.transform.position = new Vector3(myGameItem.placedPointX, myGameItem.placedPointY, myGameItem.placedPointZ);
 
-        // If just a pot, do the following
-        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
-            SetPotSprite();
-
-        // If a pot plant, do the following
-        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
-        {
-            SetPotSprite();
-            //Get Plant Sprites based on plantid
-            SetPlantSprites();
-        }
-
-        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potion)
-            SetPotionSprite();
+        // Get Sprites from GM Sprite Dictionary
+        SetUpSprites();
+        // TODO: Add getting sprites for plants. Long way off yet. Will need seed planting etc first
 
 
         // Finally, tick bool
         myGameItem.inWorld = true;
     }
-    void SetPotSprite()
+
+    void SetUpSprites()
     {
-        mainSprite.sprite = GM.allPotSprites[myGameItem.potID];
+        spriteSet = GM.GetSpriteSet(myGameItem.itemProperties.itemID);
+        mainSprite.sprite = spriteSet.normalSprites[0];
     }
 
-    void SetPlantSprites()
-    {
-        PlantCore myPlant = topSprite.gameObject.AddComponent<PlantCore>();
-        myPlant.frame1 = GM.allPlantTypes[myGameItem.plantID].frame1;
-        myPlant.frame2 = GM.allPlantTypes[myGameItem.plantID].frame2;
-    }
-
-    void SetPotionSprite()
-    { }
-
-    void SetDecorSprite()
-    { }
 }

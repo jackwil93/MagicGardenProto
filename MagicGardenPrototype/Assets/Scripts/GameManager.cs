@@ -29,10 +29,18 @@ public class GameManager : MobileInputManager {
     public List<WorldItem> worldItemsPool = new List<WorldItem>(); // Keeps inventory items hidden off screen. NOTE: Is this being used?
     public List<WorldItem> allWorldItemsInScene = new List<WorldItem>();
 
+
     [Header("All Pot Sprites")]
     public List<Sprite> allPotSprites = new List<Sprite>();
+
+    [Header("All Pot Types (Scriptables")]
+    public List<Item> allPotTypes = new List<Item>();
     [Header("All Plant Types (Scriptables)")]
-    public List<PlantType> allPlantTypes = new List<PlantType>();
+    public List<Item> allPlantTypes = new List<Item>();
+
+
+    // int = itemID
+    Dictionary<int, ItemSprites> spriteDictionary = new Dictionary<int, ItemSprites>();
 
     private void Start()
     {
@@ -42,6 +50,13 @@ public class GameManager : MobileInputManager {
         currentCamPos = 0;
         mainCam = Camera.main.transform;
         camMoveToPos = cameraPosList[0].position;
+
+        // Update Sprite Dictionary before loading the player data
+        foreach (Item itemPot in allPotTypes)
+            spriteDictionary.Add(itemPot.itemProperties.itemID, itemPot.itemSprites);
+
+        foreach (Item itemPlant in allPlantTypes)
+            spriteDictionary.Add(itemPlant.itemProperties.itemID, itemPlant.itemSprites);
 
         GetComponent<XMLSaveLoad>().LoadGame();
 
@@ -80,6 +95,10 @@ public class GameManager : MobileInputManager {
         }
     }
 
+    public ItemSprites GetSpriteSet(int id)
+    {
+        return spriteDictionary[id];
+    }
 
     public void SetScreen(int enumValue) // Called when click on Interactive
     {

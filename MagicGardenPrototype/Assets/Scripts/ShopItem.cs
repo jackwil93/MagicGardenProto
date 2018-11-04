@@ -1,7 +1,6 @@
-﻿[System.Serializable]
+﻿using UnityEngine;
+
 public class ShopItem {
     public GameItem gameItem;
-    public int buyPriceFlorets;
-    public int sellPriceFlorets;
-    public int buyPriceCrystals;
+    public Sprite itemIcon;
 }

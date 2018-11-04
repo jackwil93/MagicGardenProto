@@ -25,6 +25,11 @@ namespace MagicGlobal
         public Elements.elementTypes baseElement;
         public Elements.elementTypes elementNeeded;
         public string itemDescription;
+        public enum itemStage { normal, seed, germ1, germ2, special, sick, dead}
+        public itemStage currentStage;
+        public int buyPriceFlorets;
+        public int sellPriceFlorets;
+        public int buyPriceCrystals;
     }
    
 }

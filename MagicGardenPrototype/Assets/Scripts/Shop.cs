@@ -29,9 +29,9 @@ public class Shop : MonoBehaviour {
     public GameObject shopItemButtonPrefab;
     public ShopItem currentItem;
 
-    public List<ShopItem> seedShopItems = new List<ShopItem>();
-    public List<ShopItem> potShopItems = new List<ShopItem>();
-    public List<ShopItem> decorShopItems = new List<ShopItem>();
+    public List<Item> seedShopItems = new List<Item>();
+    public List<Item> potShopItems = new List<Item>();
+    public List<Item> decorShopItems = new List<Item>();
 
     [Space(20)]
     public Transform seedShopContent;
@@ -56,23 +56,38 @@ public class Shop : MonoBehaviour {
 
     void CreateButtons()
     {
-        foreach (ShopItem seedItem in seedShopItems)
+        foreach (Item seedItem in seedShopItems)
         {
             GameObject newItem = GameObject.Instantiate(shopItemButtonPrefab, seedShopContent);
-            newItem.GetComponent<ShopItemButton>().myShopItem = seedItem;
+            AssignProperties(newItem, seedItem);
         }
-
-        foreach (ShopItem potItem in potShopItems)
+        Debug.Log("Created Seed Shop Buttons");
+        foreach (Item potItem in potShopItems)
         {
             GameObject newItem = GameObject.Instantiate(shopItemButtonPrefab, potShopContent);
-            newItem.GetComponent<ShopItemButton>().myShopItem = potItem;
+            AssignProperties(newItem, potItem);
         }
+        Debug.Log("Created Pot Shop Buttons");
 
-        foreach (ShopItem decorItem in decorShopItems)
+        foreach (Item decorItem in decorShopItems)
         {
             GameObject newItem = GameObject.Instantiate(shopItemButtonPrefab, decorShopContent);
-            newItem.GetComponent<ShopItemButton>().myShopItem = decorItem;
+            AssignProperties(newItem, decorItem);
         }
+        Debug.Log("Created Decor Shop Buttons");
+
+    }
+
+    void AssignProperties(GameObject newItem, Item sourceItem)
+    {
+
+        ShopItem tempItem = new ShopItem();
+        tempItem.gameItem = new GameItem();
+        tempItem.gameItem.itemProperties = sourceItem.itemProperties;
+
+        tempItem.itemIcon = sourceItem.itemSprites.normalSprites[0];
+
+        newItem.GetComponent<ShopItemButton>().myShopItem = tempItem;
     }
 
     public void FocusWindow(RectTransform panelTransform)
@@ -101,7 +116,7 @@ public class Shop : MonoBehaviour {
         buyWindow.SetActive(true);
         //buyWindowItemImage.sprite =     itemToBuy.gameItem.itemProperties.itemSprite;
         buyWindowItemName.text =        itemToBuy.gameItem.itemProperties.displayedName;
-        buyWindowItemPrice.text =       itemToBuy.buyPriceFlorets.ToString();
+        buyWindowItemPrice.text =       itemToBuy.gameItem.itemProperties.buyPriceFlorets.ToString();
         buyWindowItemDescription.text = itemToBuy.gameItem.itemProperties.itemDescription;
 
         currentItem = itemToBuy;
@@ -113,7 +128,7 @@ public class Shop : MonoBehaviour {
         sellWindow.SetActive(true);
         //sellWindowItemImage.sprite =     itemToSell.gameItem.itemProperties.itemSprite;
         sellWindowItemName.text =        itemToSell.gameItem.itemProperties.displayedName;
-        sellWindowItemPrice.text =       itemToSell.buyPriceFlorets.ToString();
+        sellWindowItemPrice.text =       itemToSell.gameItem.itemProperties.sellPriceFlorets.ToString();
         sellWindowItemDescription.text = itemToSell.gameItem.itemProperties.itemDescription;
 
         currentItem = itemToSell;
@@ -128,7 +143,8 @@ public class Shop : MonoBehaviour {
 
         if (inv.CheckIfFreeSlot(newGameItem))
         {
-            if (Currencies.SubtractFlorets(currentItem.buyPriceFlorets) && Currencies.SubtractCrystals(currentItem.buyPriceCrystals))
+            if (Currencies.SubtractFlorets(currentItem.gameItem.itemProperties.buyPriceFlorets) 
+                && Currencies.SubtractCrystals(currentItem.gameItem.itemProperties.buyPriceCrystals))
             {
 
                 inv.AddItemToInventory(newGameItem);

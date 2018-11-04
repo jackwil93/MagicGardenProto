@@ -8,8 +8,6 @@ using MagicGlobal;
 public class GameItem {
     public ItemProperties itemProperties;
     // If you think about it, only a WorldItem would need both pot and plant ID... could be cleaned up
-    public int potID;
-    public int plantID;
     public float ageTime;
     public int invSlotNumber;
     public bool inWorld;
