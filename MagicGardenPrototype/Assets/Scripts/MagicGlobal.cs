@@ -6,7 +6,7 @@ namespace MagicGlobal
 {
     public static class Elements
     {
-        public enum elementTypes { fire, ice, air, force, water, energy, summer, autumn, winter, spring, life, death};
+        public enum elementTypes { noElement, fire, ice, air, force, water, energy, summer, autumn, winter, spring, life, death};
     }
 
     public static class GameStates
@@ -18,7 +18,6 @@ namespace MagicGlobal
     [System.Serializable]
     public class ItemProperties
     {
-        public Sprite itemSprite;
         public int itemID;
         public string displayedName;
         public enum itemTypes { pot, plant, potWithPlant, seed, potion, decor };

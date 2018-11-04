@@ -58,6 +58,8 @@ public class MenuManager : MonoBehaviour {
     public void CloseLaptop()
     {
         laptopUI.SetActive(false);
+        GetComponent<GameManager>().currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
+
     }
 
     public void OpenGrapevineHome()

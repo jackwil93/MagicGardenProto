@@ -11,7 +11,7 @@ public class GameItem {
     public int potID;
     public int plantID;
     public float ageTime;
-    public int invSlotNumber = 999;
+    public int invSlotNumber;
     public bool inWorld;
     public string placedPointName;
     public float placedPointX;

@@ -38,6 +38,7 @@ public class XMLSaveLoad : MonoBehaviour
     {
         pd.playerFlorets = Currencies.florets;
         pd.playerCrystals = Currencies.crystals;
+        Debug.Log("PlayerData Currency Saved");
     }
     
     private void SaveItems(GameManager GM, PlayerData pd)
@@ -56,6 +57,7 @@ public class XMLSaveLoad : MonoBehaviour
         // Add all Inventory Items to Player Data
         pd.allGameItems.AddRange(inv.CheckInAllItems());
 
+        Debug.Log("PlayerData GameItems Saved");
     }
 
     private void SaveEmails(PlayerData pd)
@@ -65,6 +67,7 @@ public class XMLSaveLoad : MonoBehaviour
 
     void SaveXML(object dataPackage, string fileName)
     {
+        Debug.Log("Saving out XML...");
         if (File.Exists(dir + fileName + ".gic"))
         {
             FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Create);
@@ -88,7 +91,7 @@ public class XMLSaveLoad : MonoBehaviour
     public void LoadGame() // Called from Game Manager
     {
         Debug.Log("Loading...");
-       // LoadPlayerDataXML(typeof(PlayerData), "ma");
+        LoadPlayerDataXML(typeof(PlayerData), "ma");
     }
 
     private void LoadPlayerDataXML(System.Type type, string fileName)

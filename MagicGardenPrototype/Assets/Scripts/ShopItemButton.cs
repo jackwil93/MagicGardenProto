@@ -6,41 +6,43 @@ using MagicGlobal;
 
 public class ShopItemButton : MonoBehaviour {
 
+    
     public ShopItem myShopItem;
     public Text itemName;
     public Text itemPrice;
     public Image itemImage;
 
+    public enum saleType { buy, sell}
+    public saleType buyOrSell; // Set to 'sell' by Shop when creating buttons in Sale window. Defaults to Buy.
+
     private void Start()
     {
         if (myShopItem != null)
             UpdateShopItemInfo();
+
+        GetComponent<Button>().onClick.AddListener(OnClickCustom);
     }
 
     public void UpdateShopItemInfo()
     {
         itemName.text = myShopItem.gameItem.itemProperties.displayedName;
-        itemPrice.text = myShopItem.buyPriceFlorets.ToString();
 
-        GetImage();
+        if (buyOrSell == saleType.buy)
+            itemPrice.text = myShopItem.buyPriceFlorets.ToString();
+        else
+            itemPrice.text = myShopItem.sellPriceFlorets.ToString();
+
+        //itemImage.sprite = myShopItem.gameItem.itemProperties.itemSprite;
     }
+    
 
-    void GetImage()
+    public void OnClickCustom()
     {
-        GameManager GM = GameManager.FindObjectOfType<GameManager>();
+        Shop shop = Shop.FindObjectOfType<Shop>();
+        shop.InspectShopItem(this, myShopItem);
 
-        switch (myShopItem.gameItem.itemProperties.itemType)
-        {
-            case ItemProperties.itemTypes.seed:
-                // No seed sprites yet
-                break;
-            case ItemProperties.itemTypes.pot:
-                itemImage.sprite = GM.allPotSprites[myShopItem.gameItem.potID];
-                break;
-            case ItemProperties.itemTypes.potion:
-                break;
-            case ItemProperties.itemTypes.decor:
-                break;
-        }
+        Debug.Log("Inspecting Shop Item");
     }
+
+    
 }

@@ -77,15 +77,17 @@ public class Inventory : MonoBehaviour
             newInvItem.transform.localScale = Vector3.one;
             newInvItem.GetComponent<RectTransform>().localScale = Vector3.one;
         }
-        else
+        else if (gi.invSlotNumber < panelTab.childCount)
         {
             itemsInInventory.Remove(gi);
             Debug.Log("Inventory item loading shares occupied slot. Deleting item...");
             Destroy(newInvItem);
         }
+        else 
 
         Debug.Log("Inventory Item Loaded: " + gi.itemProperties.itemType + " " + gi.itemProperties.displayedName + " at " + panelTab.name + " slot " + gi.invSlotNumber);
     }
+
 
 
     // Specifically to check if there is a free slot to allow purchase of a new item
