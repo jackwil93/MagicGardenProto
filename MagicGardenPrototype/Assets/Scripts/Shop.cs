@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using CurrencyManagement;
+using MagicGlobal;
 
 public class Shop : MonoBehaviour {
     Inventory inv;
@@ -22,6 +22,9 @@ public class Shop : MonoBehaviour {
     public Transform seedShopContent;
     public Transform potShopContent;
     public Transform decorShopContent;
+
+    [Space(20)]
+    public Transform sellContent;
 
 
     private void Start()
@@ -72,6 +75,27 @@ public class Shop : MonoBehaviour {
     {
         floretsUI.text = Currencies.florets + "f";
         crystalsUI.text = Currencies.crystals + " Crystals ";
+    }
+
+    public void UpdateSellButtons() // Called when the Sell tab is open in the Shop Window
+    {
+        GameManager GM = GameManager.FindObjectOfType<GameManager>();
+        List<GameItem> allGameItems = GM.RefreshAndGetAllGameItemsWorldAndInventory();
+
+        // Clear existing buttons
+        foreach (Transform t in sellContent)
+            Destroy(t.gameObject);
+
+        // Set up new buttons
+        foreach (GameItem gi in allGameItems)
+        {
+            GameObject newButton = Instantiate(shopItemButtonPrefab, sellContent);
+            ShopItem itemToSell = new ShopItem();
+            itemToSell.gameItem = gi;
+
+            newButton.GetComponent<ShopItemButton>().myShopItem = itemToSell;
+            newButton.GetComponent<ShopItemButton>().UpdateShopItemInfo();
+        }
     }
 
 }

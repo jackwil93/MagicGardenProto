@@ -2,16 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Interactive : MonoBehaviour {
+public class Interactive : MonoBehaviour { // Accessed by Game Manager on Single Tap
 
-	public enum screens
-    {
-        mainGame,
-        emails,
-        shop,
-        spellGame,
-        settings,
-        transactions
-    }
-    public screens screenToOpen;
+    public MagicGlobal.GameStates.gameScreens screenToOpen;
 }

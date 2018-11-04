@@ -250,8 +250,10 @@
     <Compile Include="Assets\Scripts\Items and Inventories\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\Items and Inventories\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\Items and Inventories\InventoryUISlot.cs" />
+    <Compile Include="Assets\Scripts\Items and Inventories\Item.cs" />
     <Compile Include="Assets\Scripts\Items and Inventories\WorldItem.cs" />
     <Compile Include="Assets\Scripts\LineDraw.cs" />
+    <Compile Include="Assets\Scripts\MagicGlobal.cs" />
     <Compile Include="Assets\Scripts\MenuManager.cs" />
     <Compile Include="Assets\Scripts\MobileInputManager.cs" />
     <Compile Include="Assets\Scripts\MusicManager.cs" />

@@ -5,16 +5,26 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
 
-    public GameObject emailCanvasGroup;
     public Transform emailListScrollContent;
     public Transform emailConvoScrollContent;
-    public GameObject inventoryCanvasGroup;
     public GameObject emailReplyWindow;
     public Button replyButton1;
     public Button replyButton2;
     public Button replyButton3;
 
     public List<Button> replyButtons = new List<Button>();
+
+
+    [Header("Laptop")]
+    public GameObject laptopUI;
+    [Header("Canvas Groups")]
+    public GameObject grapevineHomeCanvasGroup;
+    public GameObject emailCanvasGroup;
+    public GameObject dailyMarketCanvasGroup;
+    public GameObject shopCanvasGroup;
+    public GameObject transactionsCanvasGroup;
+    public GameObject inventoryCanvasGroup;
+
 
     [Header("Prefabs")]
     public GameObject emailPrefab;
@@ -40,12 +50,73 @@ public class MenuManager : MonoBehaviour {
         inventoryScreensUI = inventoryPanelUI.GetComponent<InventoryUI>();
     }
 
+    public void OpenLaptop()
+    {
+        laptopUI.SetActive(true);
+    }
+
+    public void CloseLaptop()
+    {
+        laptopUI.SetActive(false);
+    }
+
+    public void OpenGrapevineHome()
+    {
+        grapevineHomeCanvasGroup.SetActive(true);
+
+        emailCanvasGroup.SetActive(false);
+        shopCanvasGroup.SetActive(false);
+        transactionsCanvasGroup.SetActive(false);
+        dailyMarketCanvasGroup.SetActive(false);
+    }
+
     public void OpenEmails()
     {
         emailCanvasGroup.SetActive(true);
+
+        shopCanvasGroup.SetActive(false);
+        transactionsCanvasGroup.SetActive(false);
+        dailyMarketCanvasGroup.SetActive(false);
+        grapevineHomeCanvasGroup.SetActive(false);
+
+
         if (!emailsLoaded)
             PopulateEmailList();
     }
+
+    public void OpenDailyMarket()
+    {
+        dailyMarketCanvasGroup.SetActive(true);
+
+        emailCanvasGroup.SetActive(false);
+        shopCanvasGroup.SetActive(false);
+        transactionsCanvasGroup.SetActive(false);
+        grapevineHomeCanvasGroup.SetActive(false);
+
+    }
+
+    public void OpenShop()
+    {
+        shopCanvasGroup.SetActive(true);
+
+        emailCanvasGroup.SetActive(false);
+        transactionsCanvasGroup.SetActive(false);
+        dailyMarketCanvasGroup.SetActive(false);
+        grapevineHomeCanvasGroup.SetActive(false);
+
+    }
+
+    public void OpenTransactions()
+    {
+        transactionsCanvasGroup.SetActive(true);
+
+        emailCanvasGroup.SetActive(false);
+        shopCanvasGroup.SetActive(false);
+        dailyMarketCanvasGroup.SetActive(false);
+        grapevineHomeCanvasGroup.SetActive(false);
+
+    }
+
 
     public void OpenInventory() // Called from GM SwipeUp
     {
@@ -68,13 +139,10 @@ public class MenuManager : MonoBehaviour {
     public void CloseInventory() // Called from GM SwipeDown & Inventory Panel Close Button
     {
         inventoryPanelUI.MoveOffScreen();
-        GetComponent<GameManager>().currentScreen = GameManager.screens.mainGame;
+        GetComponent<GameManager>().currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
     }
 
-    public void OpenShop()
-    {
-
-    }
+    
 
     public void OpenSpellGame()
     {
@@ -93,7 +161,7 @@ public class MenuManager : MonoBehaviour {
 
     public void CloseMenu() // Called from Buttons. Do not use GameManager SetScreen on Buttons
     {
-        emailCanvasGroup.SetActive(false);
+        CloseLaptop();
         GetComponent<GameManager>().SetScreen(0);
     }
 

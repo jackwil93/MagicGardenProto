@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MagicGlobal;
 
 // This Class is attached to GAMECORE object 
 // Only manages items stored in the inventory
@@ -38,15 +39,15 @@ public class Inventory : MonoBehaviour
 
     Transform InventoryTab(GameItem item)
     {
-        switch (item.itemType)
+        switch (item.itemProperties.itemType)
         {
-            case GameItem.itemTypes.pot:
+            case ItemProperties.itemTypes.pot:
                 return panelPots;
-            case GameItem.itemTypes.seed:
+            case ItemProperties.itemTypes.seed:
                 return panelSeeds;
-            case GameItem.itemTypes.decor:
+            case ItemProperties.itemTypes.decor:
                 return panelDecor;
-            case GameItem.itemTypes.potion:
+            case ItemProperties.itemTypes.potion:
                 return panelPots;
         }
         return null;
@@ -83,7 +84,7 @@ public class Inventory : MonoBehaviour
             Destroy(newInvItem);
         }
 
-        Debug.Log("Inventory Item Loaded: " + gi.itemType + " " + gi.displayedName + " at " + panelTab.name + " slot " + gi.invSlotNumber);
+        Debug.Log("Inventory Item Loaded: " + gi.itemProperties.itemType + " " + gi.itemProperties.displayedName + " at " + panelTab.name + " slot " + gi.invSlotNumber);
     }
 
 

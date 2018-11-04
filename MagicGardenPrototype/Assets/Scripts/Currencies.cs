@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CurrencyManagement
+namespace MagicGlobal
 {
     public static class Currencies
     {

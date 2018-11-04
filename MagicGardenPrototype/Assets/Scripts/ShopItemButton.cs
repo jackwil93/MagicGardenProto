@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MagicGlobal;
 
 public class ShopItemButton : MonoBehaviour {
 
@@ -12,7 +13,13 @@ public class ShopItemButton : MonoBehaviour {
 
     private void Start()
     {
-        itemName.text = myShopItem.gameItem.displayedName;
+        if (myShopItem != null)
+            UpdateShopItemInfo();
+    }
+
+    public void UpdateShopItemInfo()
+    {
+        itemName.text = myShopItem.gameItem.itemProperties.displayedName;
         itemPrice.text = myShopItem.buyPriceFlorets.ToString();
 
         GetImage();
@@ -22,17 +29,17 @@ public class ShopItemButton : MonoBehaviour {
     {
         GameManager GM = GameManager.FindObjectOfType<GameManager>();
 
-        switch (myShopItem.gameItem.itemType)
+        switch (myShopItem.gameItem.itemProperties.itemType)
         {
-            case GameItem.itemTypes.seed:
+            case ItemProperties.itemTypes.seed:
                 // No seed sprites yet
                 break;
-            case GameItem.itemTypes.pot:
+            case ItemProperties.itemTypes.pot:
                 itemImage.sprite = GM.allPotSprites[myShopItem.gameItem.potID];
                 break;
-            case GameItem.itemTypes.potion:
+            case ItemProperties.itemTypes.potion:
                 break;
-            case GameItem.itemTypes.decor:
+            case ItemProperties.itemTypes.decor:
                 break;
         }
     }

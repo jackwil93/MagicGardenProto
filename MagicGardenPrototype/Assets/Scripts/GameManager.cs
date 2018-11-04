@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using CurrencyManagement;
+using MagicGlobal;
 
 public class GameManager : MobileInputManager {
     
@@ -11,22 +11,13 @@ public class GameManager : MobileInputManager {
     MenuManager MM;
     InventoryUI InvUI;
 
-    public enum screens
-    {
-        mainGame,
-        emails,
-        shop,
-        inventory,
-        spellGame,
-        settings,
-        transactions
-    }
-    public screens currentScreen;
+    public GameStates.gameScreens currentScreen;
 
     Transform mainCam;
     public List<Transform> cameraPosList = new List<Transform>();
     int currentCamPos;
     Vector3 camMoveToPos;
+
     [Space(20)]
     public List<PlacePoint> placePoints = new List<PlacePoint>();
     bool holdingMoveable;
@@ -35,7 +26,7 @@ public class GameManager : MobileInputManager {
     Vector3 heldObjectInitialPos; // Where the object was picked up from
 
     public GameObject worldItemPrefab;
-    public List<WorldItem> worldItemsPool = new List<WorldItem>(); // Keeps inventory items hidden off screen
+    public List<WorldItem> worldItemsPool = new List<WorldItem>(); // Keeps inventory items hidden off screen. NOTE: Is this being used?
     public List<WorldItem> allWorldItemsInScene = new List<WorldItem>();
 
     [Header("All Pot Sprites")]
@@ -47,7 +38,7 @@ public class GameManager : MobileInputManager {
     {
         MM = GetComponent<MenuManager>();
         InvUI = InventoryUI.FindObjectOfType(typeof(InventoryUI)) as InventoryUI;
-        currentScreen = screens.mainGame;
+        currentScreen = GameStates.gameScreens.mainGame;
         currentCamPos = 0;
         mainCam = Camera.main.transform;
         camMoveToPos = cameraPosList[0].position;
@@ -66,7 +57,7 @@ public class GameManager : MobileInputManager {
 
     private void Update()
     {
-        //if (currentScreen == screens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
+        //if (currentScreen == GameStates.gameScreens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
             base.Update();
 
         if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f && !userIsTouching)
@@ -92,12 +83,12 @@ public class GameManager : MobileInputManager {
 
     public void SetScreen(int enumValue) // Called when click on Interactive
     {
-        currentScreen = (screens)enumValue;
+        currentScreen = (GameStates.gameScreens)enumValue;
 
         switch (currentScreen)
         {
-            case screens.emails:
-                MM.OpenEmails();
+            case GameStates.gameScreens.laptop:
+                MM.OpenLaptop();
                 break;
         }
 
@@ -111,14 +102,14 @@ public class GameManager : MobileInputManager {
         base.SingleTapRelease();
         Debug.Log("Game Manager registered Single Tap Release!");
 
-        if (GetSelectedObject() != null && GetSelectedObject().CompareTag("interactive") && currentScreen == screens.mainGame)
+        if (GetSelectedObject() != null && GetSelectedObject().CompareTag("interactive") && currentScreen == GameStates.gameScreens.mainGame)
             SetScreen((int)GetSelectedObject().GetComponent<Interactive>().screenToOpen);
     }
 
     public override void SwipeLeft()
     {
         base.SwipeLeft();
-        if (currentScreen == screens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame)
             if (currentCamPos - 1 < 0)
                 currentCamPos = cameraPosList.Count - 1;
             else
@@ -126,14 +117,14 @@ public class GameManager : MobileInputManager {
 
         camMoveToPos = cameraPosList[currentCamPos].position;
 
-        if (currentScreen == screens.inventory)
+        if (currentScreen == GameStates.gameScreens.inventory)
             MM.InventoryLeft();
     }
 
     public override void SwipeRight()
     {
         base.SwipeRight();
-        if (currentScreen == screens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame)
             if (currentCamPos + 1 > cameraPosList.Count - 1)
                 currentCamPos = 0;
             else
@@ -142,7 +133,7 @@ public class GameManager : MobileInputManager {
         camMoveToPos = cameraPosList[currentCamPos].position;
 
 
-        if (currentScreen == screens.inventory)
+        if (currentScreen == GameStates.gameScreens.inventory)
             MM.InventoryRight();
     }
 
@@ -151,9 +142,9 @@ public class GameManager : MobileInputManager {
         base.SwipeUp();
 
         // Open Inventory if in Main
-        if (currentScreen == screens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame)
         {
-            currentScreen = screens.inventory;
+            currentScreen = GameStates.gameScreens.inventory;
             MM.OpenInventory();
         }
     }
@@ -163,16 +154,16 @@ public class GameManager : MobileInputManager {
         base.SwipeDown();
 
         // Close Inventory if in Inventory
-        if (currentScreen == screens.inventory)
+        if (currentScreen == GameStates.gameScreens.inventory)
         {
-            currentScreen = screens.mainGame;
+            currentScreen = GameStates.gameScreens.mainGame;
             MM.CloseInventory();
         }
     }
 
     public override void HoldDown()
     {
-        if (currentScreen == screens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame)
         {
             if (heldObject == null)
             {
@@ -189,12 +180,12 @@ public class GameManager : MobileInputManager {
             else if (holdingInventoryItem && screenTouchPos.y < Screen.height / 3)
             {
                 MM.OpenInventory();
-                currentScreen = screens.inventory;
+                currentScreen = GameStates.gameScreens.inventory;
             }
 
         }
 
-        else if (currentScreen == screens.inventory)
+        else if (currentScreen == GameStates.gameScreens.inventory)
         {
             if (heldObject == null && GetSelectedGUIObject() != null)
             {
@@ -212,7 +203,7 @@ public class GameManager : MobileInputManager {
             if (holdingInventoryItem && screenTouchPos.y > Screen.height / 2)
             {
                 MM.CloseInventory();
-                currentScreen = screens.mainGame;
+                currentScreen = GameStates.gameScreens.mainGame;
 
                 ShowPlacePointMarkers();
             }
@@ -225,15 +216,15 @@ public class GameManager : MobileInputManager {
     public override void HoldRelease()
     {
         // For moving World Item to world spot
-        if (currentScreen == screens.mainGame && holdingMoveable)
+        if (currentScreen == GameStates.gameScreens.mainGame && holdingMoveable)
             PlaceObject();
 
         // For moving Inventory Item to world spot
-        if (currentScreen == screens.mainGame && holdingInventoryItem)
+        if (currentScreen == GameStates.gameScreens.mainGame && holdingInventoryItem)
             PlaceInventoryItemInWorld();
 
         // For moving Inventory Item to inventory slot
-        else if (currentScreen == screens.inventory && heldObject != null && heldObject.GetComponent<InventoryItem>())
+        else if (currentScreen == GameStates.gameScreens.inventory && heldObject != null && heldObject.GetComponent<InventoryItem>())
         {
             Transform target = GetSelectedGUIObject();
             if (target != null && target.GetComponent<InventoryUISlot>() != null)
@@ -249,7 +240,7 @@ public class GameManager : MobileInputManager {
         }
 
         // For moving World Item to inventory slot
-        else if (currentScreen == screens.mainGame && heldObject != null && heldObject.GetComponent<WorldItem>() != null)
+        else if (currentScreen == GameStates.gameScreens.mainGame && heldObject != null && heldObject.GetComponent<WorldItem>() != null)
         {
             MoveWorldItemToInventory();
         }
@@ -366,7 +357,7 @@ public class GameManager : MobileInputManager {
         else
         {
             PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
-            currentScreen = screens.inventory;
+            currentScreen = GameStates.gameScreens.inventory;
             MM.OpenInventory();
         }
 
@@ -375,10 +366,10 @@ public class GameManager : MobileInputManager {
     void MoveWorldItemToInventory()
     {
         Debug.Log("World Item To Inventory = " + heldObject.name);
-        if (heldObject.GetComponent<WorldItem>().myGameItem.itemType != GameItem.itemTypes.potWithPlant)
+        if (heldObject.GetComponent<WorldItem>().myGameItem.itemProperties.itemType != ItemProperties.itemTypes.potWithPlant)
         {
             MM.OpenInventory();
-            currentScreen = screens.inventory;
+            currentScreen = GameStates.gameScreens.inventory;
             holdingInventoryItem = true;
             Inventory inv = GetComponent<Inventory>();
 
@@ -390,21 +381,21 @@ public class GameManager : MobileInputManager {
             Debug.Log("World Item to Inv, new Inv Item Created");
             
             // Open correct Inventory tab and child new Inventory item
-            switch (gi.itemType)
+            switch (gi.itemProperties.itemType)
             {
-                case GameItem.itemTypes.seed:
+                case ItemProperties.itemTypes.seed:
                     InvUI.GoToScreen(0);
                     newInvItem.transform.SetParent(inv.panelSeeds);
                     break;
-                case GameItem.itemTypes.pot:
+                case ItemProperties.itemTypes.pot:
                     InvUI.GoToScreen(1);
                     newInvItem.transform.SetParent(inv.panelPots);
                     break;
-                case GameItem.itemTypes.potion:
+                case ItemProperties.itemTypes.potion:
                     InvUI.GoToScreen(1);
                     newInvItem.transform.SetParent(inv.panelPots);
                     break;
-                case GameItem.itemTypes.decor:
+                case ItemProperties.itemTypes.decor:
                     InvUI.GoToScreen(2);
                     newInvItem.transform.SetParent(inv.panelDecor);
                     break;
@@ -471,6 +462,26 @@ public class GameManager : MobileInputManager {
     void LoadItemToInventory(GameItem newGameItem)
     {
         GetComponent<Inventory>().AddItemToInventory(newGameItem);
+    }
+
+    public List<GameItem> RefreshAndGetAllGameItemsWorldAndInventory()
+    {
+        List<GameItem> allGameItems = new List<GameItem>();
+
+        // Refresh and get all world items
+        allWorldItemsInScene.Clear();
+        allWorldItemsInScene.AddRange(WorldItem.FindObjectsOfType<WorldItem>());
+
+        // Add all world items to AllGameItems
+        foreach (WorldItem wItem in allWorldItemsInScene)
+            allGameItems.Add(wItem.myGameItem);
+
+        // Refresh and get all inventory items, add to AllGameItems
+        Inventory inv = GetComponent<Inventory>();
+        allGameItems.AddRange(inv.CheckInAllItems());
+
+        // Send back a list of all World and Inventory items
+        return allGameItems;
     }
 
 }

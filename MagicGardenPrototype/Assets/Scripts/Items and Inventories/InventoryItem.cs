@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MagicGlobal;
 
 public class InventoryItem : MonoBehaviour {
     public GameItem myGameItem;
@@ -15,7 +16,7 @@ public class InventoryItem : MonoBehaviour {
 
         GameManager GM = GameManager.FindObjectOfType(typeof(GameManager)) as GameManager;
 
-        if (myGameItem.itemType == GameItem.itemTypes.pot)
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
         {
             myRawImage.texture = GM.allPotSprites[myGameItem.potID].texture;
         }

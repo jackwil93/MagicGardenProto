@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MagicGlobal;
 
 public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exist in the scene
 
@@ -17,7 +18,7 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
         topSprite = transform.Find("node_flower_base").GetComponent<SpriteRenderer>();
 
         // Set Object name
-        transform.name = myGameItem.displayedName;
+        transform.name = myGameItem.itemProperties.displayedName;
         if (transform.name == "")
             transform.name = "World Item";
 
@@ -25,18 +26,18 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
         this.transform.position = new Vector3(myGameItem.placedPointX, myGameItem.placedPointY, myGameItem.placedPointZ);
 
         // If just a pot, do the following
-        if (myGameItem.itemType == GameItem.itemTypes.pot)
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
             SetPotSprite();
 
         // If a pot plant, do the following
-        if (myGameItem.itemType == GameItem.itemTypes.potWithPlant)
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
         {
             SetPotSprite();
             //Get Plant Sprites based on plantid
             SetPlantSprites();
         }
 
-        if (myGameItem.itemType == GameItem.itemTypes.potion)
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potion)
             SetPotionSprite();
 
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using MagicGlobal;
 
 public class XMLSaveLoad : MonoBehaviour
 {
@@ -35,8 +36,8 @@ public class XMLSaveLoad : MonoBehaviour
 
     private void SaveCurrencies(PlayerData pd)
     {
-        pd.playerFlorets = CurrencyManagement.Currencies.florets;
-        pd.playerCrystals = CurrencyManagement.Currencies.crystals;
+        pd.playerFlorets = Currencies.florets;
+        pd.playerCrystals = Currencies.crystals;
     }
     
     private void SaveItems(GameManager GM, PlayerData pd)
@@ -87,7 +88,7 @@ public class XMLSaveLoad : MonoBehaviour
     public void LoadGame() // Called from Game Manager
     {
         Debug.Log("Loading...");
-        LoadPlayerDataXML(typeof(PlayerData), "ma");
+       // LoadPlayerDataXML(typeof(PlayerData), "ma");
     }
 
     private void LoadPlayerDataXML(System.Type type, string fileName)
