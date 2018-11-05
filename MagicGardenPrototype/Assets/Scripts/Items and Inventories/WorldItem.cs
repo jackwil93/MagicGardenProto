@@ -39,8 +39,12 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
 
     void SetUpSprites()
     {
-        spriteSet = GM.GetSpriteSet(myGameItem.itemProperties.itemID);
-        mainSprite.sprite = spriteSet.normalSprites[0];
+        // Check for Sprites before getting
+        if (GM.GetSpriteSet(myGameItem.itemProperties.itemID) != null)
+        {
+            spriteSet = GM.GetSpriteSet(myGameItem.itemProperties.itemID);
+            mainSprite.sprite = spriteSet.normalSprites[0];
+        }
     }
 
 }

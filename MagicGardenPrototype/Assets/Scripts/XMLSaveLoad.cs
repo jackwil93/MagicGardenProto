@@ -8,6 +8,10 @@ using MagicGlobal;
 
 public class XMLSaveLoad : MonoBehaviour
 {
+    // For debug
+    public bool loadDataOnStart;
+
+
     // For future Ref: 
     // Inventory is for run time only, lives on the GAMECORE
     // Inventory Item (a Scriptable Obj) is to make my life easier creating new items for this game
@@ -90,8 +94,11 @@ public class XMLSaveLoad : MonoBehaviour
 
     public void LoadGame() // Called from Game Manager
     {
-        Debug.Log("Loading...");
-        LoadPlayerDataXML(typeof(PlayerData), "ma");
+        if (loadDataOnStart)
+        {
+            Debug.Log("Loading...");
+            LoadPlayerDataXML(typeof(PlayerData), "ma");
+        }
     }
 
     private void LoadPlayerDataXML(System.Type type, string fileName)

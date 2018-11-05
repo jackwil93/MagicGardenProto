@@ -100,11 +100,22 @@ public class EmailManager : MonoBehaviour {
 
 
                 if (emailEntry.characterID == "davinta")
+                {
                     allEmailsDavinta.Add(emailEntry);
+                    Debug.Log("New email added to Davinta");
+                }
                 if (emailEntry.characterID == "xander")
+                {
                     allEmailsXander.Add(emailEntry);
+                    Debug.Log("New email added to Xander");
+
+                }
                 if (emailEntry.characterID == "mrstew")
+                {
                     allEmailsMrsTew.Add(emailEntry);
+                    Debug.Log("New email added to Mrs Tew");
+
+                }
             }
 
             CreateActiveConversatons();

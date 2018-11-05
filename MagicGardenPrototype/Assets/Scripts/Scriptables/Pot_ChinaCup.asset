@@ -21,7 +21,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: b513b6e61316c71478400bfb4464cd22, type: 3}
     sickSprites: []
   itemProperties:
-    itemID: 102
+    itemID: pot_chinaCup
     displayedName: Blue China Cup
     itemType: 0
     baseElement: 0

@@ -40,7 +40,7 @@ public class GameManager : MobileInputManager {
 
 
     // int = itemID
-    Dictionary<int, ItemSprites> spriteDictionary = new Dictionary<int, ItemSprites>();
+    Dictionary<string, ItemSprites> spriteDictionary = new Dictionary<string, ItemSprites>();
 
     private void Start()
     {
@@ -95,7 +95,7 @@ public class GameManager : MobileInputManager {
         }
     }
 
-    public ItemSprites GetSpriteSet(int id)
+    public ItemSprites GetSpriteSet(string id)
     {
         return spriteDictionary[id];
     }

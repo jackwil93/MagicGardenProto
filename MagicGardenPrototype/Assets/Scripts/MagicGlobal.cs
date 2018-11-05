@@ -18,7 +18,7 @@ namespace MagicGlobal
     [System.Serializable]
     public class ItemProperties
     {
-        public int itemID;
+        public string itemID;
         public string displayedName;
         public enum itemTypes { pot, plant, potWithPlant, seed, potion, decor };
         public itemTypes itemType;

@@ -22,10 +22,13 @@ MonoBehaviour:
     - {fileID: 21300000, guid: ccdedd3d4880e8d47a7bbc02825d7414, type: 3}
     sickSprites: []
   itemProperties:
-    itemID: 40
+    itemID: plant_curlyVine
     displayedName: Curly Vine
     itemType: 1
     baseElement: 0
     elementNeeded: 0
     itemDescription: A cute curly green vine. Doesn't grow very tall. Likes to dance.
     currentStage: 0
+    buyPriceFlorets: 0
+    sellPriceFlorets: 0
+    buyPriceCrystals: 0

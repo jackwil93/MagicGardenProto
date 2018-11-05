@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
 
+    GameManager GM;
+
     public Transform emailListScrollContent;
     public Transform emailConvoScrollContent;
     public GameObject emailReplyWindow;
@@ -30,6 +32,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject emailPrefab;
     public GameObject emailContentPrefab;
     public GameObject emailConvoWindowPrefab;
+    public GameObject emailPlayerReplyPrefab;
 
     bool emailsLoaded;
     EmailEntry currentEmail; // The email of what you're replying to
@@ -46,6 +49,7 @@ public class MenuManager : MonoBehaviour {
 
     private void Start()
     {
+        GM = GetComponent<GameManager>();
         EM = GetComponent<EmailManager>();
         inventoryScreensUI = inventoryPanelUI.GetComponent<InventoryUI>();
     }
@@ -58,7 +62,7 @@ public class MenuManager : MonoBehaviour {
     public void CloseLaptop()
     {
         laptopUI.SetActive(false);
-        GetComponent<GameManager>().currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
+        GM.currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
 
     }
 
@@ -141,7 +145,7 @@ public class MenuManager : MonoBehaviour {
     public void CloseInventory() // Called from GM SwipeDown & Inventory Panel Close Button
     {
         inventoryPanelUI.MoveOffScreen();
-        GetComponent<GameManager>().currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
+        GM.currentScreen = MagicGlobal.GameStates.gameScreens.mainGame;
     }
 
     
@@ -164,7 +168,7 @@ public class MenuManager : MonoBehaviour {
     public void CloseMenu() // Called from Buttons. Do not use GameManager SetScreen on Buttons
     {
         CloseLaptop();
-        GetComponent<GameManager>().SetScreen(0);
+        GM.SetScreen(0);
     }
 
     void PopulateEmailList() // The Screen where it shows the latest email from each convo
@@ -186,6 +190,9 @@ public class MenuManager : MonoBehaviour {
 
     public void CreateEmailConversation(string characterID) // for Buttons
     {
+
+        // This is for optimisation. Rather than loading every email conversation on start, only load them once when opened
+        // And then keep them open but off screen for duration of play
         // Check if has not been loaded, else open
         if (!conversationsLoaded.Contains(characterID + "_emailConvo"))
         {
@@ -229,11 +236,22 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    // Actually put the content into the email.
     void CreateEmailConversationEntry(EmailEntry email)
     {
         // NOTE BUG: Currently does a full load on open. Needs to check if there are any new emails in the Conversation List. More work but better system
         GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent); 
         newEmailEntry.transform.Find("Text_Content").GetComponent<Text>().text = email.bodyText;
+
+        // Check if GM Sprite Dictionary Contains Reference, if so, pull sprites
+        Debug.Log("Attempting to Get Sprites for " + email.itemID);
+        if (email.itemID != "" && GM.GetSpriteSet(email.itemID) != null)
+        {
+            newEmailEntry.transform.Find("Image_ItemOrder").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+            Debug.Log("Retrived sprites");
+        }
+        else
+            newEmailEntry.transform.Find("Image_ItemOrder").gameObject.SetActive(false);
 
         // Set up the Respond button
         newEmailEntry.transform.Find("Button_Respond").GetComponent<Button>().onClick.AddListener(
@@ -250,40 +268,41 @@ public class MenuManager : MonoBehaviour {
         currentEmail = email;
         emailReplyWindow.SetActive(true);
         emailReplyWindow.transform.SetAsLastSibling();
+
+        // Set up Images
+        emailReplyWindow.transform.Find("Image_Item").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+
         replyButtons.Clear();
         replyButtons.Add(replyButton1);
         replyButtons.Add(replyButton2);
         replyButtons.Add(replyButton3);
 
-        // Set up Images
 
         // set up button text and listeners
-        int randomGood = AssignRandom(0, 3, 99);
-        int randomBad = AssignRandom(0, 3, randomGood);
 
+        // Assign random button as good response, then remove it. Assign bad response from the left over, and then neutral response
+        int randomGood = AssignRandom(0, replyButtons.Count);
         replyButtons[randomGood].transform.GetComponentInChildren<Text>().text = email.playerReplyGood;
-        replyButtons[randomBad].transform.GetComponentInChildren<Text>().text = email.playerReplyBad;
-
-
-        replyButtons[randomGood].onClick.AddListener(delegate { SubmitReply("g"); });
-        replyButtons[randomBad].onClick.AddListener(delegate { SubmitReply("b"); });
-
+        replyButtons[randomGood].onClick.AddListener(delegate { SubmitReply("g", email.playerReplyGood); });
         replyButtons.Remove(replyButtons[randomGood]);
-        replyButtons.Remove(replyButtons[randomBad]);
-        replyButtons.Sort();
 
+        // Assign Bad
+        int randomBad = AssignRandom(0, replyButtons.Count);
+        replyButtons[randomBad].transform.GetComponentInChildren<Text>().text = email.playerReplyBad;
+        replyButtons[randomBad].onClick.AddListener(delegate { SubmitReply("b", email.playerReplyBad); });
+        replyButtons.Remove(replyButtons[randomBad]);
+
+
+        // Assign Neutral
         replyButtons[0].transform.GetComponentInChildren<Text>().text = email.playerReplyNeutral;
-        replyButtons[0].onClick.AddListener(delegate { SubmitReply("n"); });
+        replyButtons[0].onClick.AddListener(delegate { SubmitReply("n", email.playerReplyNeutral); });
     }
 
-    int AssignRandom(int min, int maxExclusive, int taken)
+    int AssignRandom(int min, int maxExclusive)
     {
         int i = Random.Range(min, maxExclusive);
 
-        if (i == taken)
-            i = AssignRandom(min, maxExclusive, taken);
-
-        return Random.Range(min, maxExclusive);
+        return i;
     }
 
     public void CloseReplyWindow() // Assigned in Inspector
@@ -293,13 +312,21 @@ public class MenuManager : MonoBehaviour {
 
     
 
-    void SubmitReply(string gbn)
+    void SubmitReply(string gbn, string replyText)
     {
         CloseReplyWindow();
         currentEmail.playerReplyGBN = gbn;
+        CreateReplyEntry(replyText);
         EM.ReplyToEmailConversation(currentEmail);
 
         AddNewEntryToConversation();
+    }
+
+    // Currently wont show up after loading... I think
+    void CreateReplyEntry(string playerReplyText)
+    {
+        GameObject playerReply = Instantiate(emailPlayerReplyPrefab, emailConvoScrollContent);
+        playerReply.transform.Find("Text_Content").GetComponent<Text>().text = playerReplyText;
     }
 
     void AddNewEntryToConversation()

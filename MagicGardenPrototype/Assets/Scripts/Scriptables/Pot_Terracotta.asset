@@ -21,7 +21,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: bc5fff062a96f9440aacea2d7f7e2ccf, type: 3}
     sickSprites: []
   itemProperties:
-    itemID: 100
+    itemID: pot_terracotta
     displayedName: Terracotta Pot
     itemType: 0
     baseElement: 0
