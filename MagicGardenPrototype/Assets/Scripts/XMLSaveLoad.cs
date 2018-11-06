@@ -34,7 +34,7 @@ public class XMLSaveLoad : MonoBehaviour
         SaveCurrencies(GM.playerData);
         SaveItems(GM, GM.playerData);
         //SaveEmails();
-
+        SaveTime(GM.playerData);
         SaveXML(GetComponent<GameManager>().playerData, saveFileName);
     }
 
@@ -69,6 +69,13 @@ public class XMLSaveLoad : MonoBehaviour
         // Record this in the PlayerData too, to make saving easier to manage
     }
 
+    private void SaveTime(PlayerData pd)
+    {
+        pd.savedMinuteOfYear = (int)GameDateTime.LogCurrentDateTime().x;
+        pd.savedDayOfYear = (int)GameDateTime.LogCurrentDateTime().y;
+        
+    }
+
     void SaveXML(object dataPackage, string fileName)
     {
         Debug.Log("Saving out XML...");
@@ -98,6 +105,9 @@ public class XMLSaveLoad : MonoBehaviour
         {
             Debug.Log("Loading...");
             LoadPlayerDataXML(typeof(PlayerData), "ma");
+
+            PlayerData playerData = GetComponent<GameManager>().playerData;
+            Debug.Log("Minutes Passed = " + GameDateTime.RealTimeSinceLastPlay(playerData.savedMinuteOfYear, playerData.savedDayOfYear));
         }
     }
 

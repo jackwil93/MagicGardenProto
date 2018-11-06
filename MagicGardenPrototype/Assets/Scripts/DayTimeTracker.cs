@@ -8,11 +8,7 @@ public class DayTimeTracker : MonoBehaviour {
     public float totalTimeplayed;
     int prevSecond;
 
-	public float DayProgressionPercent()
-    {
-        return ((float)DateTime.Now.Second + ((float)DateTime.Now.Minute * 60) + ((float)DateTime.Now.Hour * 60 * 60)) / 86400; // Divide now by how many seconds in the day
-    }
-
+	
     public float SecondsRealtime()
     {
         // Flawed. Always 1. Return to fix sometime

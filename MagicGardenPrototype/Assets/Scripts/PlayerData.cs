@@ -14,4 +14,6 @@ public class PlayerData
     [XmlArray ("SavedGameItems")]
     [XmlArrayItem ("GameItem")]
     public List<GameItem> allGameItems;
+    public int savedMinuteOfYear;
+    public int savedDayOfYear;
 }

@@ -68,6 +68,10 @@ public class GameManager : MobileInputManager {
         placePoints.AddRange(GameObject.FindObjectsOfType<PlacePoint>());
         foreach (PlacePoint p in placePoints)
             p.HidePointer();
+
+
+        // TESTING DateTime stuff
+        GameDateTime.LogCurrentDateTime();
     }
 
     private void Update()
@@ -91,6 +95,7 @@ public class GameManager : MobileInputManager {
         // FOR DEV TESTING PURPOSES ONLY
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
+            GameDateTime.LogCurrentDateTime();
             this.GetComponent<XMLSaveLoad>().SaveGame();
         }
     }

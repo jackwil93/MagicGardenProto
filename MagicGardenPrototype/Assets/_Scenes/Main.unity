@@ -9285,7 +9285,6 @@ GameObject:
   - component: {fileID: 430227576}
   - component: {fileID: 430227578}
   - component: {fileID: 430227575}
-  - component: {fileID: 430227571}
   - component: {fileID: 430227574}
   - component: {fileID: 430227577}
   - component: {fileID: 430227573}
@@ -9296,18 +9295,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &430227571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 430227570}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 510e675f0003075438197bea6baf7998, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  totalTimeplayed: 0
 --- !u!4 &430227572
 Transform:
   m_ObjectHideFlags: 0
@@ -9414,6 +9401,8 @@ MonoBehaviour:
       placedPointX: 0
       placedPointY: 0
       placedPointZ: 0
+    savedMinuteOfYear: 0
+    savedDayOfYear: 0
   currentScreen: 0
   cameraPosList:
   - {fileID: 973722768}
@@ -9447,7 +9436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadDataOnStart: 0
+  loadDataOnStart: 1
   saveFileName: ma
 --- !u!114 &430227578
 MonoBehaviour:
