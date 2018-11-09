@@ -17,6 +17,7 @@ public class GameManager : MobileInputManager {
     public List<Transform> cameraPosList = new List<Transform>();
     int currentCamPos;
     Vector3 camMoveToPos;
+    bool cameraMoving;
 
     [Space(20)]
     public List<PlacePoint> placePoints = new List<PlacePoint>();
@@ -79,10 +80,18 @@ public class GameManager : MobileInputManager {
         //if (currentScreen == GameStates.gameScreens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
             base.Update();
 
-        if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f && !userIsTouching)
+        if (mainCam.position != camMoveToPos)
         {
-            mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
-            mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
+            if (!userIsTouching || cameraMoving)
+            {
+                if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f)
+                {
+                    mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
+                    mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
+                }
+                else
+                    cameraMoving = false;
+            }
         }
 
         if (holdingMoveable && heldObject != null)
@@ -133,6 +142,9 @@ public class GameManager : MobileInputManager {
     public override void SwipeLeft()
     {
         base.SwipeLeft();
+
+        cameraMoving = true;
+
         if (currentScreen == GameStates.gameScreens.mainGame)
             if (currentCamPos - 1 < 0)
                 currentCamPos = cameraPosList.Count - 1;
@@ -148,6 +160,9 @@ public class GameManager : MobileInputManager {
     public override void SwipeRight()
     {
         base.SwipeRight();
+
+        cameraMoving = true;
+
         if (currentScreen == GameStates.gameScreens.mainGame)
             if (currentCamPos + 1 > cameraPosList.Count - 1)
                 currentCamPos = 0;
@@ -205,6 +220,19 @@ public class GameManager : MobileInputManager {
             {
                 MM.OpenInventory();
                 currentScreen = GameStates.gameScreens.inventory;
+            }
+
+            else if (holdingMoveable || holdingInventoryItem)
+            {
+                // if item held on side of screen, move
+                if (!cameraMoving && screenTouchPos.x < 20)
+                {
+                    SwipeLeft();
+                }
+                if (!cameraMoving && screenTouchPos.x > (Screen.width -20))
+                {
+                    SwipeRight();
+                }
             }
 
         }
