@@ -18,4 +18,5 @@ public class EmailEntry {
     public bool received;
     public bool replied;
     public string playerReplyGBN;
+    public bool opened;
 }

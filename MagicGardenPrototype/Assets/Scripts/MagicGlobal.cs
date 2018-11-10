@@ -32,10 +32,10 @@ namespace MagicGlobal
     {
         public static int loggedMinuteOfYear;
         public static int loggedDayOfYear; // For tracking Leap Years
+        public static int realTimeSinceLastPlay;
 
         public static float DayProgressionPercent()
         {
-            
             return ((float)DateTime.Now.Second + ((float)DateTime.Now.Minute * 60) + ((float)DateTime.Now.Hour * 60 * 60)) / 86400; // Divide now by how many seconds in the day
         }
 
@@ -50,7 +50,7 @@ namespace MagicGlobal
         }
 
 
-        public static int RealTimeSinceLastPlay(int previousMinuteOfYear, int previousDayOfYear)
+        public static void SetRealTimeSinceLastPlay(int previousMinuteOfYear, int previousDayOfYear)
         {
             Vector2 dateTime = LogCurrentDateTime();
             int currentMinute = (int)dateTime.x;
@@ -67,8 +67,7 @@ namespace MagicGlobal
 
            
             Debug.Log("minute difference since last play(current - prev) = " + result);
-
-            return result;
+            realTimeSinceLastPlay = result;
         }
 
         static int MinutesPassedToEndOfYear(int previousMinuteOfYear, int previousDayOfYear)

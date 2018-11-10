@@ -59,6 +59,7 @@ public class GameManager : MobileInputManager {
         foreach (Item itemPlant in allPlantTypes)
             spriteDictionary.Add(itemPlant.itemProperties.itemID, itemPlant.itemSprites);
 
+        //Start Loading Player Data
         GetComponent<XMLSaveLoad>().LoadGame();
 
         // Update Currencies
@@ -107,6 +108,18 @@ public class GameManager : MobileInputManager {
             GameDateTime.LogCurrentDateTime();
             this.GetComponent<XMLSaveLoad>().SaveGame();
         }
+        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+        {
+            Order newEmailOrder = new Order();
+            newEmailOrder.orderID = "davinta_0_normal_reply_b";
+            newEmailOrder.orderAmount = 1;
+            newEmailOrder.myOrderType = Order.orderType.email;
+
+            Debug.Log("New order created... " + newEmailOrder.orderID);
+
+
+            GetComponent<DelayedOrderManager>().AddNewOrder(newEmailOrder, 1);
+        }
     }
 
     public ItemSprites GetSpriteSet(string id)
@@ -127,6 +140,7 @@ public class GameManager : MobileInputManager {
 
         return;
     }
+
 
     
 
@@ -473,7 +487,15 @@ public class GameManager : MobileInputManager {
             else
                 LoadItemToInventory(item);
         }
+
+        // Get Time Since Last Play
+        GameDateTime.SetRealTimeSinceLastPlay(playerData.savedMinuteOfYear, playerData.savedDayOfYear);
+
+        // Load and Check Delayed Orders AFTER Realtime Since Last Play
+        GetComponent<DelayedOrderManager>().AddListOfDelayedOrders(playerData.delayedOrdersUndelivered, GameDateTime.realTimeSinceLastPlay);
     }
+
+    
 
      void LoadItemToWorld(GameItem newGameItem)
     {

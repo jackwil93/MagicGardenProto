@@ -33,6 +33,7 @@ public class XMLSaveLoad : MonoBehaviour
 
         SaveCurrencies(GM.playerData);
         SaveItems(GM, GM.playerData);
+        SaveDelayedOrders(GM.playerData);
         //SaveEmails();
         SaveTime(GM.playerData);
         SaveXML(GetComponent<GameManager>().playerData, saveFileName);
@@ -62,6 +63,12 @@ public class XMLSaveLoad : MonoBehaviour
         pd.allGameItems.AddRange(inv.CheckInAllItems());
 
         Debug.Log("PlayerData GameItems Saved");
+    }
+
+    private void SaveDelayedOrders(PlayerData pd)
+    {
+        pd.delayedOrdersUndelivered = GetComponent<DelayedOrderManager>().GetAllDelayedOrders();
+        Debug.Log("PlayerData Undelivered Orders Saved");
     }
 
     private void SaveEmails(PlayerData pd)
@@ -99,15 +106,13 @@ public class XMLSaveLoad : MonoBehaviour
         }
     }
 
-    public void LoadGame() // Called from Game Manager
+    public void LoadGame() // Called from Game Manager on Start
     {
         if (loadDataOnStart)
         {
             Debug.Log("Loading...");
             LoadPlayerDataXML(typeof(PlayerData), "ma");
-
-            PlayerData playerData = GetComponent<GameManager>().playerData;
-            Debug.Log("Minutes Passed = " + GameDateTime.RealTimeSinceLastPlay(playerData.savedMinuteOfYear, playerData.savedDayOfYear));
+            Debug.Log("Loaded");
         }
     }
 
@@ -125,6 +130,7 @@ public class XMLSaveLoad : MonoBehaviour
         FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Open);
         GetComponent<GameManager>().LoadPlayerData((PlayerData)loadXML.Deserialize(stream));
     }
+
 
     //void LoadInventoryData(InventoryData loadedInventoryXML)
     //{

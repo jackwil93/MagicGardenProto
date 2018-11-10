@@ -240,6 +240,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Currencies.cs" />
     <Compile Include="Assets\Scripts\DayTimeTracker.cs" />
+    <Compile Include="Assets\Scripts\DelayedOrder.cs" />
+    <Compile Include="Assets\Scripts\DelayedOrderManager.cs" />
     <Compile Include="Assets\Scripts\EmailConversation.cs" />
     <Compile Include="Assets\Scripts\EmailEntry.cs" />
     <Compile Include="Assets\Scripts\EmailManager.cs" />
