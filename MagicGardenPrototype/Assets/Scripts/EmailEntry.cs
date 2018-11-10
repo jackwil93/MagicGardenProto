@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class EmailEntry {
     public string entryID;
     public string characterName;
-    public string characterID;
+    public string conversationID;
     public int stage;
     public string normalOrLove;
     public string initialOrReply;

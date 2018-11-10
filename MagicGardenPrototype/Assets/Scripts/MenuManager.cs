@@ -171,35 +171,40 @@ public class MenuManager : MonoBehaviour {
         GM.SetScreen(0);
     }
 
-    void PopulateEmailList() // The Screen where it shows the latest email from each convo
+    void PopulateEmailList() // The Screen where it shows all conversations and the latest from each
     {
-        foreach (string convo in EM.conversationsByNameList)
+        foreach (KeyValuePair<string, EmailConversation> eConvo in EM.emailConversationsDictionary)
         {
-            GameObject newEmail = GameObject.Instantiate(emailPrefab, emailListScrollContent);
-            EmailEntry emailInfo = EM.GetLatestEmailEntry(convo);
-            newEmail.transform.Find("Text_Name").GetComponent<Text>().text = emailInfo.characterName;
-            newEmail.transform.Find("Text_Subject").GetComponent<Text>().text = emailInfo.bodyText;
+            // Set up Email Conversation Prefab and Text, etc
+            GameObject newEmailConversation = GameObject.Instantiate(emailPrefab, emailListScrollContent);
+            EmailEntry latestEmail = eConvo.Value.GetLatestEmail();
+
+            newEmailConversation.transform.Find("Text_Name").GetComponent<Text>().text = latestEmail.characterName;
+            newEmailConversation.transform.Find("Text_Subject").GetComponent<Text>().text = latestEmail.bodyText;
 
             // Set up button
-            newEmail.transform.Find("Button_Open").GetComponent<Button>().onClick.AddListener(delegate { CreateEmailConversation(convo); });
+            newEmailConversation.transform.Find("Button_Open").GetComponent<Button>().onClick.AddListener(delegate { CreateEmailConversation(latestEmail.conversationID); });
         
+
+            // If latest email is unopened, display a 'New' sprite
+            // 
         }
 
         emailsLoaded = true;
     }
 
-    public void CreateEmailConversation(string characterID) // for Buttons
+    public void CreateEmailConversation(string convoID) // for Buttons
     {
 
         // This is for optimisation. Rather than loading every email conversation on start, only load them once when opened
         // And then keep them open but off screen for duration of play
         // Check if has not been loaded, else open
-        if (!conversationsLoaded.Contains(characterID + "_emailConvo"))
+        if (!conversationsLoaded.Contains(convoID + "_emailConvo"))
         {
             // Create the Conversation Window
             Transform emailUIGroup = GameObject.Find("Emails UI").transform;
             GameObject newConvoWindow = GameObject.Instantiate(emailConvoWindowPrefab, emailUIGroup);
-            newConvoWindow.name = characterID + "_emailConvo";
+            newConvoWindow.name = convoID + "_convoWindow";
 
             emailWindowPos = newConvoWindow.transform.localPosition;
 
@@ -211,10 +216,11 @@ public class MenuManager : MonoBehaviour {
             }
             
 
-            // Create each Email Entry 
-            foreach (EmailEntry email in EM.GetConversationEmails(characterID))
+            // Create each Email Entry that has NOT been opened already
+            foreach (EmailEntry email in EM.emailConversationsDictionary[convoID].receivedEmails)
             {
-                CreateEmailConversationEntry(email);
+                if (email.opened == false)
+                    CreateEmailConversationEntry(email);
             }
 
 
@@ -230,16 +236,15 @@ public class MenuManager : MonoBehaviour {
             // Store the Conversation Window somewhere (dont load it every time)
             conversationsLoaded.Add(newConvoWindow.name);
         }
-        else if (conversationsLoaded.Contains(characterID + "_emailConvo"))
+        else if (conversationsLoaded.Contains(convoID + "_emailConvo"))
         {
-            GameObject.Find(characterID + "_emailConvo").transform.localPosition = emailWindowPos;
+            GameObject.Find(convoID + "_emailConvo").transform.localPosition = emailWindowPos;
         }
     }
 
-    // Actually put the content into the email.
+    // Actually put the EmailEntry content into the email as a new panel in the Scroll View. Only if unopened
     void CreateEmailConversationEntry(EmailEntry email)
     {
-        // NOTE BUG: Currently does a full load on open. Needs to check if there are any new emails in the Conversation List. More work but better system
         GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent); 
         newEmailEntry.transform.Find("Text_Content").GetComponent<Text>().text = email.bodyText;
 
@@ -257,10 +262,11 @@ public class MenuManager : MonoBehaviour {
         newEmailEntry.transform.Find("Button_Respond").GetComponent<Button>().onClick.AddListener(
             delegate
             {
-                OpenEmailReplyWindow(EM.GetLatestEmailEntry(email.characterID));
+                OpenEmailReplyWindow(email);
             });
 
-        // Needs to cater for showing the player's past response
+        // Is now considered Opened. NOTE: All emails set to false when game loads for first time. Important so they can appear next time
+        email.opened = true;
     }
 
     void OpenEmailReplyWindow(EmailEntry email)
@@ -317,9 +323,7 @@ public class MenuManager : MonoBehaviour {
         CloseReplyWindow();
         currentEmail.playerReplyGBN = gbn;
         CreateReplyEntry(replyText);
-        EM.ReplyToEmailConversation(currentEmail);
-
-        AddNewEntryToConversation();
+        EM.RecordPlayerReplyAndQueueNextEmail(currentEmail, gbn, replyText);
     }
 
     // Currently wont show up after loading... I think
@@ -329,13 +333,5 @@ public class MenuManager : MonoBehaviour {
         playerReply.transform.Find("Text_Content").GetComponent<Text>().text = playerReplyText;
     }
 
-    void AddNewEntryToConversation()
-    {
-        CreateEmailConversationEntry(EM.GetLatestEmailEntry(currentEmail.characterID));
-    }
-
-    void ClearEmailConversation()
-    {
-
-    }
+   
 }
