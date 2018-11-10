@@ -7,7 +7,7 @@ public class DelayedOrderManager : MonoBehaviour
 
     GameManager GM;
     EmailManager EM;
-    List<DelayedOrder> delayedOrders = new List<DelayedOrder>();
+    public List<DelayedOrder> delayedOrders = new List<DelayedOrder>();
 
     private void Start()
     {
@@ -87,6 +87,7 @@ public class DelayedOrderManager : MonoBehaviour
             if (order.myOrderType == Order.orderType.email)
             {
                 Debug.Log("Delivering an Email" + " | contentID = " + readyOrder.ordersInPack[0].orderID);
+                EM.PutNextEmailToConversation(order.orderID);
             }
             else if (order.myOrderType == Order.orderType.item)
             {

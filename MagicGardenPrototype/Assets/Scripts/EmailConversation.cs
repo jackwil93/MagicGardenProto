@@ -13,11 +13,12 @@ public class EmailConversation {
     {
         // Receive new email
         receivedEmails.Add(incomingEmail);
+        incomingEmail.received = true;
 
         // Update conversation stage
         stage = incomingEmail.stage;
 
-        Debug.Log("New email added to conversation: " + conversationID + ". Conversation Stage = " + stage);
+        Debug.Log("New email added to conversation: " + conversationID + ". Conversation Stage = " + stage + "| entryID = " + incomingEmail.entryID);
     }
 
     public void CheckMaxStage(int emailStage) // Called by Email Manager when setting up all Conversations
@@ -28,7 +29,7 @@ public class EmailConversation {
 
     public EmailEntry GetLatestEmail () // Called by MenuManager when opening Emails Window
     {
-        if (receivedEmails.Count > 0)
+        if (receivedEmails.Count > 1)
             return receivedEmails[receivedEmails.Count - 1];
         else
             return receivedEmails[0];

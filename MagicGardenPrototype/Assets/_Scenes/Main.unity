@@ -9307,6 +9307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11ff4c95bfb1ca146ab62c36e6b71e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  delayedOrders: []
 --- !u!4 &430227572
 Transform:
   m_ObjectHideFlags: 0
@@ -9334,12 +9335,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e615303c4c75434e9d36274ee2876fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JSONfileName: emaildata.json
-  allEmailsDavinta: []
-  allEmailsXander: []
-  allEmailsMrsTew: []
-  conversationsByNameList: []
-  activeConversations: []
+  emailsForJSON:
+    emailEntries: []
+  allEmailsInData: []
 --- !u!114 &430227574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9449,8 +9447,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936b2fcea32d437409311e7b42a03890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadDataOnStart: 1
+  loadPlayerDataOnStart: 1
+  resetEmailData: 0
   saveFileName: ma
+  JSONfileName: emaildata.json
 --- !u!114 &430227578
 MonoBehaviour:
   m_ObjectHideFlags: 0

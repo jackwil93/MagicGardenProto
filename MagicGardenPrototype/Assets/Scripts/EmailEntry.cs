@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-[System.Serializable]
+﻿[System.Serializable]
 public class EmailEntry {
     public string entryID;
     public string characterName;
     public string conversationID;
     public int stage;
-    public string normalOrLove;
+    public string state;
     public string initialOrReply;
     public string characterReplyGBN;
     public string bodyText;
@@ -19,4 +16,5 @@ public class EmailEntry {
     public bool replied;
     public string playerReplyGBN;
     public bool opened;
+    public bool loadedToGame;
 }

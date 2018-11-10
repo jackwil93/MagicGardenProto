@@ -6,11 +6,12 @@ using System.Xml.Serialization;
 using System.IO;
 using MagicGlobal;
 
+
 public class XMLSaveLoad : MonoBehaviour
 {
     // For debug
-    public bool loadDataOnStart;
-
+    public bool loadPlayerDataOnStart;
+    public bool resetEmailData;
 
     // For future Ref: 
     // Inventory is for run time only, lives on the GAMECORE
@@ -19,6 +20,8 @@ public class XMLSaveLoad : MonoBehaviour
     // InventoryItemXML is what each Item is translated to for saving to XML (Scriptables cant be loaded via XML)
 
     public string saveFileName = "ma";
+    public string JSONfileName = "emaildata.json";
+
     string dir;
 
     private void Awake()
@@ -34,9 +37,10 @@ public class XMLSaveLoad : MonoBehaviour
         SaveCurrencies(GM.playerData);
         SaveItems(GM, GM.playerData);
         SaveDelayedOrders(GM.playerData);
-        //SaveEmails();
         SaveTime(GM.playerData);
         SaveXML(GetComponent<GameManager>().playerData, saveFileName);
+
+        SaveEmailsToJson();
     }
 
     private void SaveCurrencies(PlayerData pd)
@@ -71,10 +75,6 @@ public class XMLSaveLoad : MonoBehaviour
         Debug.Log("PlayerData Undelivered Orders Saved");
     }
 
-    private void SaveEmails(PlayerData pd)
-    {
-        // Record this in the PlayerData too, to make saving easier to manage
-    }
 
     private void SaveTime(PlayerData pd)
     {
@@ -108,9 +108,14 @@ public class XMLSaveLoad : MonoBehaviour
 
     public void LoadGame() // Called from Game Manager on Start
     {
-        if (loadDataOnStart)
+        Debug.Log("Loading Emails...");
+        LoadEmailsFromJSON();
+        Debug.Log("Loaded Emails");
+
+
+        if (loadPlayerDataOnStart)
         {
-            Debug.Log("Loading...");
+            Debug.Log("Loading Player Data...");
             LoadPlayerDataXML(typeof(PlayerData), "ma");
             Debug.Log("Loaded");
         }
@@ -129,6 +134,68 @@ public class XMLSaveLoad : MonoBehaviour
 
         FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Open);
         GetComponent<GameManager>().LoadPlayerData((PlayerData)loadXML.Deserialize(stream));
+    }
+
+
+    /// JSON SERIALISATION STUFF
+
+    void SaveEmailsToJson()
+    {
+        Debug.Log("Saving over old Email JSON File...");
+        string data = JsonUtility.ToJson(GetComponent<EmailManager>().CheckInAllEmails(), true);
+
+        
+
+        Debug.Log("email Data being saved = " + data);
+        File.WriteAllText(Application.persistentDataPath + "/data/" + "testJson.json", data);
+        Debug.Log("New Email JSON Saved");
+    }
+
+
+    void LoadEmailsFromJSON()
+    {
+        if (File.Exists(dir + JSONfileName))
+        {
+            string dataAsJson;
+            if (resetEmailData)
+                dataAsJson = File.ReadAllText(dir + "emailData.json");
+            else
+                dataAsJson = File.ReadAllText(dir + "testJson.json");
+
+            string JsonString = fixJson(dataAsJson);
+
+            EmailListJSON newJSONList = JsonUtility.FromJson<EmailListJSON>(dataAsJson);
+
+            foreach (EmailEntry email in newJSONList.emailEntries)
+                email.loadedToGame = false;
+
+
+            GetComponent<EmailManager>().SetUpAllEmails(newJSONList);
+        }
+        else
+            Debug.LogWarning("Json file not found");
+    }
+
+    
+
+    // The following was learned from: 
+    // https://stackoverflow.com/questions/36239705/serialize-and-deserialize-json-and-json-array-in-unity/36244111#36244111
+
+    public static T[] FromJson<T>(string json)
+    {
+        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+        return wrapper.EmailEntry;
+    }
+
+    private class Wrapper<T>
+    {
+        public T[] EmailEntry;
+    }
+
+    string fixJson(string value)
+    {
+        value = "{\"EmailEntry\":" + value + "}";
+        return value;
     }
 
 
@@ -154,5 +221,5 @@ public class XMLSaveLoad : MonoBehaviour
     //        mainInventory.allItemsList.Add(item);
     //    }
     //}
-        
+
 }

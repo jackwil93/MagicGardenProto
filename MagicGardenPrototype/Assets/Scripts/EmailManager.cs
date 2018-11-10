@@ -6,30 +6,39 @@ using System.Linq;
 
 public class EmailManager : MonoBehaviour
 {
+    [SerializeField]
+    public EmailListJSON emailsForJSON = new EmailListJSON();
 
-    public string JSONfileName = "emaildata.json";
-    string filePath;
-
-
-    List<EmailEntry> allEmailsInData = new List<EmailEntry>(); // Refers to ALL emails in the entire game
+    public List<EmailEntry> allEmailsInData = new List<EmailEntry>(); // Refers to ALL emails in the entire game
     List<EmailEntry> allReceivedEmails = new List<EmailEntry>(); // The emails the player has received based on their choices. Saved to PD
 
     /// <summary>
     /// string = conversationID. The character's name in lowercase ie "davinta"
     /// </summary>
-    public Dictionary<string, EmailConversation> emailConversationsDictionary;
+    [SerializeField]
+    public Dictionary<string, EmailConversation> emailConversationsDictionary = new Dictionary<string, EmailConversation>();
 
-    public void SetUpAllEmails(EmailEntry[] loadedEmails) // Called from XMLSaveLoad
+
+
+
+    public void SetUpAllEmails(EmailListJSON loadedEmails) // Called from XMLSaveLoad
     {
-        foreach (EmailEntry email in loadedEmails)
+        foreach (EmailEntry email in loadedEmails.emailEntries)
         {
+            allEmailsInData.Add(email);
+            Debug.Log("loaded email entryID = " + email.entryID + " | conversationID = " + email.conversationID);
+
             // Make new EmailConversations if not already made
-            if (emailConversationsDictionary.ContainsKey(email.conversationID) == false)
+            if (emailConversationsDictionary.ContainsKey (email.conversationID) == false)
             {
                 EmailConversation newConversation = new EmailConversation();
                 newConversation.conversationID = email.conversationID;
 
                 emailConversationsDictionary.Add(newConversation.conversationID, newConversation);
+                Debug.Log("Created New Email Conversation: " + newConversation.conversationID);
+
+                // Add the initial email 
+                newConversation.AddNextEmail(email);
             }
 
             // Check if player has received this email before. If so, add it to the conversation
@@ -59,6 +68,7 @@ public class EmailManager : MonoBehaviour
         // -------------------- RECORD PLAYER RESPONSE --------------
         // Before Anything else, record the player's response. Important for saving and loading emails later
         currentEmail.playerReplyGBN = playerReplyGBN;
+        currentEmail.replied = true;
 
         EmailEntry playerReplyEmail = new EmailEntry();
         playerReplyEmail.conversationID = currentEmail.conversationID;
@@ -67,6 +77,10 @@ public class EmailManager : MonoBehaviour
         playerReplyEmail.entryID = currentEmail.conversationID + "_" + currentEmail.stage + "_" + "player";
         playerReplyEmail.bodyText = playerReplyFull;
         playerReplyEmail.received = true;
+
+        // Put player reply to allEmails List in the right spot
+        int targetIndex = allEmailsInData.IndexOf(currentEmail) + 1;
+        allEmailsInData.Insert(targetIndex, playerReplyEmail);
 
         // Add player reply to Conversation
         currentConversation.AddNextEmail(playerReplyEmail);
@@ -83,21 +97,23 @@ public class EmailManager : MonoBehaviour
 
         // Create the string to find the next emailID (The immediate reply to the player).
         string replyEmailID = currentEmail.conversationID + "_" + currentEmail.stage + "_" +
-            currentEmail.normalOrLove + "_" + "reply" + "_" + playerReplyGBN;
+            currentEmail.state + "_" + "reply" + "_" + playerReplyGBN;
+        Debug.Log("Next NPC Reply EmailID = " + replyEmailID);
 
         // Create the email on disc, we will send it to Delivery Manager shortly
-        EmailEntry replyEmail = allEmailsInData.Where(EmailEntry => EmailEntry.entryID == replyEmailID).SingleOrDefault();
-
+        EmailEntry replyEmail = GetEmailByID(replyEmailID);
+        Debug.Log("Found reply email: " + replyEmail.entryID);
 
 
         // ---------------- QUEUE NEXT TIME EMAIL ---------------
 
         EmailEntry nextTimeEmail = new EmailEntry();
+        string nextEmailID = currentEmail.conversationID + "_" + (currentEmail.stage + 1) + "_" +
+            "normal" + "_" + "initial" + "_" + "n";
 
         if (currentConversation.stage < currentConversation.maxStage)
         {
-            nextTimeEmail = allEmailsInData.Where(EmailEntry => EmailEntry.conversationID == currentEmail.conversationID &&
-                EmailEntry.stage == currentEmail.stage + 1).SingleOrDefault();
+            nextTimeEmail = GetEmailByID(nextEmailID);
         }
 
 
@@ -122,7 +138,21 @@ public class EmailManager : MonoBehaviour
 
     }
 
-
+    EmailEntry GetEmailByID(string ID)
+    {
+        Debug.Log("Attempting to search " + allEmailsInData.Count + " items in allEmailsInData");
+        foreach (EmailEntry email in allEmailsInData)
+        {
+            Debug.Log("Searching for: " + ID + " | " + email.entryID);
+            if (email.entryID == ID)
+            {
+                Debug.Log("Found Matching Email by ID");
+                return email;
+            }
+        }
+        Debug.Log("Found No Match by ID: " + ID);
+        return null;
+    }
 
     public void PutNextEmailToConversation(string receivedEmailID) // Called from Delivery Manager when EmailOrder is Received
     {
@@ -137,8 +167,26 @@ public class EmailManager : MonoBehaviour
 
     }
 
+    public EmailListJSON CheckInAllEmails()
+    {
+        foreach (KeyValuePair<string, EmailConversation> eConvo in emailConversationsDictionary)
+            foreach (EmailEntry emailEntry in eConvo.Value.receivedEmails)
+                if (!allEmailsInData.Contains(emailEntry))
+                {
+                    allEmailsInData.Add(emailEntry);
+                    Debug.Log(emailEntry.entryID + " added to emailsInData");
+                }
+
+        emailsForJSON.emailEntries.Clear();
+        emailsForJSON.emailEntries.AddRange(allEmailsInData);
 
 
+        return emailsForJSON;
+    }
+
+
+
+    
 
 
 
@@ -211,55 +259,55 @@ public class EmailManager : MonoBehaviour
 
 
 
-    //    /// JSON SERIALISATION STUFF
+    //    
 
-    //    void DataToJson()
-    //    {
-    //        string data = JsonUtility.ToJson(allEmailsDavinta[0]);
-    //        File.AppendAllText(Application.persistentDataPath + "/data/" + "testJson.json", data);
-    //    }
+    //    
+    //    
+    //    
+    //    
+    //    
 
-    //    void GetDataFromJSON()
-    //    {
-    //        if (File.Exists(filePath))
-    //        {
-    //            string dataAsJson = File.ReadAllText(filePath);
+    //    
+    //    
+    //    
+    //    
+    //    
 
-    //            string JsonString = fixJson(dataAsJson);
-    //            EmailEntry[] emails = FromJson<EmailEntry>(JsonString);
-
-
-    //            foreach (EmailEntry emailEntry in emails)
-    //            {
-    //                // If this character hasn't appeared yet, add their name in list
-    //                if (!conversationsByNameList.Contains(emailEntry.characterID))
-    //                    conversationsByNameList.Add(emailEntry.characterID);
+    //    
+    //    
 
 
-    //                if (emailEntry.characterID == "davinta")
-    //                {
-    //                    allEmailsDavinta.Add(emailEntry);
-    //                    Debug.Log("New email added to Davinta");
-    //                }
-    //                if (emailEntry.characterID == "xander")
-    //                {
-    //                    allEmailsXander.Add(emailEntry);
-    //                    Debug.Log("New email added to Xander");
+    //    
+    //    
+    //    
+    //    
+    //    
 
-    //                }
-    //                if (emailEntry.characterID == "mrstew")
-    //                {
-    //                    allEmailsMrsTew.Add(emailEntry);
-    //                    Debug.Log("New email added to Mrs Tew");
 
-    //                }
-    //            }
+    //    
+    //    
+    //    
+    //    
+    //    
+    //    
+    //    
+    //    
+    //    
 
-    //            CreateActiveConversatons();
-    //        }
-    //        else
-    //            Debug.LogWarning("Json file not found");
-    //    }
+    //    
+    //    
+    //    
+    //    
+    //    
+
+    //    
+    //    
+
+    //    
+    //    
+    //    
+    //    
+    //    
 
     //    void CreateActiveConversatons() // MUST only run once
     //    {
@@ -369,24 +417,24 @@ public class EmailManager : MonoBehaviour
     //    }
 
 
-    //    // The following was learned from: 
-    //    // https://stackoverflow.com/questions/36239705/serialize-and-deserialize-json-and-json-array-in-unity/36244111#36244111
+    //   
+    //   
 
-    //    public static T[] FromJson<T>(string json)
-    //    {
-    //        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-    //        return wrapper.EmailEntry;
-    //    }
+    //   
+    //   
+    //   
+    //   
+    //   
 
-    //    private class Wrapper<T>
-    //    {
-    //        public T[] EmailEntry;
-    //    }
+    //   
+    //   
+    //   
+    //   
 
-    //    string fixJson(string value)
-    //    {
-    //        value = "{\"EmailEntry\":" + value + "}";
-    //        return value;
-    //    }
+    //   
+    //   
+    //   
+    //   
+    //   
     //}
 }
