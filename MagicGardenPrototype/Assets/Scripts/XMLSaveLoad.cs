@@ -20,13 +20,18 @@ public class XMLSaveLoad : MonoBehaviour
     // InventoryItemXML is what each Item is translated to for saving to XML (Scriptables cant be loaded via XML)
 
     public string saveFileName = "ma";
-    public string JSONfileName = "emaildata.json";
 
     string dir;
 
     private void Awake()
     {
         dir = Application.persistentDataPath.ToString() + "/data/";
+    }
+
+    private void Start()
+    {
+        // Save every minute
+        //InvokeRepeating("SaveGame", 60, 60);
     }
 
     public void SaveGame() // Called from Game Manager
@@ -108,9 +113,7 @@ public class XMLSaveLoad : MonoBehaviour
 
     public void LoadGame() // Called from Game Manager on Start
     {
-        Debug.Log("Loading Emails...");
-        LoadEmailsFromJSON();
-        Debug.Log("Loaded Emails");
+        Debug.Log("Loading from..." + dir);
 
 
         if (loadPlayerDataOnStart)
@@ -119,48 +122,72 @@ public class XMLSaveLoad : MonoBehaviour
             LoadPlayerDataXML(typeof(PlayerData), "ma");
             Debug.Log("Loaded");
         }
+
+
+        Debug.Log("Loading Emails...");
+        LoadEmailsFromJSON();
+        Debug.Log("Loaded Emails");
+
     }
 
-    private void LoadPlayerDataXML(System.Type type, string fileName)
+    private void LoadPlayerDataXML(System.Type type, string fileName) // Called from LoadGame
     {
         XmlSerializer loadXML = new XmlSerializer(type);
+        
 
+        // If No Player Data, create new and send to GM
         if (!File.Exists(dir + fileName + ".gic"))
         {
-            File.Create(dir + fileName + ".gic");
-            Debug.Log("New Save File created");
-            LoadPlayerDataXML(typeof(PlayerData), fileName);
+            PlayerData newPlayerData = new PlayerData();
+            newPlayerData.newGame = true;
+            Debug.Log("New Player Data created");
+
+            GetComponent<GameManager>().LoadPlayerData(newPlayerData);
+            return;
         }
 
         FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Open);
         GetComponent<GameManager>().LoadPlayerData((PlayerData)loadXML.Deserialize(stream));
+        stream.Close();
     }
+
+    
 
 
     /// JSON SERIALISATION STUFF
 
     void SaveEmailsToJson()
     {
-        Debug.Log("Saving over old Email JSON File...");
         string data = JsonUtility.ToJson(GetComponent<EmailManager>().CheckInAllEmails(), true);
 
-        
-
         Debug.Log("email Data being saved = " + data);
-        File.WriteAllText(Application.persistentDataPath + "/data/" + "testJson.json", data);
+        File.WriteAllText(Application.persistentDataPath + "/data/" + "playerEmails.json", data);
         Debug.Log("New Email JSON Saved");
     }
 
 
     void LoadEmailsFromJSON()
     {
-        if (File.Exists(dir + JSONfileName))
-        {
+        
             string dataAsJson;
-            if (resetEmailData)
-                dataAsJson = File.ReadAllText(dir + "emailData.json");
+            if (GetComponent<GameManager>().playerData.newGame || resetEmailData)
+            {
+
+                // Weird workaround so Android can load and read the JSON
+                Debug.Log("Resetting email data to original file in Assets/Data");
+                TextAsset jsonFile = Resources.Load("emaildata") as TextAsset;
+                string jsonText = jsonFile.ToString();
+                Debug.Log(jsonText);
+
+                dataAsJson = jsonText;
+            }
             else
-                dataAsJson = File.ReadAllText(dir + "testJson.json");
+            {
+                Debug.Log("Loading player's saved email data");
+                TextAsset jsonFile = Resources.Load(Application.persistentDataPath + "/data/" + "playerEmails.json") as TextAsset;
+                string jsonText = jsonFile.ToString();
+                dataAsJson = jsonText;
+            }
 
             string JsonString = fixJson(dataAsJson);
 
@@ -171,9 +198,7 @@ public class XMLSaveLoad : MonoBehaviour
 
 
             GetComponent<EmailManager>().SetUpAllEmails(newJSONList);
-        }
-        else
-            Debug.LogWarning("Json file not found");
+      
     }
 
     

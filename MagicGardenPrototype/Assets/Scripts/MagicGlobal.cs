@@ -50,24 +50,36 @@ namespace MagicGlobal
         }
 
 
-        public static void SetRealTimeSinceLastPlay(int previousMinuteOfYear, int previousDayOfYear)
+        public static void SetRealTimeSinceLastPlay(bool newGame, int previousMinuteOfYear, int previousDayOfYear)
         {
+            int _prevMinuteOfYear = previousMinuteOfYear;
+            int _prevDayOfYear = previousDayOfYear;
+
+
             Vector2 dateTime = LogCurrentDateTime();
             int currentMinute = (int)dateTime.x;
             Debug.Log("current minute = " + currentMinute);
             int currentDay = (int)dateTime.y;
 
+            if (newGame)
+            {
+                _prevMinuteOfYear = currentMinute;
+                _prevDayOfYear = currentDay;
+            }
+
+
             int result;
 
             // If played over December 31 - Jan 1, just add the previous year leftover minutes to the current minute. No Subtraction
             if (previousDayOfYear > currentDay)
-                result = currentMinute += MinutesPassedToEndOfYear(previousMinuteOfYear, previousDayOfYear);
+                result = currentMinute += MinutesPassedToEndOfYear(_prevMinuteOfYear, _prevDayOfYear);
             else // If same year, use subtraction
-                result = currentMinute - previousMinuteOfYear;
+                result = currentMinute - _prevMinuteOfYear;
 
            
             Debug.Log("minute difference since last play(current - prev) = " + result);
             realTimeSinceLastPlay = result;
+            Debug.Log("Time since last play updated");
         }
 
         static int MinutesPassedToEndOfYear(int previousMinuteOfYear, int previousDayOfYear)

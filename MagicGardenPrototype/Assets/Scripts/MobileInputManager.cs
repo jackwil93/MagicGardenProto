@@ -23,16 +23,16 @@ public class MobileInputManager : MonoBehaviour {
 
 
     // Update is called once per frame
-    public void Update () {
+    public void FixedUpdate () {
 
-        if (Input.GetMouseButton(0) || Input.touchCount > 0) // Could cause issues for 2 finger input later
+        if (Input.GetMouseButton(0) || Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) // Could cause issues for 2 finger input later
         {
             Vector3 fingerTouchPos = Vector3.zero;
             if (Input.touchCount > 0)
-                fingerTouchPos = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0);
+                fingerTouchPos = new Vector3 (Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0);
 
             screenTouchPos = Input.mousePosition + fingerTouchPos;
-
+            Debug.Log("Screen touch pos = " + screenTouchPos);
             // Stop bug on first input
             if (prevScreenTouchPos == Vector3.zero)
                 prevScreenTouchPos = screenTouchPos;
@@ -56,7 +56,7 @@ public class MobileInputManager : MonoBehaviour {
                 Drag();
 
             // To calculate swiping. Note, only finalises on touch off
-            if (touchMoveDistance > 3f)
+            if (touchMoveDistance > 50f)
             { // Fast enough to be a swipe
                 swipeDirection = Vector3.Normalize(screenTouchPos - prevScreenTouchPos);
             } else
@@ -93,7 +93,16 @@ public class MobileInputManager : MonoBehaviour {
 
     public Transform GetSelectedObject() 
     {
-        Ray r = Camera.main.ScreenPointToRay(screenTouchPos);
+
+        Vector2 inputPos = new Vector2();
+
+        if (Input.touchCount > 0)
+            inputPos += Input.GetTouch(0).position;
+
+
+        Ray r = Camera.main.ScreenPointToRay (inputPos + new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+        Debug.DrawRay(r.origin, r.direction * 100, Color.cyan);
+
         RaycastHit hit;
         if (Physics.Raycast(r, out hit))
             return hit.transform;
@@ -122,7 +131,7 @@ public class MobileInputManager : MonoBehaviour {
 
     public Vector3 GetRaycastHitPoint()
     {
-        Ray r = Camera.main.ScreenPointToRay(screenTouchPos);
+        Ray r = Camera.main.ViewportPointToRay(screenTouchPos);
         RaycastHit hit;
         if (Physics.Raycast(r, out hit))
             return hit.point;

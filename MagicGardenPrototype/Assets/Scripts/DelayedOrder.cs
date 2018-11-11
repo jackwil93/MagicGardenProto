@@ -6,6 +6,7 @@ public class DelayedOrder {
     public List<Order> ordersInPack = new List<Order>();
 }
 
+[System.Serializable]
 public class Order
 {
     public enum orderType { email, item};

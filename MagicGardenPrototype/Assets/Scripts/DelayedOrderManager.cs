@@ -64,9 +64,9 @@ public class DelayedOrderManager : MonoBehaviour
                     DeliverOrder(order);
             }
 
+            delayedOrders.RemoveAll(Delivered);
         }
 
-        delayedOrders.RemoveAll(Delivered);
 
         Debug.Log("Finished Checking Orders at: " + System.DateTime.Now.ToString("yyyy,MM,dd,HH:mm.ss,FFF"));
 

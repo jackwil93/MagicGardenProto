@@ -97,7 +97,7 @@ public class Shop : MonoBehaviour {
             focusedWindow.anchoredPosition = new Vector2(1000, focusedWindow.anchoredPosition.y);
 
         focusedWindow = panelTransform;
-        focusedWindow.anchoredPosition = new Vector2(-32, focusedWindow.anchoredPosition.y);
+        focusedWindow.anchoredPosition = new Vector2(-27.7f, focusedWindow.anchoredPosition.y);
 
 
 

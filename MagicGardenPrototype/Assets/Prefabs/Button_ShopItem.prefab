@@ -158,25 +158,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6d7535292ba634bbdc572c483df549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myShopItem:
-    gameItem:
-      itemType: 0
-      displayedName: 
-      potID: 0
-      plantID: 0
-      ageTime: 0
-      invSlotNumber: 999
-      inWorld: 0
-      placedPointName: 
-      placedPointX: 0
-      placedPointY: 0
-      placedPointZ: 0
-    buyPriceFlorets: 0
-    sellPriceFlorets: 0
-    buyPriceCrystals: 0
   itemName: {fileID: 114388413868241510}
   itemPrice: {fileID: 114394194864087524}
   itemImage: {fileID: 114939197625159978}
+  buyOrSell: 0
 --- !u!114 &114457857959593376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -315,7 +300,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 510.5, y: 145.5}
+  m_SizeDelta: {x: 392.7, y: 145.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224256991300244822
 RectTransform:
@@ -368,6 +353,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -181, y: 0.024979}
+  m_AnchoredPosition: {x: -143.95, y: 9.150009}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}

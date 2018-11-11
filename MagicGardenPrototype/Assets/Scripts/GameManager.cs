@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using MagicGlobal;
 
 public class GameManager : MobileInputManager {
-    
+
+    [Header("For Debug")]
+    public Text debugText;
+
     [Header ("Player Data")]
     public PlayerData playerData;
 
@@ -61,6 +65,11 @@ public class GameManager : MobileInputManager {
 
         //Start Loading Player Data
         GetComponent<XMLSaveLoad>().LoadGame();
+        Debug.Log("Loading going to the next stage...");
+
+        // If New Game, Do stuff...
+        if (playerData.newGame)
+            NewGame();
 
         // Update Currencies
         Currencies.OverrideFlorets(playerData.playerFlorets);
@@ -74,12 +83,23 @@ public class GameManager : MobileInputManager {
 
         // TESTING DateTime stuff
         GameDateTime.LogCurrentDateTime();
+        Debug.Log("Finished Updating DateTime");
+
     }
 
-    private void Update()
+    void NewGame()
+    {
+        Debug.Log("Setting up New Game stats...");
+        playerData.playerFlorets = 1000;
+        playerData.playerCrystals = 100;
+        playerData.newGame = false;
+        Debug.Log("Set up New Game Currency amounts. Set New Game to False");
+    }
+
+    private void FixedUpdate()
     {
         //if (currentScreen == GameStates.gameScreens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
-            base.Update();
+            base.FixedUpdate();
 
         if (mainCam.position != camMoveToPos)
         {
@@ -160,24 +180,6 @@ public class GameManager : MobileInputManager {
         cameraMoving = true;
 
         if (currentScreen == GameStates.gameScreens.mainGame)
-            if (currentCamPos - 1 < 0)
-                currentCamPos = cameraPosList.Count - 1;
-            else
-                currentCamPos--;
-
-        camMoveToPos = cameraPosList[currentCamPos].position;
-
-        if (currentScreen == GameStates.gameScreens.inventory)
-            MM.InventoryLeft();
-    }
-
-    public override void SwipeRight()
-    {
-        base.SwipeRight();
-
-        cameraMoving = true;
-
-        if (currentScreen == GameStates.gameScreens.mainGame)
             if (currentCamPos + 1 > cameraPosList.Count - 1)
                 currentCamPos = 0;
             else
@@ -188,6 +190,26 @@ public class GameManager : MobileInputManager {
 
         if (currentScreen == GameStates.gameScreens.inventory)
             MM.InventoryRight();
+
+    }
+
+    public override void SwipeRight()
+    {
+        base.SwipeRight();
+
+        
+        cameraMoving = true;
+
+        if (currentScreen == GameStates.gameScreens.mainGame)
+            if (currentCamPos - 1 < 0)
+                currentCamPos = cameraPosList.Count - 1;
+            else
+                currentCamPos--;
+
+        camMoveToPos = cameraPosList[currentCamPos].position;
+
+        if (currentScreen == GameStates.gameScreens.inventory)
+            MM.InventoryLeft();
     }
 
     public override void SwipeUp()
@@ -222,7 +244,11 @@ public class GameManager : MobileInputManager {
             {
                 Transform heldItem = GetSelectedObject();
 
-                if (heldItem.CompareTag("moveable") && !holdingMoveable)
+                //FOR DEBUG ONLY
+                if (heldItem != null)
+                debugText.text = "Held item: " + heldItem.name;
+
+                if (heldItem != null && heldItem.CompareTag("moveable") && !holdingMoveable)
                     PickUpObject(heldItem);
             }
 
@@ -477,22 +503,37 @@ public class GameManager : MobileInputManager {
 
     public void LoadPlayerData(PlayerData data) // Called from XMLSaveLoad
     {
+        Debug.Log("Game Manager getting info from PlayerData");
         playerData = data;
 
-        // Sort World Items from Inventory Items
-        foreach (GameItem item in playerData.allGameItems)
+        if (playerData.newGame == false)
         {
-            if (item.inWorld)
-                LoadItemToWorld(item);
-            else
-                LoadItemToInventory(item);
+            Debug.Log("Checking saved inventory...");
+            // Sort World Items from Inventory Items
+            foreach (GameItem item in playerData.allGameItems)
+            {
+                if (item.inWorld)
+                    LoadItemToWorld(item);
+                else
+                    LoadItemToInventory(item);
+            }
+            Debug.Log("Inventory and World Items Loaded");
         }
 
-        // Get Time Since Last Play
-        GameDateTime.SetRealTimeSinceLastPlay(playerData.savedMinuteOfYear, playerData.savedDayOfYear);
 
-        // Load and Check Delayed Orders AFTER Realtime Since Last Play
-        GetComponent<DelayedOrderManager>().AddListOfDelayedOrders(playerData.delayedOrdersUndelivered, GameDateTime.realTimeSinceLastPlay);
+        // Get Time Since Last Play
+        GameDateTime.SetRealTimeSinceLastPlay(playerData.newGame, playerData.savedMinuteOfYear, playerData.savedDayOfYear);
+
+        // Load and Check Delayed Orders AFTER Realtime Since Last Play ONLY if this is NOT a new game
+        if (playerData.newGame == false)
+        {
+            Debug.Log("Updating Undelivered Orders...");
+            GetComponent<DelayedOrderManager>().AddListOfDelayedOrders(playerData.delayedOrdersUndelivered, GameDateTime.realTimeSinceLastPlay);
+            Debug.Log("Undelivered Orders have been updated");
+
+        }
+
+        Debug.Log("Finished LoadPlayerData()");
     }
 
     

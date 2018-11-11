@@ -17,4 +17,5 @@ public class PlayerData
     public List<DelayedOrder> delayedOrdersUndelivered;
     public int savedMinuteOfYear;
     public int savedDayOfYear;
+    public bool newGame;
 }
