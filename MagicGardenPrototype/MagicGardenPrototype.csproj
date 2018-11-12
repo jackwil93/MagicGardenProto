@@ -268,6 +268,9 @@
     <Compile Include="Assets\Scripts\Shop.cs" />
     <Compile Include="Assets\Scripts\ShopItem.cs" />
     <Compile Include="Assets\Scripts\ShopItemButton.cs" />
+    <Compile Include="Assets\Scripts\Spells\Spell.cs" />
+    <Compile Include="Assets\Scripts\Spells\SpellRuneNode.cs" />
+    <Compile Include="Assets\Scripts\Spells\SpellTracker.cs" />
     <Compile Include="Assets\Scripts\SpriteBillboard.cs" />
     <Compile Include="Assets\Scripts\TextToDateTime.cs" />
     <Compile Include="Assets\Scripts\UIMovement.cs" />

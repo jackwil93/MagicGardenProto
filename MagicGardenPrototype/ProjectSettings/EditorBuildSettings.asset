@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/Main.unity
     guid: af8e5ba90bd2770439f3eeafe0e2587a
+  - enabled: 1
+    path: Assets/_Scenes/Spell Testing.unity
+    guid: a77da4650c89aea47afb7cf0bfe864d4
