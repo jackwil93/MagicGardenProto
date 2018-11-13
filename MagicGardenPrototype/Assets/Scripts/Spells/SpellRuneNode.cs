@@ -7,9 +7,15 @@ public class SpellRuneNode : MonoBehaviour {
     public ParticleSystem particleEffect;
     public Transform particleGroup;
 
+    public List<int> connectingNodeNumbers = new List<int>();
+
+    public List<SpellRuneConnection> connectingNodes = new List<SpellRuneConnection>();
+
     private void Start()
     {
         particleEffect = particleGroup.GetChild(transform.GetSiblingIndex()).GetComponent<ParticleSystem>();
+
+        StartCoroutine(SetUpNodeConnections());
     }
 
     public void HitRune()
@@ -23,5 +29,31 @@ public class SpellRuneNode : MonoBehaviour {
     public void ResetRune()
     {
         this.GetComponent<Image>().color = Color.white;
+
+        // Reset connections
+        foreach (SpellRuneConnection connection in connectingNodes)
+            connection.connected = false;
     }
+
+    IEnumerator SetUpNodeConnections()
+    {
+        yield return new WaitForEndOfFrame();
+
+        foreach (int i in connectingNodeNumbers)
+        {
+            SpellRuneConnection newConnection = new SpellRuneConnection();
+            newConnection.thisNode = this;
+            newConnection.subNode = GameObject.Find("SpellRune " + i).GetComponent<SpellRuneNode>();
+            connectingNodes.Add(newConnection);
+        }
+
+    }
+}
+
+[System.Serializable]
+public class SpellRuneConnection
+{
+    public SpellRuneNode thisNode;
+    public SpellRuneNode subNode;
+    public bool connected;
 }
