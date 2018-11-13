@@ -112,5 +112,4 @@ namespace MagicGlobal
         public int sellPriceFlorets;
         public int buyPriceCrystals;
     }
-   
 }

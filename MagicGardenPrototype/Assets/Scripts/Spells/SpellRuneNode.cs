@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class SpellRuneNode : MonoBehaviour {
-
+    public int spellRuneIndex;
     public ParticleSystem particleEffect;
     public Transform particleGroup;
 
@@ -14,7 +14,7 @@ public class SpellRuneNode : MonoBehaviour {
     private void Start()
     {
         particleEffect = particleGroup.GetChild(transform.GetSiblingIndex()).GetComponent<ParticleSystem>();
-
+        spellRuneIndex = transform.GetSiblingIndex() + 1;
         StartCoroutine(SetUpNodeConnections());
     }
 

@@ -559,6 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0100000003000000050000000a000000
@@ -644,6 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 03000000040000000500000007000000090000000b000000
@@ -694,7 +696,7 @@ GameObject:
   - component: {fileID: 131933365}
   - component: {fileID: 131933364}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -832,7 +834,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 87681133
+  randomSeed: 374906071
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4339,6 +4341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 020000000300000004000000
@@ -4424,6 +4427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0500000007000000090000000a0000000b00000003000000
@@ -4509,6 +4513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 03000000050000000600000008000000090000000b000000
@@ -4633,6 +4638,7 @@ RectTransform:
   m_Children:
   - {fileID: 1750407920}
   - {fileID: 59823447}
+  - {fileID: 788257575}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4708,7 +4714,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cast A Spell!
+  m_Text: Make the Pattern!
 --- !u!222 &401768497
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4911,6 +4917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0a0000000b0000000c000000
@@ -5035,7 +5042,7 @@ GameObject:
   - component: {fileID: 621240900}
   - component: {fileID: 621240899}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5206,7 +5213,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1355780971
+  randomSeed: 1833576462
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8583,7 +8590,7 @@ GameObject:
   - component: {fileID: 721854752}
   - component: {fileID: 721854751}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8754,7 +8761,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1351177106
+  randomSeed: -251287610
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -12118,6 +12125,111 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1001 &788257574
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 313387848}
+    m_Modifications:
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+        type: 2}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd, type: 2}
+  m_IsPrefabParent: 0
+--- !u!224 &788257575 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224915706687044174, guid: 0fd0cd935ea97554dacda0cdb8dcb8cd,
+    type: 2}
+  m_PrefabInternal: {fileID: 788257574}
 --- !u!1 &826431277
 GameObject:
   m_ObjectHideFlags: 0
@@ -12166,6 +12278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 02000000080000000b0000000d000000
@@ -12216,7 +12329,7 @@ GameObject:
   - component: {fileID: 868466237}
   - component: {fileID: 868466236}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12387,7 +12500,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -620768603
+  randomSeed: 2042489233
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -15764,7 +15877,7 @@ GameObject:
   - component: {fileID: 983597159}
   - component: {fileID: 983597158}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15935,7 +16048,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -981116648
+  randomSeed: -555033467
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -19312,7 +19425,7 @@ GameObject:
   - component: {fileID: 1285697858}
   - component: {fileID: 1285697857}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19483,7 +19596,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -369241607
+  randomSeed: -637284833
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -22895,6 +23008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0100000002000000040000000500000006000000070000000800000009000000
@@ -22980,6 +23094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 02000000030000000600000007000000080000000b000000
@@ -23139,6 +23254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0700000008000000090000000a0000000c0000000d0000000500000006000000
@@ -23224,6 +23340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 04000000090000000b0000000d000000
@@ -23274,7 +23391,7 @@ GameObject:
   - component: {fileID: 1561327689}
   - component: {fileID: 1561327688}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23445,7 +23562,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -202242700
+  randomSeed: 84083458
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -27044,7 +27161,7 @@ GameObject:
   - component: {fileID: 1648255279}
   - component: {fileID: 1648255278}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27215,7 +27332,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -675509419
+  randomSeed: -756038749
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -30739,7 +30856,18 @@ MonoBehaviour:
   - spellName: Fire
     spellCode: 13,10,8,7,6,3,1
     element: 1
+  currentRunePattern: {fileID: 11400000, guid: d52a685a22aa3cb4f9ad411a876e0c69, type: 2}
+  allRunePatterns:
+  - {fileID: 11400000, guid: 71aa42e57bf0fe74b82d4690b570c201, type: 2}
+  - {fileID: 11400000, guid: 43c1a145f66d0ed49a977a4ca740ac5e, type: 2}
+  - {fileID: 11400000, guid: 697e266b441b5254d8e9912d17cc0606, type: 2}
+  standardLineMaterial: {fileID: 2100000, guid: 1c0604ade890d9547bdf7577e52f31b9,
+    type: 2}
+  highlightLineMaterial: {fileID: 2100000, guid: 75975f2f3e2446340bc592ce8924961b,
+    type: 2}
   recordedRuneIndexes: 
+  allRuneNodes: []
+  validRunePairings: []
 --- !u!4 &1782551785
 Transform:
   m_ObjectHideFlags: 0
@@ -30988,7 +31116,7 @@ GameObject:
   - component: {fileID: 1858940200}
   - component: {fileID: 1858940199}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31159,7 +31287,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 941507875
+  randomSeed: -1822125230
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -34536,7 +34664,7 @@ GameObject:
   - component: {fileID: 1901328760}
   - component: {fileID: 1901328759}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34707,7 +34835,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1063987648
+  randomSeed: 1005885597
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -38262,6 +38390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0100000003000000060000000c000000
@@ -38393,7 +38522,7 @@ GameObject:
   - component: {fileID: 1995458190}
   - component: {fileID: 1995458189}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38564,7 +38693,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1557222140
+  randomSeed: 1333996911
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -41941,7 +42070,7 @@ GameObject:
   - component: {fileID: 2021500023}
   - component: {fileID: 2021500022}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42079,7 +42208,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 830603937
+  randomSeed: -410544468
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -45524,6 +45653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d2c991fc20fff448a0faf989c2c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellRuneIndex: 0
   particleEffect: {fileID: 0}
   particleGroup: {fileID: 1750407920}
   connectingNodeNumbers: 0600000007000000080000000b0000000c00000003000000
@@ -45574,7 +45704,7 @@ GameObject:
   - component: {fileID: 2083852676}
   - component: {fileID: 2083852675}
   m_Layer: 5
-  m_Name: Particle System
+  m_Name: Particle System8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45745,7 +45875,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1510343794
+  randomSeed: -955916562
   InitialModule:
     serializedVersion: 3
     enabled: 1
