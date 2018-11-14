@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222167216417512694}
   - component: {fileID: 114850556912457550}
   m_Layer: 5
-  m_Name: Text_Lebel_Header
+  m_Name: Text_Label_Header
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 224717261008997526}
   - component: {fileID: 222434903218850242}
   - component: {fileID: 114822209558252308}
+  - component: {fileID: 114394252757250662}
   m_Layer: 5
   m_Name: Text_Content
   m_TagString: Untagged
@@ -55,6 +56,8 @@ GameObject:
   - component: {fileID: 224648671157711488}
   - component: {fileID: 222699922901594952}
   - component: {fileID: 114976146339346948}
+  - component: {fileID: 114944443879439424}
+  - component: {fileID: 114342281231270236}
   m_Layer: 5
   m_Name: Panel_EmailPlayerResponse
   m_TagString: Untagged
@@ -62,6 +65,32 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114342281231270236
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1659836348860438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
+--- !u!114 &114394252757250662
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1519154937461340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!114 &114822209558252308
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,7 +123,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '[Content of email]'
+  m_Text: '[Email Content]'
 --- !u!114 &114850556912457550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -127,7 +156,29 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Your Reply:'
+  m_Text: Your Reply on [Day/Month/Year 00:00AM]
+--- !u!114 &114944443879439424
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1659836348860438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 10
+    m_Right: 10
+    m_Top: 10
+    m_Bottom: 10
+  m_ChildAlignment: 0
+  m_Spacing: 14.47
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 1
 --- !u!114 &114976146339346948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -184,12 +235,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224648671157711488}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 275.7, y: -43.9}
-  m_SizeDelta: {x: 484, y: 38.1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 484, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224648671157711488
 RectTransform:
@@ -201,15 +252,15 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 224717261008997526}
   - {fileID: 224094178052768414}
+  - {fileID: 224717261008997526}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 270.295, y: -799}
-  m_SizeDelta: {x: 540, y: 302.9}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 270, y: 0}
+  m_SizeDelta: {x: 540, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224717261008997526
 RectTransform:
@@ -222,10 +273,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224648671157711488}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 275.69995, y: -163.04996}
-  m_SizeDelta: {x: 484, y: 200.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 252, y: 0}
+  m_SizeDelta: {x: 484, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
