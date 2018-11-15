@@ -31,12 +31,24 @@ public class XMLSaveLoad : MonoBehaviour
     private void Start()
     {
         // Save every minute
-        //InvokeRepeating("SaveGame", 60, 60);
+        InvokeRepeating("SaveGame", 60, 60);
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+            SaveGame();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveGame();
     }
 
     public void SaveGame() // Called from Game Manager
     {
         Debug.Log("Saving...");
+        GameDateTime.LogCurrentDateTime();
         GameManager GM = GetComponent<GameManager>();
 
         SaveCurrencies(GM.playerData);

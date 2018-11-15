@@ -6,6 +6,7 @@ using MagicGlobal;
 
 public class Shop : MonoBehaviour {
     Inventory inv;
+    GameManager GM;
 
     [Header("Screen UI")]
     public Text floretsUI;
@@ -47,7 +48,8 @@ public class Shop : MonoBehaviour {
 
     private void Start()
     {
-        inv = Inventory.FindObjectOfType<Inventory>();
+        GM = FindObjectOfType<GameManager>();
+        inv = FindObjectOfType<Inventory>();
         CreateButtons();
         FocusWindow(seedShopContent.GetComponent<RectTransform>());
 
@@ -114,7 +116,7 @@ public class Shop : MonoBehaviour {
     void OpenBuyWindow(ShopItem itemToBuy) 
     {
         buyWindow.SetActive(true);
-        //buyWindowItemImage.sprite =     itemToBuy.gameItem.itemProperties.itemSprite;
+        buyWindowItemImage.sprite =     GM.GetSpriteSet(itemToBuy.gameItem.itemProperties.itemID).normalSprites[0];
         buyWindowItemName.text =        itemToBuy.gameItem.itemProperties.displayedName;
         buyWindowItemPrice.text =       itemToBuy.gameItem.itemProperties.buyPriceFlorets.ToString();
         buyWindowItemDescription.text = itemToBuy.gameItem.itemProperties.itemDescription;

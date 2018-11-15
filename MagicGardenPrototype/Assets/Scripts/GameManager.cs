@@ -44,7 +44,7 @@ public class GameManager : MobileInputManager {
     public List<Item> allPlantTypes = new List<Item>();
 
 
-    // int = itemID
+    // string = itemID
     Dictionary<string, ItemSprites> spriteDictionary = new Dictionary<string, ItemSprites>();
 
     private void Start()
@@ -125,7 +125,6 @@ public class GameManager : MobileInputManager {
         // FOR DEV TESTING PURPOSES ONLY
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
-            GameDateTime.LogCurrentDateTime();
             this.GetComponent<XMLSaveLoad>().SaveGame();
         }
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
@@ -138,7 +137,7 @@ public class GameManager : MobileInputManager {
             Debug.Log("New order created... " + newEmailOrder.orderID);
 
 
-            GetComponent<DelayedOrderManager>().AddNewOrder(newEmailOrder, 1);
+            GetComponent<DelayedOrderManager>().AddNewOrder(newEmailOrder, 1, "Test Order");
         }
     }
 

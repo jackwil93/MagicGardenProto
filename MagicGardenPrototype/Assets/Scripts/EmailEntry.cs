@@ -17,4 +17,5 @@ public class EmailEntry {
     public string playerReplyGBN;
     public bool opened;
     public bool loadedToGame;
+    public string dateTime;
 }

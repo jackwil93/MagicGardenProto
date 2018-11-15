@@ -249,25 +249,41 @@ public class MenuManager : MonoBehaviour {
     // Actually put the EmailEntry content into the email as a new panel in the Scroll View. Only if not yet loaded
     void CreateEmailConversationEntry(EmailEntry email)
     {
-        GameObject newEmailEntry = GameObject.Instantiate(emailContentPrefab, emailConvoScrollContent); 
-        newEmailEntry.transform.Find("Text_Content").GetComponent<Text>().text = email.bodyText;
 
-        // Check if GM Sprite Dictionary Contains Reference, if so, pull sprites
-        if (email.itemID != null && email.itemID != "" && email.itemID != " ")
-        {
-            Debug.Log("Attempting to Get Sprites for " + email.itemID);
-            newEmailEntry.transform.Find("Image_ItemOrder").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
-            Debug.Log("Retrived sprites");
-        }
+        GameObject prefabToUse;
+
+        // Check if this email is player or character
+        if (email.characterName == "Player")
+            prefabToUse = emailPlayerReplyPrefab;
         else
-            newEmailEntry.transform.Find("Image_ItemOrder").gameObject.SetActive(false);
+            prefabToUse = emailContentPrefab;
 
-        // Set up the Respond button
-        newEmailEntry.transform.Find("Button_Respond").GetComponent<Button>().onClick.AddListener(
-            delegate
+        GameObject newEmailEntry = GameObject.Instantiate(prefabToUse, emailConvoScrollContent); 
+        newEmailEntry.transform.FindDeepChild("Text_Content").GetComponent<Text>().text = email.bodyText;
+
+        if (email.characterName == "Player")
+            newEmailEntry.transform.Find("Text_Label_Header").GetComponent<Text>().text = "Your Response [" + email.dateTime + "]:";
+        else // If an NPC Email
+        {
+            // Check if GM Sprite Dictionary Contains Reference, if so, pull sprites
+            if (email.itemID != null && email.itemID != "" && email.itemID != " ")
             {
-                OpenEmailReplyWindow(email);
-            });
+                Debug.Log("Attempting to Get Sprites for " + email.itemID);
+                newEmailEntry.transform.FindDeepChild("Image_ItemOrder").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+                Debug.Log("Retrived sprites");
+            }
+            else
+                newEmailEntry.transform.FindDeepChild("Image_ItemOrder").gameObject.SetActive(false);
+           
+            
+            // Set up the Respond button
+            newEmailEntry.transform.FindDeepChild("Button_Respond").GetComponent<Button>().onClick.AddListener(
+                delegate
+                {
+                    OpenEmailReplyWindow(email);
+                });
+        }
+
 
         // Is now considered loaded and opened. NOTE: All emails set loaded to false when game loads for first time. 
         // Important so they can appear next time
@@ -282,7 +298,7 @@ public class MenuManager : MonoBehaviour {
         emailReplyWindow.transform.SetAsLastSibling();
 
         // Set up Images
-        emailReplyWindow.transform.Find("Image_Item").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+        emailReplyWindow.transform.FindDeepChild("Image_Item").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
 
         replyButtons.Clear();
         replyButtons.Add(replyButton1);

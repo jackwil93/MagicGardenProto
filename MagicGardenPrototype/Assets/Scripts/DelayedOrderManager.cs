@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.SimpleAndroidNotifications;
 
 public class DelayedOrderManager : MonoBehaviour
 {
@@ -17,16 +18,19 @@ public class DelayedOrderManager : MonoBehaviour
         InvokeRepeating("CheckOrders", 0, 60);
     }
 
-    public void AddNewOrder(Order newOrder, int delayTime)
+    public void AddNewOrder(Order newOrder, int delayTimeMins, string notificationMessage)
     {
         Debug.Log("New order..." + newOrder.orderID);
         DelayedOrder newDelayOrder = new DelayedOrder();
 
         Debug.Log("Created newDelayedOrder");
         newDelayOrder.ordersInPack.Add(newOrder);
-        newDelayOrder.minutesDelayed = delayTime;
+        newDelayOrder.minutesDelayed = delayTimeMins;
 
         delayedOrders.Add(newDelayOrder);
+
+        // Set Up Phone Notification
+        NotificationManager.SendWithAppIcon(System.TimeSpan.FromMinutes(delayTimeMins), "Magic Proto", notificationMessage, Color.white, NotificationIcon.Bell);
 
         Debug.Log("New DelayedOrder Added. An " + newDelayOrder.ordersInPack[0].myOrderType + " order to arrive in " + newDelayOrder.minutesDelayed + " mins");
     }

@@ -72,11 +72,12 @@ public class EmailManager : MonoBehaviour
 
         EmailEntry playerReplyEmail = new EmailEntry();
         playerReplyEmail.conversationID = currentEmail.conversationID;
-        playerReplyEmail.characterName = "player";
+        playerReplyEmail.characterName = "Player";
         playerReplyEmail.stage = currentEmail.stage;
         playerReplyEmail.entryID = currentEmail.conversationID + "_" + currentEmail.stage + "_" + "player";
         playerReplyEmail.bodyText = playerReplyFull;
         playerReplyEmail.received = true;
+        playerReplyEmail.dateTime = System.DateTime.Now.ToString("dddd MMM dd h:mm:ss tt");
 
         // Put player reply to allEmails List in the right spot
         int targetIndex = allEmailsInData.IndexOf(currentEmail) + 1;
@@ -124,7 +125,8 @@ public class EmailManager : MonoBehaviour
         emailOrder.myOrderType = Order.orderType.email;
         emailOrder.orderAmount = 1;
         emailOrder.orderID = replyEmail.entryID;
-        GetComponent<DelayedOrderManager>().AddNewOrder(emailOrder, 1); // 1 minute
+        GetComponent<DelayedOrderManager>().AddNewOrder
+            (emailOrder, 1, "You have a reply email from " + replyEmail.characterName); // 1 minute
 
         // Next time NPC Initial Email Order
         if (nextTimeEmail.entryID != null)
@@ -133,7 +135,12 @@ public class EmailManager : MonoBehaviour
             nextTimeEmailOrder.myOrderType = Order.orderType.email;
             nextTimeEmailOrder.orderAmount = 1;
             nextTimeEmailOrder.orderID = nextTimeEmail.entryID;
-            GetComponent<DelayedOrderManager>().AddNewOrder(nextTimeEmailOrder, 360); // Six hours
+
+            // Randomise delivery time between 1 - 6 hours
+            int deliveryTime = Random.Range(60, 361);
+
+            GetComponent<DelayedOrderManager>().AddNewOrder
+                (nextTimeEmailOrder, deliveryTime, "You have a new email from " + replyEmail.characterName + "!"); // Six hours
         }
 
     }
