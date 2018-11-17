@@ -28,6 +28,10 @@ public class InventoryUISlot : MonoBehaviour {
 
     public void PlaceItemInSlot(Transform newItem) // Called from GM and Inventory on Load
     {
+        if (newItem == null)
+            return;
+
+
         newItem.SetParent(this.transform);
         newItem.localPosition = Vector3.zero;
         newItem.GetComponent<RectTransform>().localScale = Vector3.one;

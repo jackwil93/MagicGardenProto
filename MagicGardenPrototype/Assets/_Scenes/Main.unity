@@ -9076,10 +9076,6 @@ MonoBehaviour:
     type: 2}
   worldItemsPool: []
   allWorldItemsInScene: []
-  allPotSprites:
-  - {fileID: 21300000, guid: 32791bcb3267e544c8f0f639034da79c, type: 3}
-  - {fileID: 21300000, guid: b513b6e61316c71478400bfb4464cd22, type: 3}
-  - {fileID: 21300000, guid: bc5fff062a96f9440aacea2d7f7e2ccf, type: 3}
   allPotTypes:
   - {fileID: 11400000, guid: ebc163b6923e8a14bb4b25c89d156cd5, type: 2}
   - {fileID: 11400000, guid: 3719d1af76007ce4aa25cedf36121992, type: 2}

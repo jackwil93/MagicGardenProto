@@ -35,8 +35,8 @@ public class GameManager : MobileInputManager {
     public List<WorldItem> allWorldItemsInScene = new List<WorldItem>();
 
 
-    [Header("All Pot Sprites")]
-    public List<Sprite> allPotSprites = new List<Sprite>();
+    //[Header("All Pot Sprites")]
+    //public List<Sprite> allPotSprites = new List<Sprite>();
 
     [Header("All Pot Types (Scriptables")]
     public List<Item> allPotTypes = new List<Item>();
@@ -96,6 +96,27 @@ public class GameManager : MobileInputManager {
         Debug.Log("Set up New Game Currency amounts. Set New Game to False");
     }
 
+    private void Update()
+    {
+        // FOR DEV TESTING PURPOSES ONLY
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            this.GetComponent<XMLSaveLoad>().SaveGame();
+        }
+        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+        {
+            Order newEmailOrder = new Order();
+            newEmailOrder.orderID = "davinta_0_normal_reply_b";
+            newEmailOrder.orderAmount = 1;
+            newEmailOrder.myOrderType = Order.orderType.email;
+
+            Debug.Log("New order created... " + newEmailOrder.orderID);
+
+
+            GetComponent<DelayedOrderManager>().AddNewOrder(newEmailOrder, 1, "Test Order");
+        }
+    }
+
     private void FixedUpdate()
     {
         //if (currentScreen == GameStates.gameScreens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
@@ -122,23 +143,7 @@ public class GameManager : MobileInputManager {
             heldObject.transform.position = screenTouchPos;
 
 
-        // FOR DEV TESTING PURPOSES ONLY
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
-        {
-            this.GetComponent<XMLSaveLoad>().SaveGame();
-        }
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
-        {
-            Order newEmailOrder = new Order();
-            newEmailOrder.orderID = "davinta_0_normal_reply_b";
-            newEmailOrder.orderAmount = 1;
-            newEmailOrder.myOrderType = Order.orderType.email;
-
-            Debug.Log("New order created... " + newEmailOrder.orderID);
-
-
-            GetComponent<DelayedOrderManager>().AddNewOrder(newEmailOrder, 1, "Test Order");
-        }
+        
     }
 
     public ItemSprites GetSpriteSet(string id)
@@ -419,12 +424,13 @@ public class GameManager : MobileInputManager {
 
     void PlaceInventoryItemInWorld()
     {
+        Debug.Log("Inv Item Dropped In World");
         // Get Holding Position
         Transform selectedObject = GetSelectedObject();
         // Check if being placed correctly
         if (selectedObject != null && selectedObject.CompareTag("placePoint"))
         {
-            if (selectedObject.GetComponent<PlacePoint>().empty)
+            if (selectedObject.GetComponent<PlacePoint>().empty && heldObject!= null)
             {
                 GameItem currentHeldGameItem = heldObject.GetComponent<InventoryItem>().myGameItem;
 

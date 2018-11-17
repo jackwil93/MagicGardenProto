@@ -10,7 +10,7 @@ using System.IO;
 
 public class SpellTracker : MonoBehaviour {
 
-    public GraphicRaycaster graphicRaycaster;
+    //public GraphicRaycaster graphicRaycaster;
     public LineRenderer playerLine;
     public Text headerText;
     public List<Spell> knownSpells = new List<Spell>();

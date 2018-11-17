@@ -27,12 +27,20 @@ public class MobileInputManager : MonoBehaviour {
 
         if (Input.GetMouseButton(0) || Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) // Could cause issues for 2 finger input later
         {
-            Vector3 fingerTouchPos = Vector3.zero;
-            if (Input.touchCount > 0)
-                fingerTouchPos = new Vector3 (Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0);
 
-            screenTouchPos = Input.mousePosition + fingerTouchPos;
-            Debug.Log("Screen touch pos = " + screenTouchPos);
+            Vector3 scaledFingerTouchPos = Vector3.zero;
+
+            if (Input.touchCount > 0)
+            {
+                Vector2 touchPos = Input.GetTouch(0).position;
+                Vector2 viewportTouch = Camera.main.ScreenToViewportPoint(touchPos);
+
+                scaledFingerTouchPos = new Vector3(Screen.width * viewportTouch.x, Screen.height * viewportTouch.y, 0);
+            }
+
+            //screenTouchPos = Input.mousePosition + scaledFingerTouchPos;
+            screenTouchPos = scaledFingerTouchPos;
+            //Debug.Log("Screen touch pos = " + screenTouchPos);
             // Stop bug on first input
             if (prevScreenTouchPos == Vector3.zero)
                 prevScreenTouchPos = screenTouchPos;
@@ -100,7 +108,7 @@ public class MobileInputManager : MonoBehaviour {
             inputPos += Input.GetTouch(0).position;
 
 
-        Ray r = Camera.main.ScreenPointToRay (inputPos + new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+        Ray r = Camera.main.ScreenPointToRay(inputPos);
         Debug.DrawRay(r.origin, r.direction * 100, Color.cyan);
 
         RaycastHit hit;
@@ -113,7 +121,7 @@ public class MobileInputManager : MonoBehaviour {
     public Transform GetSelectedGUIObject()
     {
         m_GUIPointerEventData = new PointerEventData(m_EventSystem);
-        m_GUIPointerEventData.position = screenTouchPos;
+        m_GUIPointerEventData.position = Input.GetTouch(0).position;
 
         List<RaycastResult> guiResults = new List<RaycastResult>();
         m_GUIRaycaster.Raycast(m_GUIPointerEventData, guiResults);

@@ -242,7 +242,7 @@ Canvas:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 44365230}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 1984299625}
@@ -30843,7 +30843,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8771619adf15eb34998a9ae4b7e07660, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphicRaycaster: {fileID: 35340406}
   playerLine: {fileID: 50595198}
   headerText: {fileID: 401768496}
   knownSpells:
