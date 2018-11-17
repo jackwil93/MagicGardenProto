@@ -523,6 +523,10 @@ public class GameManager : MobileInputManager {
         // Get Time Since Last Play
         GameDateTime.SetRealTimeSinceLastPlay(playerData.newGame, playerData.savedMinuteOfYear, playerData.savedDayOfYear);
 
+        // Load Emails now
+        GetComponent<XMLSaveLoad>().LoadEmailsFromJSON();
+
+
         // Load and Check Delayed Orders AFTER Realtime Since Last Play ONLY if this is NOT a new game
         if (playerData.newGame == false)
         {

@@ -34,30 +34,33 @@ public class XMLSaveLoad : MonoBehaviour
         InvokeRepeating("SaveGame", 60, 60);
     }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause)
-            SaveGame();
-    }
+    //private void OnApplicationPause(bool pause)
+    //{
+    //    if (pause)
+    //        SaveGame();
+    //}
 
     private void OnApplicationQuit()
     {
-        SaveGame();
+       // SaveGame();
     }
 
     public void SaveGame() // Called from Game Manager
     {
         Debug.Log("Saving...");
         GameDateTime.LogCurrentDateTime();
-        GameManager GM = GetComponent<GameManager>();
 
-        SaveCurrencies(GM.playerData);
-        SaveItems(GM, GM.playerData);
-        SaveDelayedOrders(GM.playerData);
-        SaveTime(GM.playerData);
-        SaveXML(GetComponent<GameManager>().playerData, saveFileName);
+        PlayerData playerData = GetComponent<GameManager>().playerData;
+
+        SaveCurrencies(playerData);
+        SaveItems(GetComponent<GameManager>(), playerData);
+        SaveDelayedOrders(playerData);
+        SaveTime(playerData);
+        SaveXML(playerData, saveFileName);
 
         SaveEmailsToJson();
+
+        Debug.Log("Finished Saving at " + System.DateTime.Now.ToLongTimeString());
     }
 
     private void SaveCurrencies(PlayerData pd)
@@ -72,7 +75,10 @@ public class XMLSaveLoad : MonoBehaviour
         Inventory inv = GetComponent<Inventory>();
 
         // Refresh Player Data
-        pd.allGameItems.Clear();
+        if (pd.allGameItems != null)
+            pd.allGameItems.Clear();
+
+        List<GameItem> tempList = new List<GameItem>();
         
         // Add all World Items to Player Data
         foreach (WorldItem wItem in GM.allWorldItemsInScene)
@@ -81,6 +87,8 @@ public class XMLSaveLoad : MonoBehaviour
         }
 
         // Add all Inventory Items to Player Data
+        
+
         pd.allGameItems.AddRange(inv.CheckInAllItems());
 
         Debug.Log("PlayerData GameItems Saved");
@@ -115,7 +123,7 @@ public class XMLSaveLoad : MonoBehaviour
         {
             Debug.Log("File does not exist");
             Directory.CreateDirectory(dir);
-            FileStream stream = new FileStream(dir + fileName + ".xml", FileMode.Create);
+            FileStream stream = new FileStream(dir + fileName + ".gic", FileMode.Create);
             stream.Close();
             
             Debug.Log("Created new XML file");
@@ -135,11 +143,6 @@ public class XMLSaveLoad : MonoBehaviour
             Debug.Log("Loaded");
         }
 
-
-        Debug.Log("Loading Emails...");
-        LoadEmailsFromJSON();
-        Debug.Log("Loaded Emails");
-
     }
 
     private void LoadPlayerDataXML(System.Type type, string fileName) // Called from LoadGame
@@ -152,7 +155,10 @@ public class XMLSaveLoad : MonoBehaviour
         {
             PlayerData newPlayerData = new PlayerData();
             newPlayerData.newGame = true;
+
             Debug.Log("New Player Data created");
+            SaveXML(newPlayerData, "ma");
+
 
             GetComponent<GameManager>().LoadPlayerData(newPlayerData);
             return;
@@ -170,36 +176,44 @@ public class XMLSaveLoad : MonoBehaviour
 
     void SaveEmailsToJson()
     {
+        // Unity does not allow saving to Resources folder at RunTime (makes sense)
+        // Must save to PersistentDataPath
+
         string data = JsonUtility.ToJson(GetComponent<EmailManager>().CheckInAllEmails(), true);
 
         Debug.Log("email Data being saved = " + data);
+
         File.WriteAllText(Application.persistentDataPath + "/data/" + "playerEmails.json", data);
         Debug.Log("New Email JSON Saved");
     }
 
 
-    void LoadEmailsFromJSON()
+    public void LoadEmailsFromJSON() // Called from Game Manager to ensure they are loaded before loading Delivered Items
     {
+        Debug.Log("Loading Emails...");
         
             string dataAsJson;
-            if (GetComponent<GameManager>().playerData.newGame || resetEmailData)
-            {
+        if (GetComponent<GameManager>().playerData.newGame || resetEmailData)
+        {
+            // If it's a new game, load all the starting emails from Resources
+            // Weird workaround so Android can load and read the JSON
+            Debug.Log("Resetting email data to original file in Assets/Data");
+            TextAsset jsonFile = Resources.Load("emaildata") as TextAsset;
+            string jsonText = jsonFile.ToString();
+            Debug.Log(jsonText);
 
-                // Weird workaround so Android can load and read the JSON
-                Debug.Log("Resetting email data to original file in Assets/Data");
-                TextAsset jsonFile = Resources.Load("emaildata") as TextAsset;
-                string jsonText = jsonFile.ToString();
-                Debug.Log(jsonText);
+            dataAsJson = jsonText;
+        }
+        else // Else load player's current emails from Persistent
+        {
+            Debug.Log("Loading player's saved email data");
+            string jsonFile = File.OpenText(Application.persistentDataPath + "/data/" + "playerEmails.json").ReadToEnd();
+            dataAsJson = jsonFile;
 
-                dataAsJson = jsonText;
-            }
-            else
-            {
-                Debug.Log("Loading player's saved email data");
-                TextAsset jsonFile = Resources.Load(Application.persistentDataPath + "/data/" + "playerEmails.json") as TextAsset;
-                string jsonText = jsonFile.ToString();
-                dataAsJson = jsonText;
-            }
+            //TextAsset jsonFile = Resources.Load("playerEmails") as TextAsset;
+            //string jsonText = jsonFile.ToString();
+            //dataAsJson = jsonText;
+        }
 
             string JsonString = fixJson(dataAsJson);
 
@@ -210,10 +224,11 @@ public class XMLSaveLoad : MonoBehaviour
 
 
             GetComponent<EmailManager>().SetUpAllEmails(newJSONList);
-      
+        Debug.Log("Loaded Emails");
+
     }
 
-    
+
 
     // The following was learned from: 
     // https://stackoverflow.com/questions/36239705/serialize-and-deserialize-json-and-json-array-in-unity/36244111#36244111

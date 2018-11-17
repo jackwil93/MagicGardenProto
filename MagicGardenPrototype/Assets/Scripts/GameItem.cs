@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Xml.Serialization;
 using MagicGlobal;
 
 //Base class for every kind of item in game that can be in world or in inventory
 [System.Serializable]
+[XmlType("GameItem")]
 public class GameItem {
     public ItemProperties itemProperties;
     // If you think about it, only a WorldItem would need both pot and plant ID... could be cleaned up

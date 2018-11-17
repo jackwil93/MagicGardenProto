@@ -274,14 +274,22 @@ public class MenuManager : MonoBehaviour {
             }
             else
                 newEmailEntry.transform.FindDeepChild("Image_ItemOrder").gameObject.SetActive(false);
-           
-            
+
+
             // Set up the Respond button
-            newEmailEntry.transform.FindDeepChild("Button_Respond").GetComponent<Button>().onClick.AddListener(
-                delegate
-                {
-                    OpenEmailReplyWindow(email);
-                });
+            Transform respondButton = newEmailEntry.transform.FindDeepChild("Button_Respond");
+
+            if (email.playerCanReply)
+            {
+                respondButton.GetComponent<Button>().onClick.AddListener(
+                    delegate
+                    {
+                        OpenEmailReplyWindow(email);
+                    });
+            }
+            else
+                respondButton.gameObject.SetActive(false);
+        
         }
 
 

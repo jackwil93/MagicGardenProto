@@ -9,6 +9,7 @@ public class EmailEntry {
     public string characterReplyGBN;
     public string bodyText;
     public string itemID;
+    public bool playerCanReply;
     public string playerReplyGood;
     public string playerReplyBad;
     public string playerReplyNeutral;

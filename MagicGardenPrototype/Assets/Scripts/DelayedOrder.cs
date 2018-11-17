@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 [System.Serializable]
+[XmlType("DelayedOrder")]
 public class DelayedOrder {
     public int minutesDelayed;
     public List<Order> ordersInPack = new List<Order>();

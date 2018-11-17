@@ -126,7 +126,7 @@ public class Inventory : MonoBehaviour
             if (slot.myItem != null)
                 itemsInInventory.Add(slot.myItem.myGameItem);
         }
-
+        Debug.Log(itemsInInventory);
         return itemsInInventory;
     }
 }
