@@ -35,7 +35,6 @@ public class MenuManager : MonoBehaviour {
     public GameObject emailConvoWindowPrefab;
     public GameObject emailPlayerReplyPrefab;
 
-    bool emailsLoaded;
     EmailEntry currentEmail; // The email of what you're replying to
 
     public List<string> conversationsLoaded = new List<string>();
@@ -87,8 +86,7 @@ public class MenuManager : MonoBehaviour {
         grapevineHomeCanvasGroup.SetActive(false);
 
 
-        if (!emailsLoaded)
-            PopulateEmailList();
+        PopulateConversationsList();
     }
 
     public void OpenDailyMarket()
@@ -172,29 +170,49 @@ public class MenuManager : MonoBehaviour {
         GM.SetScreen(0);
     }
 
-    void PopulateEmailList() // The Screen where it shows all conversations and the latest from each
+    void PopulateConversationsList() // The Screen where it shows all conversations and the latest from each
     {
         foreach (KeyValuePair<string, EmailConversation> eConvo in EM.emailConversationsDictionary)
         {
-            // Set up Email Conversation Prefab and Text, etc
-            GameObject newEmailConversation = GameObject.Instantiate(emailPrefab, emailListScrollContent);
+            EmailConversation conversation = eConvo.Value;
+            GameObject emailConversationHeader;
+
+            if (!eConvo.Value.uiHeaderExists)
+            {
+                // Set up Email Conversation Prefab and Text, etc
+                emailConversationHeader = GameObject.Instantiate(emailPrefab, emailListScrollContent);
+                conversation.inGameHeader = emailConversationHeader;
+                conversation.uiHeaderExists = true;
+            }
             EmailEntry latestEmail = eConvo.Value.GetLatestEmail();
 
-            newEmailConversation.transform.Find("Text_Name").GetComponent<Text>().text = latestEmail.characterName;
-            newEmailConversation.transform.Find("Text_Subject").GetComponent<Text>().text = latestEmail.bodyText;
+            conversation.inGameHeader.transform.Find("Text_Name").GetComponent<Text>().text = latestEmail.characterName;
+            conversation.inGameHeader.transform.Find("Text_Subject").GetComponent<Text>().text = latestEmail.bodyText;
+
+
+            Transform readButton = conversation.inGameHeader.transform.Find("Button_Open");
+
+            // Display "NEW" if has an unread email
+            if (conversation.unreadEmail)
+            {
+                readButton.GetComponent<Image>().color = Color.yellow;
+                readButton.GetComponentInChildren<Text>().text = "New Message!";
+            }
+            else
+            {
+                readButton.GetComponent<Image>().color = Color.white;
+                readButton.GetComponentInChildren<Text>().text = "Open";
+            }
+
 
             // Set up button
-            newEmailConversation.transform.Find("Button_Open").GetComponent<Button>().onClick.AddListener(delegate { CreateEmailConversation(latestEmail.conversationID); });
-        
+            readButton.GetComponent<Button>().onClick.AddListener(delegate { CreateEmailConversation(latestEmail.conversationID); });
 
-            // TO DO: If latest email is unopened, display a 'New' sprite
-            // (Do here)
+
         }
-
-        emailsLoaded = true;
     }
 
-    public void CreateEmailConversation(string convoID) // for Buttons
+    public void CreateEmailConversation(string convoID) // for Buttons. This runs when a Convo Header 'Open' Button is clicked.
     {
 
         // This is for optimisation. Rather than loading every email conversation on start, only load them once when opened
@@ -226,6 +244,7 @@ public class MenuManager : MonoBehaviour {
                 delegate
             {
                 newConvoWindow.transform.localPosition = Vector3.right * 2000;
+                PopulateConversationsList();
             }
                 );
 
@@ -243,7 +262,16 @@ public class MenuManager : MonoBehaviour {
         {
             if (email.loadedToGame == false)
                 CreateEmailConversationEntry(email);
+
+            if (email.opened == false)
+            {
+                email.opened = true;
+            }
+                EM.CheckNotifications();
         }
+
+        // Mark this Convo as 'Read'
+        EM.emailConversationsDictionary[convoID].MarkEmailsRead();
     }
 
     // Actually put the EmailEntry content into the email as a new panel in the Scroll View. Only if not yet loaded

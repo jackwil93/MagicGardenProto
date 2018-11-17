@@ -6,11 +6,13 @@ using System.Linq;
 
 public class EmailManager : MonoBehaviour
 {
+    public GameObject laptopScreenNotification;
+
     [SerializeField]
     public EmailListJSON emailsForJSON = new EmailListJSON();
 
     public List<EmailEntry> allEmailsInData = new List<EmailEntry>(); // Refers to ALL emails in the entire game
-    List<EmailEntry> allReceivedEmails = new List<EmailEntry>(); // The emails the player has received based on their choices. Saved to PD
+    //List<EmailEntry> allReceivedEmails = new List<EmailEntry>(); // The emails the player has received based on their choices. Saved to PD
 
     /// <summary>
     /// string = conversationID. The character's name in lowercase ie "davinta"
@@ -51,6 +53,8 @@ public class EmailManager : MonoBehaviour
             emailConversationsDictionary[email.conversationID].CheckMaxStage(email.stage);
 
         }
+
+        CheckNotifications();
     }
 
         /// <summary>
@@ -172,6 +176,9 @@ public class EmailManager : MonoBehaviour
         // Send to EmailConversation
         emailConversationsDictionary[nextEmail.conversationID].AddNextEmail(nextEmail);
 
+        // Show 'New' Notification
+        laptopScreenNotification.SetActive(true);
+
     }
 
     public EmailListJSON CheckInAllEmails()
@@ -191,7 +198,21 @@ public class EmailManager : MonoBehaviour
         return emailsForJSON;
     }
 
+    public void CheckNotifications()
+    {
+        Debug.Log("Checking Notifications");
 
+        laptopScreenNotification.SetActive(false);
+
+        foreach (EmailEntry receivedEmail in allEmailsInData)
+        {
+            if (receivedEmail.received && receivedEmail.opened == false)
+            {
+                laptopScreenNotification.SetActive(true);
+                break;
+            }
+        }
+    }
 
     
 
