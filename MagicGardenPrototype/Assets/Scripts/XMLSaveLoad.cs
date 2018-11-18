@@ -78,18 +78,8 @@ public class XMLSaveLoad : MonoBehaviour
         if (pd.allGameItems != null)
             pd.allGameItems.Clear();
 
-        List<GameItem> tempList = new List<GameItem>();
-        
-        // Add all World Items to Player Data
-        foreach (WorldItem wItem in GM.allWorldItemsInScene)
-        {
-            pd.allGameItems.Add(wItem.myGameItem);
-        }
-
-        // Add all Inventory Items to Player Data
-        
-
-        pd.allGameItems.AddRange(inv.CheckInAllItems());
+       
+        pd.allGameItems.AddRange(GM.RefreshAndGetAllGameItemsWorldAndInventory());
 
         Debug.Log("PlayerData GameItems Saved");
     }

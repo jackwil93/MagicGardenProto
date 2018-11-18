@@ -90,7 +90,14 @@ public class Shop : MonoBehaviour {
         tempItem.gameItem = new GameItem();
         tempItem.gameItem.itemProperties = sourceItem.itemProperties;
 
-        tempItem.itemIcon = sourceItem.itemSprites.normalSprites[0];
+        Sprite displaySprite;
+        // Seed sprites for plant types
+        if (sourceItem.itemProperties.itemType == ItemProperties.itemTypes.plant)
+            displaySprite = sourceItem.itemSprites.seedSprite;
+        else // If Pot or Decor. No other options here.
+            displaySprite = sourceItem.itemSprites.normalSprites[0];
+
+        tempItem.itemIcon = displaySprite;
 
         newItem.GetComponent<ShopItemButton>().myShopItem = tempItem;
     }
@@ -146,6 +153,9 @@ public class Shop : MonoBehaviour {
         // Make a new item, get the values, otherwise causes a bug where all purchases copy each others properties!
         GameItem newGameItem = new GameItem();
         newGameItem.itemProperties = currentShopItem.gameItem.itemProperties;
+
+        // If buying a plant, force it's type to Seed
+        newGameItem.itemProperties.currentStage = ItemProperties.itemStage.seed;
 
         if (inv.CheckIfFreeSlot(newGameItem))
         {

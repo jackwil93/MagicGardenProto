@@ -63,7 +63,7 @@ public class GameManager : MobileInputManager {
         foreach (Item itemPlant in allPlantTypes)
             spriteDictionary.Add(itemPlant.itemProperties.itemID, itemPlant.itemSprites);
 
-        //Start Loading Player Data
+        //Start Loading Player Data. Includes Updating GameDateTime
         GetComponent<XMLSaveLoad>().LoadGame();
         Debug.Log("Loading going to the next stage...");
 
@@ -74,6 +74,10 @@ public class GameManager : MobileInputManager {
         // Update Currencies
         Currencies.OverrideFlorets(playerData.playerFlorets);
         Currencies.OverrideCrystals(playerData.playerCrystals);
+
+        // Update WorldItems
+        foreach (WorldItem wi in allWorldItemsInScene)
+            wi.UpdateWorldItemStats();
 
         // Turn off PlacePoint Icons
         placePoints.AddRange(GameObject.FindObjectsOfType<PlacePoint>());
@@ -441,40 +445,103 @@ public class GameManager : MobileInputManager {
 
     void PlaceInventoryItemInWorld()
     {
-        Debug.Log("Inv Item Dropped In World");
+        if (heldObject == null)
+            return;
+
         // Get Holding Position
         Transform selectedObject = GetSelectedObject();
-        // Check if being placed correctly
-        if (selectedObject != null && selectedObject.CompareTag("placePoint"))
+        Debug.Log("Trying to place inv item to... " + selectedObject.name);
+        // Splits two ways: Either placing a Pot or Decor item to a Position Point
+        // OR placing a Seed into an empty Pot
+
+        GameItem itemBeingPlaced = heldObject.GetComponent<InventoryItem>().myGameItem;
+
+        // ----- PLACING POT OR DECOR ITEM INTO WORLD --------
+        if (itemBeingPlaced.itemProperties.itemType == ItemProperties.itemTypes.pot ||
+            itemBeingPlaced.itemProperties.itemType == ItemProperties.itemTypes.decor)
         {
-            if (selectedObject.GetComponent<PlacePoint>().empty && heldObject!= null)
+            // Check if being placed correctly
+            if (selectedObject != null && selectedObject.CompareTag("placePoint"))
             {
-                GameItem currentHeldGameItem = heldObject.GetComponent<InventoryItem>().myGameItem;
+                if (selectedObject.GetComponent<PlacePoint>().empty)
+                {
+                    GameItem currentHeldGameItem = heldObject.GetComponent<InventoryItem>().myGameItem;
 
-                currentHeldGameItem.placedPointName = selectedObject.name;
-                Vector3 placePointPos = selectedObject.position;
-                currentHeldGameItem.placedPointX = placePointPos.x;
-                currentHeldGameItem.placedPointY = placePointPos.y;
-                currentHeldGameItem.placedPointZ = placePointPos.z;
+                    currentHeldGameItem.placedPointName = selectedObject.name;
+                    Vector3 placePointPos = selectedObject.position;
+                    currentHeldGameItem.placedPointX = placePointPos.x;
+                    currentHeldGameItem.placedPointY = placePointPos.y;
+                    currentHeldGameItem.placedPointZ = placePointPos.z;
 
-                LoadItemToWorld(currentHeldGameItem);
+                    LoadItemToWorld(currentHeldGameItem);
 
-                heldObject.gameObject.SetActive(false);
 
-                // Remove the item from Inventory Item lists, as it is now in the World
-                GetComponent<Inventory>().RemoveItemFromInventory(currentHeldGameItem);
-                
-                ClearHeldObject();
-                HidePlacePointMarkers();
+                    //heldObject.gameObject.SetActive(false);
+
+                    // Remove the item from Inventory Item lists, as it is now in the World
+                    GetComponent<Inventory>().RemoveItemFromInventory(currentHeldGameItem);
+                    
+                    // Delete the bit of UI floating around
+                    Destroy(heldObject.gameObject);
+
+                    ClearHeldObject();
+                    HidePlacePointMarkers();
+
+                    Debug.Log("Inv Item Dropped In World");
+
+                }
+            }
+            // Else send it back to inventory slot
+            else
+            {
+                PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
+                currentScreen = GameStates.gameScreens.inventory;
+                MM.OpenInventory();
             }
         }
-        else
+
+        // --------- PLACING SEED INTO POT -----------
+        //
+        if (itemBeingPlaced.itemProperties.itemType == ItemProperties.itemTypes.plant)
         {
-            PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
-            currentScreen = GameStates.gameScreens.inventory;
-            MM.OpenInventory();
+
+            WorldItem targetPot;
+
+            if (selectedObject.GetComponent<WorldItem>())
+                targetPot = selectedObject.GetComponent<WorldItem>();
+            else
+                targetPot = null;
+
+            if (targetPot != null)
+            {
+                if (targetPot.myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
+                {
+                    PlaceSeedInPot(itemBeingPlaced, targetPot);
+                }
+
+                Debug.Log("Inv Seed Dropped In World Pot");
+
+            }
+
+            else
+            {
+                PlaceInventoryObjectInSlot(InvUI.lastUsedSlot);
+                currentScreen = GameStates.gameScreens.inventory;
+                MM.OpenInventory();
+            }
         }
 
+    }
+
+    void PlaceSeedInPot(GameItem plantItem, WorldItem targetPot)
+    {
+        targetPot.AddPlantToWorldPotItem(plantItem);
+
+        // Delete the bit of UI floating around
+        Destroy(heldObject.gameObject);
+
+        ClearHeldObject();
+        HidePlacePointMarkers();
     }
 
     void MoveWorldItemToInventory()
@@ -497,9 +564,12 @@ public class GameManager : MobileInputManager {
             // Open correct Inventory tab and child new Inventory item
             switch (gi.itemProperties.itemType)
             {
-                case ItemProperties.itemTypes.seed:
-                    InvUI.GoToScreen(0);
-                    newInvItem.transform.SetParent(inv.panelSeeds);
+                case ItemProperties.itemTypes.plant:
+                    if (gi.itemProperties.currentStage == ItemProperties.itemStage.seed) // Can't put a full plant into inventory! Seeds only
+                    {
+                        InvUI.GoToScreen(0);
+                        newInvItem.transform.SetParent(inv.panelSeeds);
+                    }
                     break;
                 case ItemProperties.itemTypes.pot:
                     InvUI.GoToScreen(1);
@@ -623,13 +693,20 @@ public class GameManager : MobileInputManager {
         GetComponent<Inventory>().AddItemToInventory(newGameItem);
     }
 
-    public List<GameItem> RefreshAndGetAllGameItemsWorldAndInventory()
+    public void RefreshListAllWorldItems()
+    {
+        allWorldItemsInScene.Clear();
+
+        allWorldItemsInScene.AddRange(FindObjectsOfType<WorldItem>());
+    }
+
+    public List<GameItem> RefreshAndGetAllGameItemsWorldAndInventory() // Called by XMLSaveLoad on Save
     {
         List<GameItem> allGameItems = new List<GameItem>();
 
         // Refresh and get all world items
         allWorldItemsInScene.Clear();
-        allWorldItemsInScene.AddRange(WorldItem.FindObjectsOfType<WorldItem>());
+        allWorldItemsInScene.AddRange(FindObjectsOfType<WorldItem>());
 
         // Add all world items to AllGameItems
         foreach (WorldItem wItem in allWorldItemsInScene)

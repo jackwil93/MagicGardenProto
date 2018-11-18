@@ -9078,10 +9078,14 @@ MonoBehaviour:
         elementNeeded: 0
         itemDescription: 
         currentStage: 0
+        ageStartGerm1Stage: 0
+        ageStartGerm2Stage: 0
+        ageStartBloomStage: 0
+        ageLifeTotal: 0
         buyPriceFlorets: 0
         sellPriceFlorets: 0
         buyPriceCrystals: 0
-      ageTime: 0
+      ageTimeMins: 0
       invSlotNumber: 0
       inWorld: 0
       placedPointName: 
@@ -21987,10 +21991,14 @@ MonoBehaviour:
       elementNeeded: 0
       itemDescription: 
       currentStage: 0
+      ageStartGerm1Stage: 0
+      ageStartGerm2Stage: 0
+      ageStartBloomStage: 0
+      ageLifeTotal: 0
       buyPriceFlorets: 0
       sellPriceFlorets: 0
       buyPriceCrystals: 0
-    ageTime: 0
+    ageTimeMins: 0
     invSlotNumber: 999
     inWorld: 0
     placedPointName: 
@@ -25188,7 +25196,8 @@ MonoBehaviour:
   sellWindowItemPrice: {fileID: 1846751468}
   shopItemButtonPrefab: {fileID: 1642226405454706, guid: 80afe39f6b5b5a944ba4d34402d3fffd,
     type: 2}
-  seedShopItems: []
+  seedShopItems:
+  - {fileID: 11400000, guid: 5f46da18ac4310e499755a390eec0d85, type: 2}
   potShopItems:
   - {fileID: 11400000, guid: ebc163b6923e8a14bb4b25c89d156cd5, type: 2}
   - {fileID: 11400000, guid: 105af334af4dcac4abda28960afa97f4, type: 2}

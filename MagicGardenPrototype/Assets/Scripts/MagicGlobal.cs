@@ -7,7 +7,7 @@ namespace MagicGlobal
 {
     public static class Elements
     {
-        public enum elementTypes { noElement, fire, ice, air, force, water, energy, summer, autumn, winter, spring, life, death };
+        public enum elementTypes { noElement, fire, ice, air, earth, water, energy, summer, autumn, winter, spring, life, death };
     }
 
     public static class GameStates
@@ -101,13 +101,18 @@ namespace MagicGlobal
     {
         public string itemID;
         public string displayedName;
-        public enum itemTypes { pot, plant, potWithPlant, seed, potion, decor };
+        public enum itemTypes { pot, plant, potWithPlant, potion, decor };
         public itemTypes itemType;
         public Elements.elementTypes baseElement;
         public Elements.elementTypes elementNeeded;
         public string itemDescription;
-        public enum itemStage { normal, seed, germ1, germ2, special, sick, dead}
+        public enum itemStage { normal, seed, planted, germ1, germ2, special, sick, dead}
         public itemStage currentStage;
+        [Header ("Stage Ends must be Cumulative and in Minutes")]
+        public int ageStartGerm1Stage; 
+        public int ageStartGerm2Stage; 
+        public int ageStartBloomStage;  // At end, dies.
+        public int ageLifeTotal;  // At end, dies.
         public int buyPriceFlorets;
         public int sellPriceFlorets;
         public int buyPriceCrystals;

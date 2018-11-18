@@ -43,8 +43,12 @@ public class Inventory : MonoBehaviour
         {
             case ItemProperties.itemTypes.pot:
                 return panelPots;
-            case ItemProperties.itemTypes.seed:
-                return panelSeeds;
+            case ItemProperties.itemTypes.plant:
+                if (item.itemProperties.currentStage == ItemProperties.itemStage.seed)
+                {
+                    return panelSeeds;
+                }
+                return null;
             case ItemProperties.itemTypes.decor:
                 return panelDecor;
             case ItemProperties.itemTypes.potion:
@@ -94,7 +98,7 @@ public class Inventory : MonoBehaviour
     public bool CheckIfFreeSlot(GameItem gameItem)
     {
         Transform targetTab = InventoryTab(gameItem);
-
+        Debug.Log(targetTab);
         List<InventoryUISlot> slots = new List<InventoryUISlot>();
         slots.AddRange(targetTab.GetComponentsInChildren<InventoryUISlot>());
 

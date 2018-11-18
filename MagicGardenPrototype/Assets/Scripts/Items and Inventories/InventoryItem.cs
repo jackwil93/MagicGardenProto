@@ -14,11 +14,14 @@ public class InventoryItem : MonoBehaviour {
     {
         myRawImage = GetComponentInChildren<RawImage>();
 
-        GameManager GM = GameManager.FindObjectOfType(typeof(GameManager)) as GameManager;
+        GameManager GM = FindObjectOfType(typeof(GameManager)) as GameManager;
+
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.plant)
+            myRawImage.texture = GM.GetSpriteSet(myGameItem.itemProperties.itemID).seedSprite.texture;
+
 
         if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.pot)
-        {
             myRawImage.texture = GM.GetSpriteSet(myGameItem.itemProperties.itemID).normalSprites[0].texture;
-        }
+
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class ItemSprites {
     public Sprite seedSprite;
+    public Sprite plantedSprite;
     public Sprite deadSprite;
     [Space(10)]
     public List<Sprite> germ1Sprites;

@@ -13,10 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   referenceIcon: {fileID: 2800000, guid: a8588191682034f4ba43dc71116ad664, type: 3}
   itemSprites:
-    seedSprite: {fileID: 0}
+    seedSprite: {fileID: 21300000, guid: 873ce9b57b1bb9840aa0db76226a32cc, type: 3}
+    plantedSprite: {fileID: 21300000, guid: 1d1e8210b4384c947933d427f777101a, type: 3}
     deadSprite: {fileID: 0}
-    germ1Sprites: []
-    germ2Sprites: []
+    germ1Sprites:
+    - {fileID: 21300000, guid: 619dde7d4bfc312429542df16d409692, type: 3}
+    germ2Sprites:
+    - {fileID: 21300000, guid: 6f421c0c0a0545a4d839f4f9c90b9605, type: 3}
     normalSprites:
     - {fileID: 21300000, guid: a8588191682034f4ba43dc71116ad664, type: 3}
     - {fileID: 21300000, guid: ccdedd3d4880e8d47a7bbc02825d7414, type: 3}
@@ -28,7 +31,11 @@ MonoBehaviour:
     baseElement: 0
     elementNeeded: 0
     itemDescription: A cute curly green vine. Doesn't grow very tall. Likes to dance.
-    currentStage: 0
-    buyPriceFlorets: 0
-    sellPriceFlorets: 0
+    currentStage: 1
+    ageStartGerm1Stage: 5
+    ageStartGerm2Stage: 10
+    ageStartBloomStage: 30
+    ageLifeTotal: 999
+    buyPriceFlorets: 50
+    sellPriceFlorets: 80
     buyPriceCrystals: 0
