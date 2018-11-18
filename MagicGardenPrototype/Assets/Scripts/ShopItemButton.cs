@@ -21,6 +21,7 @@ public class ShopItemButton : MonoBehaviour {
             UpdateShopItemInfo();
 
         GetComponent<Button>().onClick.AddListener(OnClickCustom);
+
     }
 
     public void UpdateShopItemInfo()

@@ -28,7 +28,8 @@ public class Shop : MonoBehaviour {
 
 
     public GameObject shopItemButtonPrefab;
-    public ShopItem currentItem;
+    public ShopItem currentShopItem; // For Buying
+    WorldItem selectedWorldItem; // For Selling
 
     public List<Item> seedShopItems = new List<Item>();
     public List<Item> potShopItems = new List<Item>();
@@ -45,6 +46,8 @@ public class Shop : MonoBehaviour {
     // For switching shop windows
     RectTransform focusedWindow;
 
+    // Get a Total List of all GameItems Here. Makes Life Easier when Handling Selling
+    List<GameItem> itemsToSell = new List<GameItem>();
 
     private void Start()
     {
@@ -107,9 +110,7 @@ public class Shop : MonoBehaviour {
 
     public void InspectShopItem(ShopItemButton shopButton, ShopItem item) // Called by ShopItemButton. Delegate Applied on ShopItemButton Start
     {
-        if (shopButton.buyOrSell == ShopItemButton.saleType.sell)
-            OpenSellWindow(item);
-        else
+        // After Recent Changes (Nov 18) Shop Items ONLY exist in Buy Menu
             OpenBuyWindow(item);
     }
 
@@ -121,32 +122,35 @@ public class Shop : MonoBehaviour {
         buyWindowItemPrice.text =       itemToBuy.gameItem.itemProperties.buyPriceFlorets.ToString();
         buyWindowItemDescription.text = itemToBuy.gameItem.itemProperties.itemDescription;
 
-        currentItem = itemToBuy;
+        currentShopItem = itemToBuy;
         Debug.Log("Current item = " + itemToBuy.ToString());
     }
 
-    void OpenSellWindow(ShopItem itemToSell) 
+    public void OpenSellWindow(WorldItem itemToSell) // Called from GM. The window that pops up: "Do you want to sell this item"?
     {
         sellWindow.SetActive(true);
-        //sellWindowItemImage.sprite =     itemToSell.gameItem.itemProperties.itemSprite;
-        sellWindowItemName.text =        itemToSell.gameItem.itemProperties.displayedName;
-        sellWindowItemPrice.text =       itemToSell.gameItem.itemProperties.sellPriceFlorets.ToString();
-        sellWindowItemDescription.text = itemToSell.gameItem.itemProperties.itemDescription;
+        sellWindowItemImage.sprite = itemToSell.GetWorldItemSprites().normalSprites[0];
+        sellWindowItemName.text =        itemToSell.myGameItem.itemProperties.displayedName;
+        sellWindowItemPrice.text =       itemToSell.myGameItem.itemProperties.sellPriceFlorets.ToString();
+        sellWindowItemDescription.text = itemToSell.myGameItem.itemProperties.itemDescription;
 
-        currentItem = itemToSell;
+        selectedWorldItem = itemToSell;
+
+        //instancesOfCurrentItem = GM.GetInstancesOfGameItemOwnedWorldAndInv(itemToSell.gameItem.itemProperties.itemID);
+        //currentItem = itemToSell[0];
     }
 
     public void BuyItem()
     {
-        Debug.Log("Buying item, type = " + currentItem.gameItem.itemProperties.itemType.ToString());
+        Debug.Log("Buying item, type = " + currentShopItem.gameItem.itemProperties.itemType.ToString());
         // Make a new item, get the values, otherwise causes a bug where all purchases copy each others properties!
         GameItem newGameItem = new GameItem();
-        newGameItem.itemProperties = currentItem.gameItem.itemProperties;
+        newGameItem.itemProperties = currentShopItem.gameItem.itemProperties;
 
         if (inv.CheckIfFreeSlot(newGameItem))
         {
-            if (Currencies.SubtractFlorets(currentItem.gameItem.itemProperties.buyPriceFlorets) 
-                && Currencies.SubtractCrystals(currentItem.gameItem.itemProperties.buyPriceCrystals))
+            if (Currencies.SubtractFlorets(currentShopItem.gameItem.itemProperties.buyPriceFlorets) 
+                && Currencies.SubtractCrystals(currentShopItem.gameItem.itemProperties.buyPriceCrystals))
             {
 
                 inv.AddItemToInventory(newGameItem);
@@ -157,6 +161,19 @@ public class Shop : MonoBehaviour {
         }
         else
             Debug.LogWarning("No Free Slots to purchase this item");
+    }
+
+    public void SellItem() // Runs when the 'Sell' Button is Pressed in the Sell Item Window
+    {
+        Currencies.AddFlorets(selectedWorldItem.myGameItem.itemProperties.sellPriceFlorets);
+
+        GameObject.Find(selectedWorldItem.myGameItem.placedPointName).GetComponent<PlacePoint>().empty = true;
+        GM.allWorldItemsInScene.Remove(selectedWorldItem);
+        Destroy(selectedWorldItem.gameObject);
+
+        UpdateCurrenciesUI();
+
+        sellWindow.SetActive(false);
     }
 
 
@@ -193,29 +210,45 @@ public class Shop : MonoBehaviour {
         crystalsUI.text = Currencies.crystals + " Crystals ";
     }
 
-    public void UpdateSellButtons() // Called when the Sell tab is open in the Shop Window
+
+    public void EnterSellMode() // When "Start Selling" Button is clicked
     {
-        GameManager GM = GameManager.FindObjectOfType<GameManager>();
-        List<GameItem> allGameItems = GM.RefreshAndGetAllGameItemsWorldAndInventory();
+        GM.SetScreen(GameStates.gameScreens.selling);
+        GameObject.Find("Laptop UI").GetComponent<UIMovement>().MoveOffScreen();
 
-        // Clear existing buttons
-        foreach (Transform t in sellContent)
-            Destroy(t.gameObject);
-
-        // Set up new buttons
-        foreach (GameItem gi in allGameItems)
-        {
-            GameObject newButton = Instantiate(shopItemButtonPrefab, sellContent);
-            ShopItem itemToSell = new ShopItem();
-            itemToSell.gameItem = gi;
-            
-
-            ShopItemButton newShopButton = newButton.GetComponent<ShopItemButton>();
-
-            newShopButton.myShopItem = itemToSell;
-            newShopButton.buyOrSell = ShopItemButton.saleType.sell;
-            newShopButton.UpdateShopItemInfo();
-        }
+        // All sellable items should animate
     }
+
+    public void ExitSellMode() // When user swipes down in Sell Mode. Called from GM
+    {
+        GM.SetScreen(GameStates.gameScreens.laptop);
+        GameObject.Find("Laptop UI").GetComponent<UIMovement>().MoveOnScreen();
+
+    }
+
+    //public void UpdateSellButtons() // Called when the Sell tab is open in the Shop Window. Lists all items the player has to Sell
+    //{
+    //    GameManager GM = FindObjectOfType<GameManager>();
+    //    itemsToSell.Clear();
+    //    itemsToSell = GM.RefreshAndGetAllGameItemsWorldAndInventory();
+
+    //    // Clear existing buttons
+    //    foreach (Transform t in sellContent)
+    //        Destroy(t.gameObject);
+
+    //    // Set up new buttons
+    //    foreach (GameItem gi in itemsToSell)
+    //    {
+    //        GameObject newButton = Instantiate(shopItemButtonPrefab, sellContent);
+    //        ShopItem itemToSell = new ShopItem();
+    //        itemToSell.gameItem = gi;
+
+    //        ShopItemButton newShopButton = newButton.GetComponent<ShopItemButton>();
+
+    //        newShopButton.myShopItem = itemToSell;
+    //        newShopButton.buyOrSell = ShopItemButton.saleType.sell;
+    //        newShopButton.UpdateShopItemInfo();
+    //    }
+    //}
 
 }

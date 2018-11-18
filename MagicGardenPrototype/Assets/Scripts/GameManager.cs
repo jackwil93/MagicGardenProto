@@ -151,9 +151,9 @@ public class GameManager : MobileInputManager {
         return spriteDictionary[id];
     }
 
-    public void SetScreen(int enumValue) // Called when click on Interactive
+    public void SetScreen(GameStates.gameScreens screen) // Called when click on Interactive
     {
-        currentScreen = (GameStates.gameScreens)enumValue;
+        currentScreen = screen;
 
         switch (currentScreen)
         {
@@ -173,8 +173,19 @@ public class GameManager : MobileInputManager {
         base.SingleTapRelease();
         Debug.Log("Game Manager registered Single Tap Release!");
 
-        if (GetSelectedObject() != null && GetSelectedObject().CompareTag("interactive") && currentScreen == GameStates.gameScreens.mainGame)
-            SetScreen((int)GetSelectedObject().GetComponent<Interactive>().screenToOpen);
+        Transform tappedObject = GetSelectedObject();
+
+        if (tappedObject != null)
+        {
+            // For opening screens
+            if (tappedObject.CompareTag("interactive") && currentScreen == GameStates.gameScreens.mainGame)
+                SetScreen(tappedObject.GetComponent<Interactive>().screenToOpen);
+
+            // For Selling
+            if (currentScreen == GameStates.gameScreens.selling && tappedObject.GetComponent<WorldItem>())
+                FindObjectOfType<Shop>().OpenSellWindow(tappedObject.GetComponent<WorldItem>());
+        }
+
     }
 
     public override void SwipeLeft()
@@ -183,7 +194,7 @@ public class GameManager : MobileInputManager {
 
         cameraMoving = true;
 
-        if (currentScreen == GameStates.gameScreens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
             if (currentCamPos + 1 > cameraPosList.Count - 1)
                 currentCamPos = 0;
             else
@@ -204,7 +215,7 @@ public class GameManager : MobileInputManager {
         
         cameraMoving = true;
 
-        if (currentScreen == GameStates.gameScreens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
             if (currentCamPos - 1 < 0)
                 currentCamPos = cameraPosList.Count - 1;
             else
@@ -237,6 +248,12 @@ public class GameManager : MobileInputManager {
         {
             currentScreen = GameStates.gameScreens.mainGame;
             MM.CloseInventory();
+        }
+
+        // Exit Sell Mode if in Sell Mode
+        if (currentScreen == GameStates.gameScreens.selling)
+        {
+            FindObjectOfType<Shop>().ExitSellMode();
         }
     }
 
@@ -504,6 +521,24 @@ public class GameManager : MobileInputManager {
             Destroy(temp);
             Debug.Log("Old World Item destroyed");
         }
+    }
+
+    public List<GameItem> GetInstancesOfGameItemOwnedWorldAndInv(string gameItemID) // Could be useful for when buying
+    {
+        List<GameItem> tempList = new List<GameItem>();
+
+        // Get Inventory Items
+        tempList.AddRange(GetComponent<Inventory>().GetAllByGameItemID(gameItemID));
+        
+        
+        // Get World Items
+        foreach (WorldItem worldItem in allWorldItemsInScene)
+        {
+            if (worldItem.myGameItem.itemProperties.itemID == gameItemID)
+                tempList.Add(worldItem.myGameItem);
+        }
+
+        return tempList;
     }
 
     public void LoadPlayerData(PlayerData data) // Called from XMLSaveLoad

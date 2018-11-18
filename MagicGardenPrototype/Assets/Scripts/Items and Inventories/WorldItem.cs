@@ -11,6 +11,8 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
     SpriteRenderer mainSprite; // The central sprite. Pot, potions, decor, etc
     SpriteRenderer topSprite; // A raised sprite for plants or things that sit on top
 
+    // Might be worth having an enum for single or double sprite (ie pot vs pot with plant)
+
     ItemSprites spriteSet;
 
     public void SetupSelf(GameManager gm, GameObject myGameObject, GameItem data) // Called from GameManager.
@@ -45,6 +47,11 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
             spriteSet = GM.GetSpriteSet(myGameItem.itemProperties.itemID);
             mainSprite.sprite = spriteSet.normalSprites[0];
         }
+    }
+
+    public ItemSprites GetWorldItemSprites() // Called from Shop when Sell Window Opened
+    {
+        return spriteSet;
     }
 
 }

@@ -112,6 +112,24 @@ public class Inventory : MonoBehaviour
         }
         return false;
     }
+
+    /// <summary>
+    /// Returns a List of all Game Items in Inventory that match the gameItemID. Used for Selling
+    /// </summary>
+    /// <param name="gameItemID"></param>
+    /// <returns></returns>
+    public List<GameItem> GetAllByGameItemID(string gameItemID)
+    {
+        List<GameItem> temp = new List<GameItem>();
+
+        foreach (GameItem invGI in itemsInInventory)
+        {
+            if (invGI.itemProperties.itemID == gameItemID)
+                temp.Add(invGI);
+        }
+
+        return temp;
+    }
     
 
 

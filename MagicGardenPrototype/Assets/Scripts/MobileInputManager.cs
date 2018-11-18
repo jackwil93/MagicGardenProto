@@ -196,7 +196,7 @@ public class MobileInputManager : MonoBehaviour {
     public virtual void Drag()
     {
         // Override for input where the user has been holding their finger down and is now dragging across screen slowly
-        Debug.Log("Touch Input: Drag()");
+        // Debug.Log("Touch Input: Drag()");
     }
 
     private void GetSwipeDirection()

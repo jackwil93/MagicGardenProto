@@ -13,7 +13,7 @@ namespace MagicGlobal
     public static class GameStates
     {
         public enum gameScreens
-        { mainGame, emails, inventory, laptop, spellGame, settings, transactions };
+        { mainGame, emails, inventory, laptop, spellGame, settings, transactions, selling };
     }
 
     public static class GameEvents

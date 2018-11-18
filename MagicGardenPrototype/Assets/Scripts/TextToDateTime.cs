@@ -13,6 +13,5 @@ public class TextToDateTime : MonoBehaviour {
     private void OnGUI()
     {
         GetComponent<Text>().text = System.DateTime.Now.ToString("dddd MMM dd h:mm:ss tt");
-        Debug.Log("Updated time OnGUI");
     }
 }
