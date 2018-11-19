@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 namespace MagicGlobal
 {
@@ -117,9 +118,47 @@ namespace MagicGlobal
         public int sellPriceFlorets;
         public int buyPriceCrystals;
     }
+
+    public class MagicTools
+    {
+
+        /// <summary>
+        /// Makes a Deep Copy of a Serializable Object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// https://www.infoworld.com/article/3109870/application-development/my-two-cents-on-deep-copy-vs-shallow-copy-in-net.html
+        public static T DeepCopy<T>(T obj)
+        {
+            if (!typeof(T).IsSerializable)
+
+            {
+                throw new Exception("The source object must be serializable");
+            }
+            if (System.Object.ReferenceEquals(obj, null))
+
+            {
+                throw new Exception("The source object must not be null");
+            }
+            T result = default(T);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                formatter.Serialize(memoryStream, obj);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                result = (T)formatter.Deserialize(memoryStream);
+                memoryStream.Close();
+            }
+
+            return result;
+        }
+    }
+
 }
 
-// Extensions
+// Extensions and Tools
 
 //https://answers.unity.com/questions/799429/transformfindstring-no-longer-finds-grandchild.html
 public static class TransformDeepChildExtension
@@ -139,3 +178,5 @@ public static class TransformDeepChildExtension
         return null;
     }
 }
+
+

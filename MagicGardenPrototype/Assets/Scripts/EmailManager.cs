@@ -140,8 +140,8 @@ public class EmailManager : MonoBehaviour
             nextTimeEmailOrder.orderAmount = 1;
             nextTimeEmailOrder.orderID = nextTimeEmail.entryID;
 
-            // Randomise delivery time between 1 - 6 hours
-            int deliveryTime = Random.Range(60, 361);
+            // Randomise delivery time between 1 - 6 hours (adjusted to 1 hour for development)
+            int deliveryTime = 60;
 
             GetComponent<DelayedOrderManager>().AddNewOrder
                 (nextTimeEmailOrder, deliveryTime, "You have a new email from " + replyEmail.characterName + "!"); // Six hours

@@ -28,8 +28,8 @@ MonoBehaviour:
     itemID: plant_curlyVine
     displayedName: Curly Vine
     itemType: 1
-    baseElement: 0
-    elementNeeded: 0
+    baseElement: 4
+    elementNeeded: 3
     itemDescription: A cute curly green vine. Doesn't grow very tall. Likes to dance.
     currentStage: 1
     ageStartGerm1Stage: 5

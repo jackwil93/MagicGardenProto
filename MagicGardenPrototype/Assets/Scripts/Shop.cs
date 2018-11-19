@@ -187,31 +187,7 @@ public class Shop : MonoBehaviour {
     }
 
 
-    // Thank you http://technico.qnownow.com/how-copy-properties-one-object-another-c/
-    public void CopyProperties(object objSource, object objDestination)
-    {
-        //get the list of all properties in the destination object
-        var destProps = objDestination.GetType().GetProperties();
-
-        Debug.Log("CopyProperties()");
-        //get the list of all properties in the source object
-        foreach (var sourceProp in objSource.GetType().GetProperties())
-        {
-            Debug.Log("Copying property...");
-            foreach (var destProperty in destProps)
-            {
-                //if we find match between source & destination properties name, set
-                //the value to the destination property
-                if (destProperty.Name == sourceProp.Name &&
-                        destProperty.PropertyType.IsAssignableFrom(sourceProp.PropertyType))
-                {
-                    destProperty.SetValue(destProps, sourceProp.GetValue(
-                        sourceProp, new object[] { }), new object[] { });
-                    Debug.Log("Copied property " + destProperty.Name);
-                }
-            }
-        }
-    }
+    
 
 
     public void UpdateCurrenciesUI()

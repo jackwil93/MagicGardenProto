@@ -125,17 +125,18 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
     /// <param name="incomingPlantItem"></param>
     public void AddPlantToWorldPotItem(GameItem incomingPlantScriptable) // Called from GM
     {
-        GameItem incomingPlantItem = new GameItem();
-        incomingPlantItem.itemProperties = incomingPlantScriptable.itemProperties;
 
-        incomingPlantItem.placedPointName = myGameItem.placedPointName;
-        incomingPlantItem.placedPointX = myGameItem.placedPointX;
-        incomingPlantItem.placedPointY = myGameItem.placedPointY;
-        incomingPlantItem.placedPointZ = myGameItem.placedPointZ;
-        incomingPlantItem.basePotID = myGameItem.itemProperties.itemID; // IMPORTANT. Allows loading of Pot Sprite on Game Re-Open
+
+        GameItem cloneOfIncomingPlantItem = MagicTools.DeepCopy<GameItem>(incomingPlantScriptable);
+
+        cloneOfIncomingPlantItem.placedPointName = myGameItem.placedPointName;
+        cloneOfIncomingPlantItem.placedPointX = myGameItem.placedPointX;
+        cloneOfIncomingPlantItem.placedPointY = myGameItem.placedPointY;
+        cloneOfIncomingPlantItem.placedPointZ = myGameItem.placedPointZ;
+        cloneOfIncomingPlantItem.basePotID = myGameItem.itemProperties.itemID; // IMPORTANT. Allows loading of Pot Sprite on Game Re-Open
 
         secondaryGameItem = myGameItem;
-        myGameItem = incomingPlantItem;
+        myGameItem = cloneOfIncomingPlantItem;
 
         myGameItem.itemProperties.itemType = ItemProperties.itemTypes.potWithPlant;
         myGameItem.inWorld = true;
