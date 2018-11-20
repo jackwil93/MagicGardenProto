@@ -37,14 +37,14 @@ public class CameraController : MonoBehaviour {
     {
         if (movingToPreset)
         {
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 3);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5);
 
             float dot = Quaternion.Dot(transform.rotation, targetRotation);
             Debug.Log("Dot to target = " + dot);
 
             
 
-        if (Mathf.Abs (dot) > 0.994f)
+        if (Mathf.Abs (dot) > 0.99999f)
             movingToPreset = false;
         }
 
@@ -59,7 +59,32 @@ public class CameraController : MonoBehaviour {
 
     public void CamMoveRight()
     {
-        Debug.Log("Current Y rotation = " + this.transform.rotation.y);
+       
+        int targetIndex = presetYPosList.IndexOf(GetClosestRotationPos()) + 1;
+
+        if (targetIndex == presetYPosList.Count)
+            targetIndex = 0;
+
+        targetRotation = presetYPosList[targetIndex];
+
+        movingToPreset = true;
+
+    }
+
+    public void CamMoveLeft()
+    {
+        int targetIndex = presetYPosList.IndexOf(GetClosestRotationPos()) - 1;
+
+        if (targetIndex < 0)
+            targetIndex = presetYPosList.Count - 1;
+
+        targetRotation = presetYPosList[targetIndex];
+
+        movingToPreset = true;
+    }
+
+    Quaternion GetClosestRotationPos()
+    {
         Quaternion currentRotation = this.transform.rotation;
         Quaternion closestRotation = new Quaternion();
         float smallestAngle = 999;
@@ -77,37 +102,7 @@ public class CameraController : MonoBehaviour {
             }
         }
 
-        //foreach (float presetY in presetYPosList)
-        //{
-
-
-        //    if (angle < smallestAngle)
-        //    {
-        //        Debug.Log("Closest pos = " + presetY + "| Angle of " + angle);
-        //        smallestAngle = angle;
-        //        closestPosY = presetY;
-        //    }
-        //}
-
-
-        int targetIndex = presetYPosList.IndexOf(closestRotation) + 1;
-
-        if (targetIndex == presetYPosList.Count)
-            targetIndex = 0;
-
-
-        //targetRotation = closestRotation;
-        targetRotation = presetYPosList[targetIndex];
-
-
-        Debug.Log("Target Rotation = " + targetRotation);
-        movingToPreset = true;
-
-    }
-
-    public void CamMoveLeft()
-    {
-
+        return closestRotation;
     }
 
 }

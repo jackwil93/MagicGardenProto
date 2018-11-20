@@ -4293,7 +4293,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 190931466}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1494449883}
+        m_MethodName: CamMoveLeft
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &190931466
@@ -28452,7 +28463,7 @@ Transform:
   - {fileID: 2123343003}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 79.004005, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 162.98001, z: 0}
 --- !u!114 &1494449883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28466,9 +28477,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   presetYPosList:
   - {x: 0, y: 0, z: 0, w: 1}
-  - {x: 0, y: -0.75, z: 0, w: 0.66}
-  - {x: 0, y: 0.98, z: 0, w: 0.17}
-  - {x: 0, y: 0.63, z: 0, w: 0.77}
+  - {x: 0, y: 0.6511112, z: 0, w: 0.7589823}
+  - {x: 0, y: 0.9889907, z: 0, w: 0.1479781}
+  - {x: 0, y: -0.7450953, z: 0, w: 0.6669581}
   cameraIsMoving: 0
 --- !u!1 &1499917511
 GameObject:
