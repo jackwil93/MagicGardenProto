@@ -13,11 +13,15 @@ public class PlayerData
     [XmlArray("SavedGameItems")]
     [XmlArrayItem("GameItem")]
     public List<GameItem> allGameItems = new List<GameItem>();
+    [XmlArray("SavedShopItems")]
+    [XmlArrayItem("ItemForSale")]
+    public List<GameItem> itemsInShop = new List<GameItem>();
     [XmlArray("DelayedOrdersUndelivered")]
     [XmlArrayItem("DelayedOrder")]
     public List<DelayedOrder> delayedOrdersUndelivered = new List<DelayedOrder>();
     public int savedMinuteOfYear;
     public int savedDayOfYear;
+    public int shopRating; // 0 - 5, 5 Star Rating
     public bool newGame;
 
 }

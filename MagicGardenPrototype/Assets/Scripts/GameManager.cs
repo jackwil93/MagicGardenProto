@@ -175,7 +175,7 @@ public class GameManager : MobileInputManager {
     public override void SingleTapRelease()
     {
         base.SingleTapRelease();
-        Debug.Log("Game Manager registered Single Tap Release!");
+        //Debug.Log("Game Manager registered Single Tap Release!");
 
         Transform tappedObject = GetSelectedObject();
 
@@ -638,6 +638,9 @@ public class GameManager : MobileInputManager {
         // Load Emails now
         GetComponent<XMLSaveLoad>().LoadEmailsFromJSON();
 
+        // Load Shop Items
+        FindObjectOfType<Shop>().LoadItemsForSale(playerData.itemsInShop);
+
 
         // Load and Check Delayed Orders AFTER Realtime Since Last Play ONLY if this is NOT a new game
         if (playerData.newGame == false)
@@ -699,6 +702,17 @@ public class GameManager : MobileInputManager {
         allWorldItemsInScene.Clear();
 
         allWorldItemsInScene.AddRange(FindObjectsOfType<WorldItem>());
+    }
+
+    public ItemProperties GetPotOriginal(string requestedItemID)
+    {
+        foreach (Item pot in allPotTypes)
+        {
+            if (pot.itemProperties.itemID == requestedItemID)
+                return pot.itemProperties;
+        }
+
+        return null;
     }
 
     public List<GameItem> RefreshAndGetAllGameItemsWorldAndInventory() // Called by XMLSaveLoad on Save

@@ -8,7 +8,7 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
     GameManager GM;
     public GameItem myGameItem; // Overwritten when has a seed planted.
 
-    GameItem secondaryGameItem; // For pots with plants. 'secondary' is the pot as plant becomes main item
+    public GameItem secondaryGameItem; //{ get; private set; } // For pots with plants. 'secondary' is the pot as plant becomes main item
 
     SpriteRenderer mainSprite; // The central sprite. Pot, potions, decor, etc
     SpriteRenderer topSprite; // A raised sprite for plants or things that sit on top
@@ -97,7 +97,16 @@ public class WorldItem : MonoBehaviour { // Must be MonoBehaviour so it can exis
 
         // Get Sprites from GM Sprite Dictionary
         SetUpSprites();
-        // TODO: Add getting sprites for plants. Long way off yet. Will need seed planting etc first
+
+        // If Pot with Plant, create the GameItem for the Pot
+        if (myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
+        {
+            ItemProperties cloneOfPotScrObj = MagicTools.DeepCopy<ItemProperties>(GM.GetPotOriginal(myGameItem.basePotID));
+            GameItem potGI = new GameItem();
+            potGI.itemProperties = cloneOfPotScrObj;
+
+            secondaryGameItem = potGI;
+        }
 
 
         // Finally, tick bool

@@ -20,8 +20,8 @@ public class XMLSaveLoad : MonoBehaviour
     // InventoryItemXML is what each Item is translated to for saving to XML (Scriptables cant be loaded via XML)
 
     public string saveFileName = "ma";
-
     string dir;
+    PlayerData pd;
 
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class XMLSaveLoad : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-       // SaveGame();
+        SaveGame();
     }
 
     public void SaveGame() // Called from Game Manager
@@ -50,27 +50,28 @@ public class XMLSaveLoad : MonoBehaviour
         Debug.Log("Saving...");
         GameDateTime.LogCurrentDateTime();
 
-        PlayerData playerData = GetComponent<GameManager>().playerData;
+        pd = GetComponent<GameManager>().playerData;
 
-        SaveCurrencies(playerData);
-        SaveItems(GetComponent<GameManager>(), playerData);
-        SaveDelayedOrders(playerData);
-        SaveTime(playerData);
-        SaveXML(playerData, saveFileName);
+        SaveCurrencies();
+        SaveItems(GetComponent<GameManager>());
+        SaveShop();
+        SaveDelayedOrders();
+        SaveTime();
+        SaveXML(pd, saveFileName);
 
         SaveEmailsToJson();
 
         Debug.Log("Finished Saving at " + System.DateTime.Now.ToLongTimeString());
     }
 
-    private void SaveCurrencies(PlayerData pd)
+    private void SaveCurrencies()
     {
         pd.playerFlorets = Currencies.florets;
         pd.playerCrystals = Currencies.crystals;
         Debug.Log("PlayerData Currency Saved");
     }
     
-    private void SaveItems(GameManager GM, PlayerData pd)
+    private void SaveItems(GameManager GM)
     {
         Inventory inv = GetComponent<Inventory>();
 
@@ -84,14 +85,24 @@ public class XMLSaveLoad : MonoBehaviour
         Debug.Log("PlayerData GameItems Saved");
     }
 
-    private void SaveDelayedOrders(PlayerData pd)
+    private void SaveShop()
+    {
+        pd.itemsInShop.Clear();
+
+        pd.itemsInShop.AddRange(FindObjectOfType<Shop>().SaveItemsForSale());
+
+
+        Debug.Log("PlayerData Shop Items Saved");
+    }
+
+    private void SaveDelayedOrders()
     {
         pd.delayedOrdersUndelivered = GetComponent<DelayedOrderManager>().GetAllDelayedOrders();
         Debug.Log("PlayerData Undelivered Orders Saved");
     }
 
 
-    private void SaveTime(PlayerData pd)
+    private void SaveTime()
     {
         pd.savedMinuteOfYear = (int)GameDateTime.LogCurrentDateTime().x;
         pd.savedDayOfYear = (int)GameDateTime.LogCurrentDateTime().y;

@@ -168,40 +168,40 @@ public class MobileInputManager : MonoBehaviour {
     public virtual void SingleTapRelease()
     {
         // Override for Single Tap input. Registered on release
-        Debug.Log("Touch Input: Single Tap Release");
+        //Debug.Log("Touch Input: Single Tap Release");
     }
 
 
     public virtual void SwipeUp()
     {
-        Debug.Log("Touch Input: Swipe Up");
+        //Debug.Log("Touch Input: Swipe Up");
     }
     public virtual void SwipeDown()
     {
-        Debug.Log("Touch Input: Swipe Down");
+        //Debug.Log("Touch Input: Swipe Down");
 
     }
     public virtual void SwipeLeft()
     {
-        Debug.Log("Touch Input: Swipe Left");
+        //Debug.Log("Touch Input: Swipe Left");
 
     }
     public virtual void SwipeRight()
     {
-        Debug.Log("Touch Input: Swipe Right");
+        //Debug.Log("Touch Input: Swipe Right");
 
     }
     public virtual void HoldDown()
     {
         // Override for input where the user is holding their finger in one spot
-        Debug.Log("Touch Input: Hold Down()");
+        //Debug.Log("Touch Input: Hold Down()");
         
     }
 
     public virtual void HoldRelease()
     {
         // Override for input release after being held down. Registered on release
-        Debug.Log("Touch Input: Hold Release");
+        //Debug.Log("Touch Input: Hold Release");
     }
 
     public virtual void Drag()

@@ -170,6 +170,9 @@ public class MenuManager : MonoBehaviour {
         GM.SetScreen(0);
     }
 
+
+    #region Emails
+
     void PopulateConversationsList() // The Screen where it shows all conversations and the latest from each
     {
         foreach (KeyValuePair<string, EmailConversation> eConvo in EM.emailConversationsDictionary)
@@ -374,7 +377,6 @@ public class MenuManager : MonoBehaviour {
         emailReplyWindow.SetActive(false);
     }
 
-    
 
     void SubmitReply(string gbn, string replyText)
     {
@@ -386,7 +388,7 @@ public class MenuManager : MonoBehaviour {
         CreateEmailConversationEntry(EM.emailConversationsDictionary[currentEmail.conversationID].GetLatestEmail());
     }
 
-   
+    #endregion
 
-   
+
 }

@@ -26,6 +26,11 @@ public class Shop : MonoBehaviour {
     public Text     sellWindowItemDescription;
     public Text     sellWindowItemPrice;
 
+    [Header ("ShopFront Elements")]
+    public Transform shopWindowContent;
+    public GameObject saleItemButtonPrefab;
+    public GameObject salesSummaryWindow;
+
 
     public GameObject shopItemButtonPrefab;
     public ShopItem currentShopItem; // For Buying
@@ -40,26 +45,35 @@ public class Shop : MonoBehaviour {
     public Transform potShopContent;
     public Transform decorShopContent;
 
-    [Space(20)]
-    public Transform sellContent;
 
     // For switching shop windows
     RectTransform focusedWindow;
 
     // Get a Total List of all GameItems Here. Makes Life Easier when Handling Selling
-    List<GameItem> itemsToSell = new List<GameItem>();
+    //List<GameItem> itemsToSell = new List<GameItem>();
+
+    // The actual List of items that appear in the Selling Window
+    [SerializeField]
+    public List<ShopItem> itemsForSale = new List<ShopItem>();
+
+    public int saleChance = 10; // + 10 for every 1 in PlayerData ShopRating
 
     private void Start()
     {
         GM = FindObjectOfType<GameManager>();
         inv = FindObjectOfType<Inventory>();
-        CreateButtons();
+        CreateBuyButtons();
         FocusWindow(seedShopContent.GetComponent<RectTransform>());
 
         Invoke("UpdateCurrenciesUI", 0.1f);
+
+        saleChance += (GM.playerData.shopRating * 10);
+
+        SalesOverInactiveTime();
+        InvokeRepeating("RandomSale", 60, 60);
     }
 
-    void CreateButtons()
+    void CreateBuyButtons()
     {
         foreach (Item seedItem in seedShopItems)
         {
@@ -83,12 +97,14 @@ public class Shop : MonoBehaviour {
 
     }
 
+    
+
     void AssignProperties(GameObject newItem, Item sourceItem)
     {
 
         ShopItem tempItem = new ShopItem();
-        tempItem.gameItem = new GameItem();
-        tempItem.gameItem.itemProperties = sourceItem.itemProperties;
+        tempItem.mainGameItem = new GameItem();
+        tempItem.mainGameItem.itemProperties = sourceItem.itemProperties;
 
         Sprite displaySprite;
         // Seed sprites for plant types
@@ -97,7 +113,7 @@ public class Shop : MonoBehaviour {
         else // If Pot or Decor. No other options here.
             displaySprite = sourceItem.itemSprites.normalSprites[0];
 
-        tempItem.itemIcon = displaySprite;
+        tempItem.mainItemIcon = displaySprite;
 
         newItem.GetComponent<ShopItemButton>().myShopItem = tempItem;
     }
@@ -111,23 +127,23 @@ public class Shop : MonoBehaviour {
         focusedWindow = panelTransform;
         focusedWindow.anchoredPosition = new Vector2(-27.7f, focusedWindow.anchoredPosition.y);
 
-
-
     }
 
     public void InspectShopItem(ShopItemButton shopButton, ShopItem item) // Called by ShopItemButton. Delegate Applied on ShopItemButton Start
     {
-        // After Recent Changes (Nov 18) Shop Items ONLY exist in Buy Menu
+        if (shopButton.buyOrSell == ShopItemButton.saleType.buy)
             OpenBuyWindow(item);
+            
+            // TODO - Ability to cancel sale and put item back in world
     }
 
     void OpenBuyWindow(ShopItem itemToBuy) 
     {
         buyWindow.SetActive(true);
-        buyWindowItemImage.sprite =     GM.GetSpriteSet(itemToBuy.gameItem.itemProperties.itemID).normalSprites[0];
-        buyWindowItemName.text =        itemToBuy.gameItem.itemProperties.displayedName;
-        buyWindowItemPrice.text =       itemToBuy.gameItem.itemProperties.buyPriceFlorets.ToString();
-        buyWindowItemDescription.text = itemToBuy.gameItem.itemProperties.itemDescription;
+        buyWindowItemImage.sprite =     GM.GetSpriteSet(itemToBuy.mainGameItem.itemProperties.itemID).normalSprites[0];
+        buyWindowItemName.text =        itemToBuy.mainGameItem.itemProperties.displayedName;
+        buyWindowItemPrice.text =       itemToBuy.mainGameItem.itemProperties.buyPriceFlorets.ToString();
+        buyWindowItemDescription.text = itemToBuy.mainGameItem.itemProperties.itemDescription;
 
         currentShopItem = itemToBuy;
         Debug.Log("Current item = " + itemToBuy.ToString());
@@ -149,18 +165,18 @@ public class Shop : MonoBehaviour {
 
     public void BuyItem()
     {
-        Debug.Log("Buying item, type = " + currentShopItem.gameItem.itemProperties.itemType.ToString());
+        Debug.Log("Buying item, type = " + currentShopItem.mainGameItem.itemProperties.itemType.ToString());
         // Make a new item, get the values, otherwise causes a bug where all purchases copy each others properties!
         GameItem newGameItem = new GameItem();
-        newGameItem.itemProperties = currentShopItem.gameItem.itemProperties;
+        newGameItem.itemProperties = currentShopItem.mainGameItem.itemProperties;
 
         // If buying a plant, force it's type to Seed
         newGameItem.itemProperties.currentStage = ItemProperties.itemStage.seed;
 
         if (inv.CheckIfFreeSlot(newGameItem))
         {
-            if (Currencies.SubtractFlorets(currentShopItem.gameItem.itemProperties.buyPriceFlorets) 
-                && Currencies.SubtractCrystals(currentShopItem.gameItem.itemProperties.buyPriceCrystals))
+            if (Currencies.SubtractFlorets(currentShopItem.mainGameItem.itemProperties.buyPriceFlorets) 
+                && Currencies.SubtractCrystals(currentShopItem.mainGameItem.itemProperties.buyPriceCrystals))
             {
 
                 inv.AddItemToInventory(newGameItem);
@@ -173,18 +189,125 @@ public class Shop : MonoBehaviour {
             Debug.LogWarning("No Free Slots to purchase this item");
     }
 
-    public void SellItem() // Runs when the 'Sell' Button is Pressed in the Sell Item Window
-    {
-        Currencies.AddFlorets(selectedWorldItem.myGameItem.itemProperties.sellPriceFlorets);
 
+    public void AddItemToSales() // Runs when the 'Sell' Button is Pressed in the Sell Item Window
+    {
+        ShopItem newShopItem = new ShopItem();
+        newShopItem.mainGameItem = selectedWorldItem.myGameItem;
+
+        if (selectedWorldItem.myGameItem.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
+            newShopItem.secondaryGameItem = selectedWorldItem.secondaryGameItem;
+
+        itemsForSale.Add(newShopItem);
+
+        // Destroy World Object
         GameObject.Find(selectedWorldItem.myGameItem.placedPointName).GetComponent<PlacePoint>().empty = true;
         GM.allWorldItemsInScene.Remove(selectedWorldItem);
         Destroy(selectedWorldItem.gameObject);
-
-        UpdateCurrenciesUI();
-
-        sellWindow.SetActive(false);
     }
+
+    public void RefreshShopWindow() // Called whenever the player visits their shop
+    {
+        foreach (Transform child in shopWindowContent)
+            Destroy(child.gameObject);
+
+        foreach (ShopItem itemSelling in itemsForSale)
+        {
+            GameObject saleItemPrefab = Instantiate(saleItemButtonPrefab, shopWindowContent);
+            ShopItemButton shopButton = saleItemPrefab.GetComponent<ShopItemButton>();
+
+            shopButton.myShopItem = itemSelling;
+            shopButton.buyOrSell = ShopItemButton.saleType.sell;
+
+            shopButton.UpdateShopItemInfo();
+
+            if (itemSelling.sold)
+                saleItemButtonPrefab.transform.Find("Text_Sold").gameObject.SetActive(true);
+            else
+                saleItemButtonPrefab.transform.Find("Text_Sold").gameObject.SetActive(false);
+
+        }
+
+    }
+
+    void SalesOverInactiveTime()
+    {
+        for (int i = GameDateTime.realTimeSinceLastPlay; i > 0; i --)
+        {
+            RandomSale();
+        }
+    }
+
+    void RandomSale()
+    {
+        Debug.Log("Random Sale, pass or fail...");
+
+        // for each minute passed, there is a 10% chance somebody buys an item. This % (fame) increases with more sales
+        int itemIndex = Random.Range(0, itemsForSale.Count);
+
+        int roll = Random.Range(0, 100);
+
+        if (roll <= saleChance)
+            ItemIsSold(itemsForSale[itemIndex]);
+        Debug.Log("Random Sale failed");
+        
+    }
+
+    public void ItemIsSold(ShopItem gameItem)
+    {
+        gameItem.sold = true;
+        Debug.Log(gameItem.mainGameItem.itemProperties.itemID + " has been sold!");
+    }
+
+    public void CollectSales() // Called from Collect Sales button
+    {
+        List<ShopItem> itemsToProcess = new List<ShopItem>();
+
+        foreach (ShopItem saleItem in itemsForSale)
+            if (saleItem.sold)
+            {
+                itemsToProcess.Add(saleItem);
+            }
+
+        ProcessSales(itemsToProcess);
+    }
+
+    void ProcessSales(List<ShopItem> itemsSold)
+    {
+        // Open Window
+        salesSummaryWindow.gameObject.SetActive(true);
+
+        int earnings = 0;
+        int numberSold = itemsSold.Count;
+
+        foreach (ShopItem item in itemsSold)
+        {
+            earnings += item.mainGameItem.itemProperties.sellPriceFlorets;
+
+            if (item.secondaryGameItem != null)
+                earnings += item.secondaryGameItem.itemProperties.sellPriceFlorets;
+
+            // Remove it from the list of items
+            itemsForSale.Remove(item);
+        }
+
+        salesSummaryWindow.transform.Find("Text_Earnings").GetComponent<Text>().text = "+" + earnings.ToString() + " florets";
+        salesSummaryWindow.transform.Find("Text_Summary").GetComponent<Text>().text = "You sold " + numberSold + " items!";
+
+        Currencies.AddFlorets(earnings);
+
+    }
+
+    //public void SellItem() // 
+    //{
+    //    Currencies.AddFlorets(selectedWorldItem.myGameItem.itemProperties.sellPriceFlorets);
+
+    
+
+    //    UpdateCurrenciesUI();
+
+    //    sellWindow.SetActive(false);
+    //}
 
 
     
@@ -210,6 +333,50 @@ public class Shop : MonoBehaviour {
         GM.SetScreen(GameStates.gameScreens.laptop);
         GameObject.Find("Laptop UI").GetComponent<UIMovement>().MoveOnScreen();
 
+    }
+
+
+    /// <summary>
+    /// Runs on Game Startup. Not the same as displaying the items in the window. Try UpdateItemsForSale in MenuManager
+    /// </summary>
+    /// <param name="itemsLoaded"></param>
+    public void LoadItemsForSale(List<GameItem> itemsLoaded) // Called From GM (TODO)
+    {
+        GM = FindObjectOfType<GameManager>();
+
+        foreach (GameItem loadedGI in itemsLoaded)
+        {
+            ShopItem newShopItem = new ShopItem();
+            newShopItem.mainGameItem = loadedGI;
+
+            // If pot with plant, add the pot as secondary GameItem
+            if (loadedGI.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
+            {
+                ItemProperties originalPot = GM.GetPotOriginal(loadedGI.basePotID);
+                ItemProperties cloneOfPotScrObj = MagicTools.DeepCopy<ItemProperties>(originalPot);
+                GameItem potGI = new GameItem();
+                potGI.itemProperties = cloneOfPotScrObj;
+
+                newShopItem.secondaryGameItem = potGI;
+            }
+
+            // Add the created ShopItem to the list of items for sale
+            itemsForSale.Add(newShopItem); 
+        }
+
+        Debug.Log(itemsForSale.Count + " Items loaded to Items For Sale");
+    }
+
+    public List<GameItem> SaveItemsForSale() // For Saving. Called from XML SaveLoad (TODO)
+    {
+        // Turn all ShopItems in itemsForSale into Game Items (just grab the main Game Item, the secondary can be ref'd via basePotID)
+
+        List<GameItem> tempList = new List<GameItem>();
+
+        foreach (ShopItem si in itemsForSale)
+            tempList.Add(si.mainGameItem);
+
+        return tempList;
     }
 
     //public void UpdateSellButtons() // Called when the Sell tab is open in the Shop Window. Lists all items the player has to Sell

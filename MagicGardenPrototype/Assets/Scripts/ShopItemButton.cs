@@ -26,14 +26,26 @@ public class ShopItemButton : MonoBehaviour {
 
     public void UpdateShopItemInfo()
     {
-        itemName.text = myShopItem.gameItem.itemProperties.displayedName;
+        itemName.text = myShopItem.mainGameItem.itemProperties.displayedName;
+        int price = 0;
 
         if (buyOrSell == saleType.buy)
-            itemPrice.text = myShopItem.gameItem.itemProperties.buyPriceFlorets.ToString();
-        else
-            itemPrice.text = myShopItem.gameItem.itemProperties.sellPriceFlorets.ToString();
+            price = myShopItem.mainGameItem.itemProperties.buyPriceFlorets;
+        else if (myShopItem.mainGameItem.itemProperties.itemType == ItemProperties.itemTypes.potWithPlant)
+        {
+            // If Plant is at full stage, sells for full price. Otherwise only base price
+            if (myShopItem.mainGameItem.itemProperties.currentStage == ItemProperties.itemStage.normal)
+                price += myShopItem.mainGameItem.itemProperties.sellPriceFlorets;
 
-        itemImage.sprite = myShopItem.itemIcon;
+            // Now add the pot
+            price += myShopItem.secondaryGameItem.itemProperties.sellPriceFlorets;
+        }
+        else // Only selling Pot or Decor
+            price = myShopItem.mainGameItem.itemProperties.sellPriceFlorets;
+
+        itemPrice.text = price.ToString();
+
+        itemImage.sprite = myShopItem.mainItemIcon;
     }
     
 
