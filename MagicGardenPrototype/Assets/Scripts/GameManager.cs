@@ -18,11 +18,10 @@ public class GameManager : MobileInputManager {
     public GameStates.gameScreens currentScreen;
 
     public CameraController cameraController;
+    public bool cameraEngaged; // The camera is actively being used, even if not moving on these frames. Resets on Touch Release
     Transform mainCam;
     public List<Transform> cameraPosList = new List<Transform>();
-    int currentCamPos;
-    Vector3 camMoveToPos;
-    bool cameraMoving;
+   
 
     [Space(20)]
     public List<PlacePoint> placePoints = new List<PlacePoint>();
@@ -53,9 +52,7 @@ public class GameManager : MobileInputManager {
         MM = GetComponent<MenuManager>();
         InvUI = InventoryUI.FindObjectOfType(typeof(InventoryUI)) as InventoryUI;
         currentScreen = GameStates.gameScreens.mainGame;
-        currentCamPos = 0;
         mainCam = Camera.main.transform;
-        camMoveToPos = cameraPosList[0].position;
 
         // Update Sprite Dictionary before loading the player data
         foreach (Item itemPot in allPotTypes)
@@ -108,7 +105,12 @@ public class GameManager : MobileInputManager {
         if (userIsTouching)
         {
             if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
+            {
                 cameraController.RotateCamera(lastTouchMoveVelocity);
+
+                if (cameraController.cameraIsMoving)
+                    cameraEngaged = true;
+            }
         }
 
         // FOR DEV TESTING PURPOSES ONLY
@@ -136,19 +138,7 @@ public class GameManager : MobileInputManager {
 
 
 
-        //if (mainCam.position != camMoveToPos)
-        //{
-        //    if (!userIsTouching || cameraMoving)
-        //    {
-        //        if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f)
-        //        {
-        //            mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
-        //            mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
-        //        }
-        //        else
-        //            cameraMoving = false;
-        //    }
-        //}
+      
 
         if (holdingMoveable && heldObject != null)
             heldObject.transform.position = GetRaycastHitPoint();
@@ -206,7 +196,6 @@ public class GameManager : MobileInputManager {
     {
         base.SwipeLeft();
 
-        cameraMoving = true;
 
         
         //if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
@@ -228,7 +217,6 @@ public class GameManager : MobileInputManager {
         base.SwipeRight();
 
         
-        cameraMoving = true;
 
         //if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
         //    if (currentCamPos - 1 < 0)
@@ -274,7 +262,7 @@ public class GameManager : MobileInputManager {
 
     public override void HoldDown()
     {
-        if (currentScreen == GameStates.gameScreens.mainGame && cameraController.cameraIsMoving == false)
+        if (currentScreen == GameStates.gameScreens.mainGame && cameraEngaged == false)
         {
             if (heldObject == null)
             {
@@ -301,14 +289,14 @@ public class GameManager : MobileInputManager {
             else if (holdingMoveable || holdingInventoryItem)
             {
                 // if item held on side of screen, move
-                if (!cameraMoving && screenTouchPos.x < 20)
-                {
-                    SwipeLeft();
-                }
-                if (!cameraMoving && screenTouchPos.x > (Screen.width -20))
-                {
-                    SwipeRight();
-                }
+                //if (!cameraMoving && screenTouchPos.x < 20)
+                //{
+                //    SwipeLeft();
+                //}
+                //if (!cameraMoving && screenTouchPos.x > (Screen.width -20))
+                //{
+                //    SwipeRight();
+                //}
             }
 
         }
@@ -343,6 +331,8 @@ public class GameManager : MobileInputManager {
 
     public override void HoldRelease()
     {
+            cameraEngaged = false;
+
         // For moving World Item to world spot
         if (currentScreen == GameStates.gameScreens.mainGame && holdingMoveable)
             PlaceObject();
