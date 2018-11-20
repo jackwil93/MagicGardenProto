@@ -9,12 +9,14 @@ public class MobileInputManager : MonoBehaviour {
 
     public bool userIsTouching;
     float touchTime;
+    float holdStillTouchTime; // The time in which the user's finger is within a set pixel radius
     public Vector3 screenTouchPos;
     Vector3 prevScreenTouchPos; // Recorded at end of Update to check change between frames
-    float touchMoveDistance;
+    protected float touchMoveDistance;
     float storedTouchMoveDist; // For accessing from other scripts
-    Vector3 swipeDirection;
-    bool holdDown;
+    protected Vector3 swipeDirection;
+    protected Vector3 lastTouchMoveVelocity; // For Camera rotation
+    protected bool holdDown;
 
     // For Graphics UI interactions
     public GraphicRaycaster m_GUIRaycaster;
@@ -23,7 +25,7 @@ public class MobileInputManager : MonoBehaviour {
 
 
     // Update is called once per frame
-    public void FixedUpdate () {
+    public void Update () {
 
         if (Input.GetMouseButton(0) || Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) // Could cause issues for 2 finger input later
         {
@@ -52,11 +54,18 @@ public class MobileInputManager : MonoBehaviour {
             // Get Distance of drag, if player is moving finger while touching
             touchMoveDistance = Vector3.Distance(screenTouchPos, prevScreenTouchPos);
 
+            lastTouchMoveVelocity = (screenTouchPos - prevScreenTouchPos) * touchMoveDistance;
+
             // To register when being 'Held Down'
-            if (touchTime > 0.2f && touchMoveDistance < 0.2f)
+            if (touchTime > 0.2f && touchMoveDistance < 0.1f)
             {
-                holdDown = true;
-                HoldDown();
+                holdStillTouchTime += Time.deltaTime;
+
+                if (holdStillTouchTime > 0.2f)
+                {
+                    holdDown = true;
+                    HoldDown();
+                }
             }
 
             // To register 'Hold and Drag'
@@ -64,7 +73,7 @@ public class MobileInputManager : MonoBehaviour {
                 Drag();
 
             // To calculate swiping. Note, only finalises on touch off
-            if (touchMoveDistance > 50f)
+            if (touchMoveDistance > 20f)
             { // Fast enough to be a swipe
                 swipeDirection = Vector3.Normalize(screenTouchPos - prevScreenTouchPos);
             } else
@@ -74,6 +83,7 @@ public class MobileInputManager : MonoBehaviour {
 
             storedTouchMoveDist = touchMoveDistance;
             prevScreenTouchPos = screenTouchPos;
+
         }
         else 
         {
@@ -91,6 +101,7 @@ public class MobileInputManager : MonoBehaviour {
             userIsTouching = false;
             holdDown = false;
             touchTime = 0;
+            holdStillTouchTime = 0;
             touchMoveDistance = 0;
             storedTouchMoveDist = 0;
             screenTouchPos = Vector3.zero;
@@ -149,7 +160,7 @@ public class MobileInputManager : MonoBehaviour {
 
     public float GetTouchMoveDistance()
     {
-        Debug.Log("touchMoveDistance = " + storedTouchMoveDist);
+        //Debug.Log("touchMoveDistance = " + storedTouchMoveDist);
 
         return storedTouchMoveDist;
     }

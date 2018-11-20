@@ -9092,11 +9092,13 @@ MonoBehaviour:
       placedPointX: 0
       placedPointY: 0
       placedPointZ: 0
+      basePotID: 
     delayedOrdersUndelivered: []
     savedMinuteOfYear: 0
     savedDayOfYear: 0
     newGame: 0
   currentScreen: 0
+  cameraController: {fileID: 1494449883}
   cameraPosList:
   - {fileID: 973722768}
   - {fileID: 1028708367}
@@ -22005,6 +22007,7 @@ MonoBehaviour:
     placedPointX: 0
     placedPointY: 0
     placedPointZ: 0
+    basePotID: 
 --- !u!4 &1190375899
 Transform:
   m_ObjectHideFlags: 0
@@ -28160,6 +28163,48 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1491969376}
+--- !u!1 &1494449881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1494449882}
+  - component: {fileID: 1494449883}
+  m_Layer: 0
+  m_Name: Camera Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1494449882
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1494449881}
+  m_LocalRotation: {x: -0, y: -0, z: -0.0000000018626449, w: 1}
+  m_LocalPosition: {x: 1, y: 7.37, z: 100.69}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2123343003}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1494449883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1494449881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 431e9243c0c138442875dbbb22b1300e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraIsMoving: 0
 --- !u!1 &1499917511
 GameObject:
   m_ObjectHideFlags: 0
@@ -37866,11 +37911,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2123342999}
   m_LocalRotation: {x: -0.07657817, y: -0.383407, z: 0.03191907, w: -0.9198457}
-  m_LocalPosition: {x: 1, y: 7.37, z: 100.69}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1494449882}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 9.518001, y: 405.254, z: 0}
 --- !u!1 &2125666837
 GameObject:

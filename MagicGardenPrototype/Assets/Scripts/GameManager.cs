@@ -17,6 +17,7 @@ public class GameManager : MobileInputManager {
 
     public GameStates.gameScreens currentScreen;
 
+    public CameraController cameraController;
     Transform mainCam;
     public List<Transform> cameraPosList = new List<Transform>();
     int currentCamPos;
@@ -102,6 +103,14 @@ public class GameManager : MobileInputManager {
 
     private void Update()
     {
+        base.Update();
+
+        if (userIsTouching)
+        {
+            if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
+                cameraController.RotateCamera(lastTouchMoveVelocity);
+        }
+
         // FOR DEV TESTING PURPOSES ONLY
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -124,21 +133,22 @@ public class GameManager : MobileInputManager {
     private void FixedUpdate()
     {
         //if (currentScreen == GameStates.gameScreens.mainGame) // ONLY register custom touch input if not in a Menu. Otherwise let Unity do its Event things
-            base.FixedUpdate();
 
-        if (mainCam.position != camMoveToPos)
-        {
-            if (!userIsTouching || cameraMoving)
-            {
-                if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f)
-                {
-                    mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
-                    mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
-                }
-                else
-                    cameraMoving = false;
-            }
-        }
+
+
+        //if (mainCam.position != camMoveToPos)
+        //{
+        //    if (!userIsTouching || cameraMoving)
+        //    {
+        //        if (Vector3.Distance(mainCam.position, camMoveToPos) > 0.02f)
+        //        {
+        //            mainCam.position = Vector3.Lerp(mainCam.position, camMoveToPos, Time.deltaTime * 5);
+        //            mainCam.rotation = Quaternion.Lerp(mainCam.rotation, cameraPosList[currentCamPos].rotation, Time.deltaTime * 5);
+        //        }
+        //        else
+        //            cameraMoving = false;
+        //    }
+        //}
 
         if (holdingMoveable && heldObject != null)
             heldObject.transform.position = GetRaycastHitPoint();
@@ -198,13 +208,14 @@ public class GameManager : MobileInputManager {
 
         cameraMoving = true;
 
-        if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
-            if (currentCamPos + 1 > cameraPosList.Count - 1)
-                currentCamPos = 0;
-            else
-                currentCamPos++;
+        
+        //if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
+        //    if (currentCamPos + 1 > cameraPosList.Count - 1)
+        //        currentCamPos = 0;
+        //    else
+        //        currentCamPos++;
 
-        camMoveToPos = cameraPosList[currentCamPos].position;
+        //camMoveToPos = cameraPosList[currentCamPos].position;
 
 
         if (currentScreen == GameStates.gameScreens.inventory)
@@ -219,13 +230,13 @@ public class GameManager : MobileInputManager {
         
         cameraMoving = true;
 
-        if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
-            if (currentCamPos - 1 < 0)
-                currentCamPos = cameraPosList.Count - 1;
-            else
-                currentCamPos--;
+        //if (currentScreen == GameStates.gameScreens.mainGame || currentScreen == GameStates.gameScreens.selling)
+        //    if (currentCamPos - 1 < 0)
+        //        currentCamPos = cameraPosList.Count - 1;
+        //    else
+        //        currentCamPos--;
 
-        camMoveToPos = cameraPosList[currentCamPos].position;
+        //camMoveToPos = cameraPosList[currentCamPos].position;
 
         if (currentScreen == GameStates.gameScreens.inventory)
             MM.InventoryLeft();
@@ -263,7 +274,7 @@ public class GameManager : MobileInputManager {
 
     public override void HoldDown()
     {
-        if (currentScreen == GameStates.gameScreens.mainGame)
+        if (currentScreen == GameStates.gameScreens.mainGame && cameraController.cameraIsMoving == false)
         {
             if (heldObject == null)
             {
