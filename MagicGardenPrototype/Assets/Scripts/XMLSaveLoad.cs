@@ -199,7 +199,7 @@ public class XMLSaveLoad : MonoBehaviour
             // If it's a new game, load all the starting emails from Resources
             // Weird workaround so Android can load and read the JSON
             Debug.Log("Resetting email data to original file in Assets/Data");
-            TextAsset jsonFile = Resources.Load("emaildata") as TextAsset;
+            TextAsset jsonFile = Resources.Load("emailData") as TextAsset;
             string jsonText = jsonFile.ToString();
             Debug.Log(jsonText);
 

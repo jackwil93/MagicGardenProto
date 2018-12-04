@@ -27,30 +27,33 @@ public class EmailManager : MonoBehaviour
     {
         foreach (EmailEntry email in loadedEmails.emailEntries)
         {
-            allEmailsInData.Add(email);
-            Debug.Log("loaded email entryID = " + email.entryID + " | conversationID = " + email.conversationID);
-
-            // Make new EmailConversations if not already made
-            if (emailConversationsDictionary.ContainsKey (email.conversationID) == false)
+            if (email.entryID != "____") // Only continue if this is not a blank entry
             {
-                EmailConversation newConversation = new EmailConversation();
-                newConversation.conversationID = email.conversationID;
+                allEmailsInData.Add(email);
+                Debug.Log("loaded email entryID = " + email.entryID + " | conversationID = " + email.conversationID);
 
-                emailConversationsDictionary.Add(newConversation.conversationID, newConversation);
-                Debug.Log("Created New Email Conversation: " + newConversation.conversationID);
+                // Make new EmailConversations if not already made
+                if (emailConversationsDictionary.ContainsKey(email.conversationID) == false)
+                {
+                    EmailConversation newConversation = new EmailConversation();
+                    newConversation.conversationID = email.conversationID;
 
-                // Add the initial email 
-                newConversation.AddNextEmail(email);
+                    emailConversationsDictionary.Add(newConversation.conversationID, newConversation);
+                    Debug.Log("Created New Email Conversation: " + newConversation.conversationID);
+
+                    // Add the initial email 
+                    newConversation.AddNextEmail(email);
+                }
+
+                // Check if player has received this email before. If so, add it to the conversation
+                if (email.received)
+                {
+                    emailConversationsDictionary[email.conversationID].AddNextEmail(email);
+                }
+
+                // Find Max stage for each conversation
+                emailConversationsDictionary[email.conversationID].CheckMaxStage(email.stage);
             }
-
-            // Check if player has received this email before. If so, add it to the conversation
-            if (email.received)
-            {
-                emailConversationsDictionary[email.conversationID].AddNextEmail(email);
-            }
-
-            // Find Max stage for each conversation
-            emailConversationsDictionary[email.conversationID].CheckMaxStage(email.stage);
 
         }
 

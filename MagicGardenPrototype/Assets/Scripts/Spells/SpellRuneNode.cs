@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class SpellRuneNode : MonoBehaviour {
+
+    RuneGameTimer RuneTimer;
+
     public int spellRuneIndex;
     public ParticleSystem particleEffect;
     public Transform particleGroup;
@@ -16,11 +19,15 @@ public class SpellRuneNode : MonoBehaviour {
         particleEffect = particleGroup.GetChild(transform.GetSiblingIndex()).GetComponent<ParticleSystem>();
         spellRuneIndex = transform.GetSiblingIndex() + 1;
         StartCoroutine(SetUpNodeConnections());
+
+        RuneTimer = FindObjectOfType<RuneGameTimer>();
     }
 
     public void HitRune()
     {
         this.GetComponent<Image>().color = Color.cyan;
+
+        RuneTimer.AddTime(0.3f);
 
         if (particleEffect.isPlaying == false)
             particleEffect.Play();

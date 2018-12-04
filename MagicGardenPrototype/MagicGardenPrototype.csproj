@@ -267,6 +267,8 @@
     <Compile Include="Assets\Scripts\PlantCore.cs" />
     <Compile Include="Assets\Scripts\PlantType.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
+    <Compile Include="Assets\Scripts\Rune Game\RuneGameController.cs" />
+    <Compile Include="Assets\Scripts\Rune Game\RuneGameTimer.cs" />
     <Compile Include="Assets\Scripts\Shop.cs" />
     <Compile Include="Assets\Scripts\ShopItem.cs" />
     <Compile Include="Assets\Scripts\ShopItemButton.cs" />
