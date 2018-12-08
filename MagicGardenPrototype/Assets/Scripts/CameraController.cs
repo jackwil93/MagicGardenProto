@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour {
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5);
 
             float dot = Quaternion.Dot(transform.rotation, targetRotation);
-            Debug.Log("Dot to target = " + dot);
+            //Debug.Log("Dot to target = " + dot);
 
             
 

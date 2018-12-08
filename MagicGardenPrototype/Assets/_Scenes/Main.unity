@@ -9374,7 +9374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadPlayerDataOnStart: 1
-  resetEmailData: 0
+  resetEmailData: 1
   saveFileName: ma
 --- !u!114 &430227578
 MonoBehaviour:

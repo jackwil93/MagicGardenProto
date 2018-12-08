@@ -337,7 +337,17 @@ public class MenuManager : MonoBehaviour {
         emailReplyWindow.transform.SetAsLastSibling();
 
         // Set up Images
-        emailReplyWindow.transform.FindDeepChild("Image_Item").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+        if (email.itemID != null)
+            emailReplyWindow.transform.FindDeepChild("Image_Item").GetComponent<Image>().sprite = GM.GetSpriteSet(email.itemID).normalSprites[0];
+        else
+            emailReplyWindow.transform.FindDeepChild("Image_Item").gameObject.SetActive(false);
+
+        // Reset Buttons
+        foreach(Button b in replyButtons)
+        {
+            b.onClick.RemoveAllListeners();
+        }
+
 
         replyButtons.Clear();
         replyButtons.Add(replyButton1);
@@ -349,20 +359,21 @@ public class MenuManager : MonoBehaviour {
 
         // Assign random button as good response, then remove it. Assign bad response from the left over, and then neutral response
         int randomGood = AssignRandom(0, replyButtons.Count);
-        replyButtons[randomGood].transform.GetComponentInChildren<Text>().text = email.playerReplyGood;
-        replyButtons[randomGood].onClick.AddListener(delegate { SubmitReply("g", email.playerReplyGood); });
+     
+        replyButtons[randomGood].transform.GetComponentInChildren<Text>().text = currentEmail.playerReplyGood;
+        replyButtons[randomGood].onClick.AddListener(delegate { SubmitReply("g", currentEmail.playerReplyGood); });
         replyButtons.Remove(replyButtons[randomGood]);
 
         // Assign Bad
         int randomBad = AssignRandom(0, replyButtons.Count);
-        replyButtons[randomBad].transform.GetComponentInChildren<Text>().text = email.playerReplyBad;
-        replyButtons[randomBad].onClick.AddListener(delegate { SubmitReply("b", email.playerReplyBad); });
+        replyButtons[randomBad].transform.GetComponentInChildren<Text>().text = currentEmail.playerReplyBad;
+        replyButtons[randomBad].onClick.AddListener(delegate { SubmitReply("b", currentEmail.playerReplyBad); });
         replyButtons.Remove(replyButtons[randomBad]);
 
 
         // Assign Neutral
-        replyButtons[0].transform.GetComponentInChildren<Text>().text = email.playerReplyNeutral;
-        replyButtons[0].onClick.AddListener(delegate { SubmitReply("n", email.playerReplyNeutral); });
+        replyButtons[0].transform.GetComponentInChildren<Text>().text = currentEmail.playerReplyNeutral;
+        replyButtons[0].onClick.AddListener(delegate { SubmitReply("n", currentEmail.playerReplyNeutral); });
     }
 
     int AssignRandom(int min, int maxExclusive)
@@ -380,12 +391,19 @@ public class MenuManager : MonoBehaviour {
 
     void SubmitReply(string gbn, string replyText)
     {
-        CloseReplyWindow();
-        currentEmail.playerReplyGBN = gbn;
-        EM.RecordPlayerReplyAndQueueNextEmail(currentEmail, gbn, replyText);
+        Debug.Log("Submit reply");
+        if (currentEmail.replied == false)
+        {
+            currentEmail.replied = true;
+            currentEmail.playerReplyGBN = gbn;
+            CloseReplyWindow();
 
-        // Because the player email has been recorded and added, we can just get it as the latest email in the conversation
-        CreateEmailConversationEntry(EM.emailConversationsDictionary[currentEmail.conversationID].GetLatestEmail());
+
+            EM.RecordPlayerReplyAndQueueNextEmail(currentEmail, gbn, replyText);
+
+            // Because the player email has been recorded and added, we can just get it as the latest email in the conversation
+            CreateEmailConversationEntry(EM.emailConversationsDictionary[currentEmail.conversationID].GetLatestEmail());
+        }
     }
 
     #endregion

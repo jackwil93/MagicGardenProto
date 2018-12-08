@@ -29,6 +29,8 @@ public class EmailManager : MonoBehaviour
         {
             if (email.entryID != "____") // Only continue if this is not a blank entry
             {
+               
+
                 allEmailsInData.Add(email);
                 Debug.Log("loaded email entryID = " + email.entryID + " | conversationID = " + email.conversationID);
 
