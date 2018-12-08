@@ -285,11 +285,16 @@ public class MenuManager : MonoBehaviour {
 
         // Check if this email is player or character
         if (email.characterName == "Player")
+        {
             prefabToUse = emailPlayerReplyPrefab;
+            email.opened = true;
+            email.received = true;
+        }
         else
             prefabToUse = emailContentPrefab;
 
-        GameObject newEmailEntry = GameObject.Instantiate(prefabToUse, emailConvoScrollContent); 
+        GameObject newEmailEntry = GameObject.Instantiate(prefabToUse, emailConvoScrollContent);
+        newEmailEntry.name = "EmailEntry_" + email.entryID;
         newEmailEntry.transform.FindDeepChild("Text_Content").GetComponent<Text>().text = email.bodyText;
 
         if (email.characterName == "Player")
@@ -395,14 +400,19 @@ public class MenuManager : MonoBehaviour {
         if (currentEmail.replied == false)
         {
             currentEmail.replied = true;
+            
             currentEmail.playerReplyGBN = gbn;
             CloseReplyWindow();
 
+            GameObject.Find("EmailEntry_" + currentEmail.entryID).transform.FindDeepChild("Button_Respond").gameObject.SetActive(false);
 
             EM.RecordPlayerReplyAndQueueNextEmail(currentEmail, gbn, replyText);
 
             // Because the player email has been recorded and added, we can just get it as the latest email in the conversation
             CreateEmailConversationEntry(EM.emailConversationsDictionary[currentEmail.conversationID].GetLatestEmail());
+
+            // Now don't show the player's reply as an unread emaik
+            EM.emailConversationsDictionary[currentEmail.conversationID].MarkEmailsRead();
         }
     }
 
